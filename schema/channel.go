@@ -1,62 +1,62 @@
 package schema
 
 type Channel struct {
-	Id                int    `json:"id,int,omitempty"`
-	Link              string `json:"link,omitempty"`
-	Username          string `json:"username,omitempty"`
-	Title             string `json:"title,omitempty"`
-	About             string `json:"about,omitempty"`
-	Image100          string `json:"image100,omitempty"`
-	Image640          string `json:"image640,omitempty"`
-	ParticipantsCount int    `json:"participants_count,omitempty"`
+	Id                int    `json:"id,int"`
+	Link              string `json:"link"`
+	Username          string `json:"username"`
+	Title             string `json:"title"`
+	About             string `json:"about"`
+	Image100          string `json:"image100"`
+	Image640          string `json:"image640"`
+	ParticipantsCount int    `json:"participants_count"`
 }
 
 type ChannelResponse struct {
-	Status   string `json:"status,string,omitempty"`
+	Status   string `json:"status,string"`
 	Response struct {
-		Id                int    `json:"id,int,omitempty"`
-		Link              string `json:"link,omitempty"`
-		Username          string `json:"username,omitempty"`
-		Title             string `json:"title,omitempty"`
-		About             string `json:"about,omitempty"`
-		Image100          string `json:"image100,omitempty"`
-		Image640          string `json:"image640,omitempty"`
-		ParticipantsCount int    `json:"participants_count,omitempty"`
+		Id                int    `json:"id,int"`
+		Link              string `json:"link"`
+		Username          string `json:"username"`
+		Title             string `json:"title"`
+		About             string `json:"about"`
+		Image100          string `json:"image100"`
+		Image640          string `json:"image640"`
+		ParticipantsCount int    `json:"participants_count"`
 		TGStatRestriction []struct {
-			RedLabel   bool `json:"red_label,omitempty"`
-			BlackLabel bool `json:"black_label,omitempty"`
-		} `json:"tgstat_restrictions,omitempty"`
+			RedLabel   bool `json:"red_label"`
+			BlackLabel bool `json:"black_label"`
+		} `json:"tgstat_restrictions"`
 	} `json:"response"`
 }
 
 type ChannelSearchResponse struct {
-	Status   string `json:"status,string,omitempty"`
+	Status   string `json:"status,string"`
 	Response struct {
-		Count             int    `json:"count,int,omitempty"`
+		Count             int    `json:"count,int"`
 		Items []struct {
-			Id                int    `json:"id,int,omitempty"`
-			Link              string `json:"link,omitempty"`
-			Username          string `json:"username,omitempty"`
-			Title             string `json:"title,omitempty"`
-			About             string `json:"about,omitempty"`
-			Image100          string `json:"image100,omitempty"`
-			Image640          string `json:"image640,omitempty"`
-			ParticipantsCount int    `json:"participants_count,omitempty"`
-		} `json:"items,omitempty"`
+			Id                int    `json:"id,int"`
+			Link              string `json:"link"`
+			Username          string `json:"username"`
+			Title             string `json:"title"`
+			About             string `json:"about"`
+			Image100          string `json:"image100"`
+			Image640          string `json:"image640"`
+			ParticipantsCount int    `json:"participants_count"`
+		} `json:"items"`
 	} `json:"response"`
 }
 
 type ChannelStatResponse struct {
-	Status   string `json:"status,string,omitempty"`
+	Status   string `json:"status,string"`
 	Response struct {
-		Id                int    `json:"id,int,omitempty"`
-		Title             string `json:"title,omitempty"`
-		Username          string `json:"username,omitempty"`
-		ParticipantsCount int    `json:"participants_count,omitempty"`
-		AvgPostReach      int    `json:"avg_post_reach,omitempty"`
-		ErrPercent        int    `json:"err_percent,omitempty"`
-		DailyReach        int    `json:"daily_reach,omitempty"`
-		CiIndex           int    `json:"ci_index,omitempty"`
+		Id                int    `json:"id,int"`
+		Title             string `json:"title"`
+		Username          string `json:"username"`
+		ParticipantsCount int    `json:"participants_count"`
+		AvgPostReach      int    `json:"avg_post_reach"`
+		ErrPercent        int    `json:"err_percent"`
+		DailyReach        int    `json:"daily_reach"`
+		CiIndex           int    `json:"ci_index"`
 	} `json:"response"`
 }
 
