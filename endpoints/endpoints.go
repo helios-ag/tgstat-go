@@ -5,10 +5,10 @@ const (
 	ChannelsGet         string = "/channels/get"
 	ChannelsSearch      string = "/channels/search"
 	ChannelsStat        string = "/channels/stat"
-	ChannelsMention     string  = "/channels/mentions"
-	ChannelsForward     string = "/channels/forwards"
+	ChannelsMentions    string  = "/channels/mentions"
+	ChannelsForwards    string = "/channels/forwards"
 	ChannelsSubscribers string = "/channels/subscribers"
-	ChannelsView        string = "/channels/views"
+	ChannelsViews       string = "/channels/views"
 	ChannelsAdd         string = "/channels/add"
 
 	PostsGet string = "/posts/get"
