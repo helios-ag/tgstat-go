@@ -314,7 +314,7 @@ type ChannelForwardRequest struct {
 }
 
 func (c *Client) ChannelForwards(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwards, *http.Response, error) {
-	path := endpoints.ChannelsMentions
+	path := endpoints.ChannelsForwards
 
 	if err := validateChannelForwardRequest(request); err != nil {
 		return nil, nil, err
@@ -346,7 +346,7 @@ func (c *Client) ChannelForwards(ctx context.Context, request ChannelForwardRequ
 }
 
 func (c *Client) ChannelForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwardsExtended, *http.Response, error) {
-	path := endpoints.ChannelsMentions
+	path := endpoints.ChannelsForwards
 
 	if err := validateChannelForwardRequest(request); err != nil {
 		return nil, nil, err
@@ -458,7 +458,7 @@ type ChannelViewsRequest struct {
 }
 
 func (c *Client) ChannelViews(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelViews, *http.Response, error) {
-	path := endpoints.ChannelsSubscribers
+	path := endpoints.ChannelsViews
 
 	if err := validateChannelViewsRequest(request); err != nil {
 		return nil, nil, err
@@ -507,7 +507,7 @@ type ChannelAddRequest struct {
 }
 
 func (c *Client) ChannelAdd(ctx context.Context, request ChannelAddRequest) (*schema.ChannelViews, *http.Response, error) {
-	path := endpoints.ChannelsSubscribers
+	path := endpoints.ChannelsAdd
 
 	if err := validateChannelAddRequest(request); err != nil {
 		return nil, nil, err

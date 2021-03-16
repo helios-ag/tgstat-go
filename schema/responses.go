@@ -28,3 +28,15 @@ type LanguageResponse struct {
 		Name string `json:"name"`
 	} `json:"response"`
 }
+
+type ChannelAddPendingResponse struct {
+	Status   string `json:"status"`
+}
+
+type ChannelAddSuccessResponse struct {
+	Status   string `json:"status"`
+	Response []struct {
+		ChannelId string `json:"channelId"`
+	} `json:"response"`
+}
+
