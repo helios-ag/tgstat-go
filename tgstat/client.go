@@ -21,6 +21,7 @@ const (
 // ClientConfig is used to set client configuration
 type ClientConfig struct {
 	token    string
+	extended string
 	endpoint string
 }
 
@@ -45,13 +46,19 @@ func WithToken(token string) ClientOption {
 	}
 }
 
+// WithExtendedResponse configures a Client to receive extended response
+func WithExtendedResponse() ClientOption {
+	return func(client *Client) {
+		client.Config.extended = "1"
+	}
+}
+
 // WithEndpoint configures a Client to use the specified API endpoint.
 func WithEndpoint(endpoint string) ClientOption {
 	return func(client *Client) {
 		client.Config.endpoint = strings.TrimRight(endpoint, "/")
 	}
 }
-
 
 func (c *Client) NewRestRequest(ctx context.Context, method, urlPath string, data map[string]string) (*http.Request, error) {
 	return newRestRequest(c, ctx, method, urlPath, data)

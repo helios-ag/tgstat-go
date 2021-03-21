@@ -9,24 +9,17 @@ type Channel struct {
 	Image100          string `json:"image100"`
 	Image640          string `json:"image640"`
 	ParticipantsCount int    `json:"participants_count"`
+	TGStatRestriction TGStatRestriction `json:"tgstat_restrictions"`
+}
+
+type TGStatRestriction struct {
+	RedLabel   bool `json:"red_label"`
+	BlackLabel bool `json:"black_label"`
 }
 
 type ChannelResponse struct {
 	Status   string `json:"status,string"`
-	Response struct {
-		Id                int    `json:"id,int"`
-		Link              string `json:"link"`
-		Username          string `json:"username"`
-		Title             string `json:"title"`
-		About             string `json:"about"`
-		Image100          string `json:"image100"`
-		Image640          string `json:"image640"`
-		ParticipantsCount int    `json:"participants_count"`
-		TGStatRestriction []struct {
-			RedLabel   bool `json:"red_label"`
-			BlackLabel bool `json:"black_label"`
-		} `json:"tgstat_restrictions"`
-	} `json:"response"`
+	Response Channel `json:"response"`
 }
 
 type ChannelSearchResponse struct {

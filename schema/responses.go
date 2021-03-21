@@ -1,6 +1,6 @@
 package schema
 
-type Response struct {
+type ErrorResponse struct {
 	Status string `json:"status,string,omitempty"`
 	Error  string `json:"error,string,omitempty"`
 }
