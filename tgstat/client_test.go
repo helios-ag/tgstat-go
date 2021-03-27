@@ -66,7 +66,7 @@ func TestNewClient(t *testing.T) {
 		defer server.Teardown()
 
 		server.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(schema.Response{
+			json.NewEncoder(w).Encode(schema.ErrorResponse{
 				Status: "error",
 				Error:  "empty_token",
 			})
@@ -85,7 +85,7 @@ func TestClientDo(t *testing.T) {
 		defer server.Teardown()
 
 		server.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(schema.Response{
+			json.NewEncoder(w).Encode(schema.ErrorResponse{
 				Status: "error",
 				Error:  "empty_token",
 			})
@@ -111,7 +111,7 @@ func TestClientDo(t *testing.T) {
 		defer server.Teardown()
 
 		server.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(schema.Response{
+			json.NewEncoder(w).Encode(schema.ErrorResponse{
 				Status: "error",
 				Error:  "empty_token",
 			})
