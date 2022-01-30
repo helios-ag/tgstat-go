@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"net/http"
 	"strconv"
 	"tgstat/endpoints"
@@ -37,17 +38,21 @@ func (c *Client) PostGet(ctx context.Context, postId string) (*schema.PostRespon
 
 type PostStatRequest struct {
 	PostId string
-	Group *string
+	Group  *string
+}
+
+func (postStatRequest PostStatRequest) Validate() error {
+	return validation.ValidateStruct(&postStatRequest,
+		validation.Field(&postStatRequest.PostId, validation.Required),
+		validation.Field(&postStatRequest.Group, validation.In("hour", "day")),
+	)
 }
 
 func (c *Client) PostStat(ctx context.Context, request PostStatRequest) (*schema.PostStatResponse, *http.Response, error) {
 	path := endpoints.PostsStat
 
-	if request.PostId == "" {
-		return nil, nil, fmt.Errorf("postId can not be empty")
-	}
-	if !validateGroupStat(*request.Group) {
-		return nil, nil, fmt.Errorf("improper group value")
+	if err := request.Validate(); err != nil {
+		return nil, nil, err
 	}
 
 	body := make(map[string]string)
@@ -69,35 +74,32 @@ func (c *Client) PostStat(ctx context.Context, request PostStatRequest) (*schema
 	return &response, result, err
 }
 
-func validateGroupStat(group string) bool {
-	switch group {
-	case
-		"day",
-		"hour":
-		return true
-	}
-
-	return false
+type PostSearchRequest struct {
+	Q              string
+	Limit          *int
+	Offset         *int
+	PeerType       *string
+	StartDate      *string
+	EndDate        *string
+	HideForwards   *bool
+	HideDeleted    *bool
+	StrongSearch   *bool
+	MinusWords     *string
+	ExtendedSyntax *bool
 }
 
-type PostSearchRequest struct {
-	Q string
-	Limit *int
-	Offset *int
-	PeerType *string
-	StartDate *string
-	EndDate *string
-	HideForwards *bool
-	HideDeleted *bool
-	StrongSearch *bool
-	MinusWords *string
-	ExtendedSyntax *bool
+func (postSearchRequest PostSearchRequest) Validate() error {
+	return validation.ValidateStruct(&postSearchRequest,
+		validation.Field(&postSearchRequest.Q, validation.Required),
+		validation.Field(&postSearchRequest.Limit, validation.Max(50)),
+		validation.Field(&postSearchRequest.Offset, validation.Max(50)),
+	)
 }
 
 func (c *Client) PostSearch(ctx context.Context, request PostSearchRequest) (*schema.PostSearchResponse, *http.Response, error) {
 	path := endpoints.PostsSearch
 
-	if err := validateChannelSearchRequest(request); err != nil {
+	if err := request.Validate(); err != nil {
 		return nil, nil, err
 	}
 
@@ -108,10 +110,28 @@ func (c *Client) PostSearch(ctx context.Context, request PostSearchRequest) (*sc
 	body["peerType"] = *request.PeerType
 	body["startDate"] = *request.StartDate
 	body["EndDate"] = *request.EndDate
-	body["hideForwards"] = func() string { if *request.HideForwards == true { return "1" } else { return "0" } }()
-	body["hideDeleted"] = func() string { if *request.HideDeleted == true { return "1" } else { return "0" } }()
+	body["hideForwards"] = func() string {
+		if *request.HideForwards == true {
+			return "1"
+		} else {
+			return "0"
+		}
+	}()
+	body["hideDeleted"] = func() string {
+		if *request.HideDeleted == true {
+			return "1"
+		} else {
+			return "0"
+		}
+	}()
 	body["minusWords"] = *request.MinusWords
-	body["extendedSyntax"] = func() string { if *request.ExtendedSyntax == true { return "1" } else { return "0" } }()
+	body["extendedSyntax"] = func() string {
+		if *request.ExtendedSyntax == true {
+			return "1"
+		} else {
+			return "0"
+		}
+	}()
 
 	req, err := c.NewRestRequest(ctx, "GET", path, body)
 
@@ -129,26 +149,10 @@ func (c *Client) PostSearch(ctx context.Context, request PostSearchRequest) (*sc
 	return &response, result, err
 }
 
-func validateChannelSearchRequest(request PostSearchRequest) error {
-	if request.Q == "" {
-		return fmt.Errorf("q must be set")
-	}
-
-	if *request.Limit > 50 {
-		return fmt.Errorf("max limit is 50")
-	}
-
-	if *request.Offset > 1000 {
-		return fmt.Errorf("max offset is 50")
-	}
-
-	return nil
-}
-
 func (c *Client) PostSearchExtended(ctx context.Context, request PostSearchRequest) (*schema.PostSearchExtendedResponse, *http.Response, error) {
 	path := endpoints.PostsSearch
 
-	if err := validateChannelSearchRequest(request); err != nil {
+	if err := request.Validate(); err != nil {
 		return nil, nil, err
 	}
 
@@ -159,10 +163,28 @@ func (c *Client) PostSearchExtended(ctx context.Context, request PostSearchReque
 	body["peerType"] = *request.PeerType
 	body["startDate"] = *request.StartDate
 	body["EndDate"] = *request.EndDate
-	body["hideForwards"] = func() string { if *request.HideForwards == true { return "1" } else { return "0" } }()
-	body["hideDeleted"] = func() string { if *request.HideDeleted == true { return "1" } else { return "0" } }()
+	body["hideForwards"] = func() string {
+		if *request.HideForwards == true {
+			return "1"
+		} else {
+			return "0"
+		}
+	}()
+	body["hideDeleted"] = func() string {
+		if *request.HideDeleted == true {
+			return "1"
+		} else {
+			return "0"
+		}
+	}()
 	body["minusWords"] = *request.MinusWords
-	body["extendedSyntax"] = func() string { if *request.ExtendedSyntax == true { return "1" } else { return "0" } }()
+	body["extendedSyntax"] = func() string {
+		if *request.ExtendedSyntax == true {
+			return "1"
+		} else {
+			return "0"
+		}
+	}()
 	body["extended"] = "1"
 
 	req, err := c.NewRestRequest(ctx, "GET", path, body)
