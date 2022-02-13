@@ -132,7 +132,7 @@ var reader = func(r io.Reader) ([]byte, error) {
 	return ioutil.ReadAll(r)
 }
 
-// Do performs an HTTP request against the API.
+// Do perform an HTTP request against the API.
 func (c *Client) Do(r *http.Request, v interface{}) (*http.Response, error) {
 	resp, err := c.httpClient.Do(r)
 	if err != nil {
@@ -170,7 +170,7 @@ func errorFromResponse(resp *http.Response, body []byte) error {
 		return nil
 	}
 
-	var respBody schema.Response
+	var respBody schema.ErrorResponse
 	if err := json.Unmarshal(body, &respBody); err != nil {
 		return nil
 	}
@@ -181,7 +181,7 @@ func errorFromResponse(resp *http.Response, body []byte) error {
 }
 
 func (c *ClientConfig) validate() error {
-	if c.token != "" {
+	if c.token == "" {
 		return errors.New("token can't be empty")
 	}
 

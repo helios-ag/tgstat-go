@@ -12,16 +12,6 @@ import (
 	"tgstat/schema"
 )
 
-func prepareClient() (*Client, error) {
-	cfg := ClientConfig{
-		token: "test",
-	}
-
-	client, err := NewClient(&cfg, WithEndpoint("http://api-tgstat///"))
-
-	return client, err
-}
-
 var NewRestRequestStub = func(
 	c *Client,
 	ctx context.Context,
@@ -51,7 +41,7 @@ func TestClient_ChannelGet(t *testing.T) {
 
 		_, _, err := client.ChannelGet(context.Background(), channelId)
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("return url must be set"))
+		Expect(err.Error()).To(ContainSubstring("ChannelID must be set"))
 	})
 
 	t.Run("Test channel Get response Mapping", func(t *testing.T) {
@@ -63,17 +53,17 @@ func TestClient_ChannelGet(t *testing.T) {
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(schema.ChannelResponse{
 				Status: "ok",
-				Response: schema.Channel {
-					Id: 321,
-					Link: "t.me/varlamov",
-					Username: "@varlamov",
-					Title: "Varlamov.ru",
-					About: "Илья Варламов. Make Russia warm again! ...",
-					Image100: "//static.tgstat.ru/public/images/channels/_100/ca/caf1a3dfb505ffed0d024130f58c5cfa.jpg",
-					Image640: "//static.tgstat.ru/public/images/channels/_0/ca/caf1a3dfb505ffed0d024130f58c5cfa.jpg",
+				Response: schema.Channel{
+					Id:                321,
+					Link:              "t.me/varlamov",
+					Username:          "@varlamov",
+					Title:             "Varlamov.ru",
+					About:             "Илья Варламов. Make Russia warm again! ...",
+					Image100:          "//static.tgstat.ru/public/images/channels/_100/ca/caf1a3dfb505ffed0d024130f58c5cfa.jpg",
+					Image640:          "//static.tgstat.ru/public/images/channels/_0/ca/caf1a3dfb505ffed0d024130f58c5cfa.jpg",
 					ParticipantsCount: 100,
-					TGStatRestriction: schema.TGStatRestriction {
-						RedLabel: true,
+					TGStatRestriction: schema.TGStatRestriction{
+						RedLabel:   true,
 						BlackLabel: true,
 					},
 				},
@@ -85,9 +75,10 @@ func TestClient_ChannelGet(t *testing.T) {
 		response, _, err := server.Client.ChannelGet(context.Background(), channelId)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
-			"Status": ContainSubstring("ok"),
-			"Response": ContainSubstring("varlam"),
+			"Status": Equal("ok"),
+			"Response": MatchFields(IgnoreExtras, Fields{
+				"Title": ContainSubstring("Varlam"),
+			}),
 		})))
-
 	})
 }

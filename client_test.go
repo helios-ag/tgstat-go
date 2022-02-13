@@ -56,7 +56,7 @@ func newServer() Server {
 func TestNewClient(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test trailing slashes remove", func(t *testing.T) {
-		client, _ := NewClient(getCfg(), WithEndpoint("http://api-sberbank///"))
+		client, _ := NewClient(getCfg(), WithEndpoint("http://api-tgstat///"))
 		if strings.HasSuffix(client.Config.endpoint, "/") {
 			t.Fatalf("endpoint has trailing slashes: %q", client.Config.endpoint)
 		}
@@ -136,7 +136,7 @@ func TestClientDo(t *testing.T) {
 		request, _ := server.Client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
 		_, err := server.Client.Do(request, nil)
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("empty_token"))
+		Expect(err.Error()).To(ContainSubstring("tgstat server responded with status code 400"))
 	})
 }
 
@@ -144,7 +144,7 @@ func TestErrorFromResponse(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Expect application/json", func(t *testing.T) {
 		resp := http.Response{
-			Body: ioutil.NopCloser(bytes.NewBufferString("Hello World")),
+			Body:   ioutil.NopCloser(bytes.NewBufferString("Hello World")),
 			Header: make(http.Header, 0),
 		}
 		resp.Header.Set("Content-Type", "application/json")
@@ -155,7 +155,7 @@ func TestErrorFromResponse(t *testing.T) {
 
 	t.Run("Expect wrong json", func(t *testing.T) {
 		resp := http.Response{
-			Body: ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
+			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
 			Header: make(http.Header, 0),
 		}
 		resp.Header.Set("Content-Type", "application/json")
@@ -166,7 +166,7 @@ func TestErrorFromResponse(t *testing.T) {
 
 	t.Run("Expect wrong json header", func(t *testing.T) {
 		resp := http.Response{
-			Body: ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
+			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
 			Header: make(http.Header, 0),
 		}
 		resp.Header.Set("Content-Type", "application_json")
@@ -177,7 +177,7 @@ func TestErrorFromResponse(t *testing.T) {
 
 	t.Run("Expect Error", func(t *testing.T) {
 		resp := http.Response{
-			Body: ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
+			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
 			Header: make(http.Header, 0),
 		}
 		resp.Header.Set("Content-Type", "application/json")
@@ -189,7 +189,7 @@ func TestErrorFromResponse(t *testing.T) {
 
 	t.Run("Dont expect Error", func(t *testing.T) {
 		resp := http.Response{
-			Body: ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
+			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
 			Header: make(http.Header, 0),
 		}
 		resp.Header.Set("Content-Type", "application/json")
@@ -266,7 +266,7 @@ func TestNewRequest(t *testing.T) {
 	t.Run("Test improper Config url", func(t *testing.T) {
 		_, err := NewClient(
 			&ClientConfig{
-				endpoint:           "http\\:wrongUrl",
+				endpoint: "http\\:wrongUrl",
 			},
 		)
 

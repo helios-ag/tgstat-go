@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	//"github.com/helios-ag/tgstat-go/endpoints"
+	//"github.com/helios-ag/tgstat-go/schema"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"net/http"
 	"strconv"
 	"tgstat/endpoints"
-	//"github.com/helios-ag/tgstat-go/endpoints"
-	//"github.com/helios-ag/tgstat-go/schema"
 	"tgstat/schema"
 )
 
@@ -39,7 +40,7 @@ func (c *Client) ChannelGet(ctx context.Context, channelId string) (*schema.Chan
 
 func validateGetChannelId(channelId string) error {
 	if channelId == "" {
-		return fmt.Errorf("channel ID must be set")
+		return fmt.Errorf("ChannelID must be set")
 	}
 	return nil
 }
@@ -53,10 +54,18 @@ type SearchRequest struct {
 	Limit               int
 }
 
+func (searchRequest SearchRequest) Validate() error {
+	return validation.ValidateStruct(&searchRequest,
+		validation.Field(&searchRequest.Country, validation.Required),
+		validation.Field(&searchRequest.Q, validation.Required.When(searchRequest.Category == "").Error("Either query or category is required.")),
+		validation.Field(&searchRequest.Category, validation.Required.When(searchRequest.Q == "").Error("Either query or category  is required.")),
+	)
+}
+
 func (c *Client) ChannelSearch(ctx context.Context, request SearchRequest) (*schema.ChannelSearchResponse, *http.Response, error) {
 	path := endpoints.ChannelsSearch
 
-	if err := validateSearchRequest(request); err != nil {
+	if err := request.Validate(); err != nil {
 		return nil, nil, err
 	}
 
@@ -82,20 +91,6 @@ func (c *Client) ChannelSearch(ctx context.Context, request SearchRequest) (*sch
 	_ = json.NewDecoder(result.Body).Decode(&response)
 
 	return &response, result, err
-}
-
-func validateSearchRequest(request SearchRequest) error {
-	if request.Country == "" {
-		return fmt.Errorf("country must be set")
-	}
-
-	if request.Q != "" {
-		if request.Q == "" || request.Category == "" {
-			return fmt.Errorf("category or query word is empty")
-		}
-	}
-
-	return nil
 }
 
 func (c *Client) ChannelStat(ctx context.Context, channelId string) (*schema.ChannelStatResponse, *http.Response, error) {
@@ -124,19 +119,31 @@ func (c *Client) ChannelStat(ctx context.Context, channelId string) (*schema.Cha
 }
 
 type PostsRequest struct {
-	ChannelId           string
-	Limit               *uint64
-	Offset              *uint64
-	StartTime			*string
-	EndTime             *string
-	HideForwards        *int
-	HideDeleted         *int
+	ChannelId    string
+	Limit        *uint64
+	Offset       *uint64
+	StartTime    *string
+	EndTime      *string
+	HideForwards *int
+	HideDeleted  *int
+}
+
+func (postsRequest PostsRequest) Validate() error {
+	return validation.ValidateStruct(&postsRequest,
+		validation.Field(&postsRequest.ChannelId, validation.Required),
+		validation.Field(&postsRequest.StartTime, validation.Date("1643113399")),
+		validation.Field(&postsRequest.EndTime, validation.Date("1643113399")),
+		validation.Field(&postsRequest.Offset, validation.Min(0), validation.Min(1000)),
+		validation.Field(&postsRequest.Limit, validation.Min(0), validation.Min(50)),
+		validation.Field(&postsRequest.HideForwards, validation.In(0, 1)),
+		validation.Field(&postsRequest.HideDeleted, validation.In(0, 1)),
+	)
 }
 
 func (c *Client) ChannelPosts(ctx context.Context, request PostsRequest) (*schema.ChannelPostsResponse, *http.Response, error) {
 	path := endpoints.ChannelsStat
 
-	if err := validatePostsRequests(request); err != nil {
+	if err := request.Validate(); err != nil {
 		return nil, nil, err
 	}
 
@@ -169,7 +176,7 @@ func (c *Client) ChannelPosts(ctx context.Context, request PostsRequest) (*schem
 func (c *Client) ChannelPostsExtended(ctx context.Context, request PostsRequest) (*schema.ChannelPostsWithChannelResponse, *http.Response, error) {
 	path := endpoints.ChannelsStat
 
-	if err := validatePostsRequests(request); err != nil {
+	if err := request.Validate(); err != nil {
 		return nil, nil, err
 	}
 
@@ -200,34 +207,28 @@ func (c *Client) ChannelPostsExtended(ctx context.Context, request PostsRequest)
 	return &response, result, err
 }
 
-func validatePostsRequests(request PostsRequest) error {
-	if request.ChannelId == "" {
-		return fmt.Errorf("channel ID must be set")
-	}
-
-	if *request.Limit > 50 {
-		return fmt.Errorf("max limit is 50")
-	}
-
-	if *request.Offset > 1000 {
-		return fmt.Errorf("max offset is 1000")
-	}
-
-	return nil
+type ChannelMentionsRequest struct {
+	ChannelId string
+	Limit     *uint64
+	Offset    *uint64
+	StartDate *string
+	EndDate   *string
 }
 
-type ChannelMentionsRequest struct {
-	ChannelId           string
-	Limit               *uint64
-	Offset              *uint64
-	StartDate			*string
-	EndDate             *string
+func (channelMentionsRequest ChannelMentionsRequest) Validate() error {
+	return validation.ValidateStruct(&channelMentionsRequest,
+		validation.Field(&channelMentionsRequest.ChannelId, validation.Required),
+		validation.Field(&channelMentionsRequest.Limit, validation.Min(0), validation.Max(50)),
+		validation.Field(&channelMentionsRequest.Offset, validation.Min(0), validation.Max(1000)),
+		validation.Field(&channelMentionsRequest.StartDate, validation.Date("1643113399")),
+		validation.Field(&channelMentionsRequest.EndDate, validation.Date("1643113399")),
+	)
 }
 
 func (c *Client) ChannelMentions(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentions, *http.Response, error) {
 	path := endpoints.ChannelsMentions
 
-	if err := validateChannelMentionsRequests(request); err != nil {
+	if err := request.Validate(); err != nil {
 		return nil, nil, err
 	}
 
@@ -259,7 +260,7 @@ func (c *Client) ChannelMentions(ctx context.Context, request ChannelMentionsReq
 func (c *Client) ChannelMentionsExtended(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentionsExtended, *http.Response, error) {
 	path := endpoints.ChannelsMentions
 
-	if err := validateChannelMentionsRequests(request); err != nil {
+	if err := request.Validate(); err != nil {
 		return nil, nil, err
 	}
 
@@ -288,34 +289,28 @@ func (c *Client) ChannelMentionsExtended(ctx context.Context, request ChannelMen
 	return &response, result, err
 }
 
-func validateChannelMentionsRequests(request ChannelMentionsRequest) error {
-	if request.ChannelId == "" {
-		return fmt.Errorf("channel ID must be set")
-	}
-
-	if *request.Limit > 50 {
-		return fmt.Errorf("max limit is 50")
-	}
-
-	if *request.Offset > 1000 {
-		return fmt.Errorf("max offset is 1000")
-	}
-
-	return nil
+type ChannelForwardRequest struct {
+	ChannelId string
+	Limit     *uint64
+	Offset    *uint64
+	StartDate *string
+	EndDate   *string
 }
 
-type ChannelForwardRequest struct {
-	ChannelId           string
-	Limit               *uint64
-	Offset              *uint64
-	StartDate			*string
-	EndDate             *string
+func (channelForwardRequest ChannelForwardRequest) Validate() error {
+	return validation.ValidateStruct(&channelForwardRequest,
+		validation.Field(&channelForwardRequest.ChannelId, validation.Required),
+		validation.Field(&channelForwardRequest.Limit, validation.Min(0), validation.Max(50)),
+		validation.Field(&channelForwardRequest.Offset, validation.Min(0), validation.Max(1000)),
+		validation.Field(&channelForwardRequest.StartDate, validation.Date("1643113399")),
+		validation.Field(&channelForwardRequest.EndDate, validation.Date("1643113399")),
+	)
 }
 
 func (c *Client) ChannelForwards(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwards, *http.Response, error) {
 	path := endpoints.ChannelsForwards
 
-	if err := validateChannelForwardRequest(request); err != nil {
+	if err := request.Validate(); err != nil {
 		return nil, nil, err
 	}
 
@@ -347,7 +342,7 @@ func (c *Client) ChannelForwards(ctx context.Context, request ChannelForwardRequ
 func (c *Client) ChannelForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwardsExtended, *http.Response, error) {
 	path := endpoints.ChannelsForwards
 
-	if err := validateChannelForwardRequest(request); err != nil {
+	if err := request.Validate(); err != nil {
 		return nil, nil, err
 	}
 
@@ -376,29 +371,26 @@ func (c *Client) ChannelForwardsExtended(ctx context.Context, request ChannelFor
 	return &response, result, err
 }
 
-func validateChannelForwardRequest(request ChannelForwardRequest) error {
-	if request.ChannelId == "" {
-		return fmt.Errorf("channel ID must be set")
-	}
-
-	if *request.Limit > 50 {
-		return fmt.Errorf("max limit is 50")
-	}
-
-	return nil
+type ChannelSubscribersRequest struct {
+	ChannelId string
+	StartDate *string
+	EndDate   *string
+	Group     *string
 }
 
-type ChannelSubscribersRequest struct {
-	ChannelId           string
-	StartDate			*string
-	EndDate             *string
-	Group               *string
+func (channelSubscribersRequest ChannelSubscribersRequest) Validate() error {
+	return validation.ValidateStruct(&channelSubscribersRequest,
+		validation.Field(&channelSubscribersRequest.ChannelId, validation.Required),
+		validation.Field(&channelSubscribersRequest.StartDate, validation.Date("1643113399")),
+		validation.Field(&channelSubscribersRequest.EndDate, validation.Date("1643113399")),
+		validation.Field(&channelSubscribersRequest.Group, validation.In("hour", "day", "week", "month")),
+	)
 }
 
 func (c *Client) ChannelSubscribers(ctx context.Context, request ChannelSubscribersRequest) (*schema.ChannelSubscribers, *http.Response, error) {
 	path := endpoints.ChannelsSubscribers
 
-	if err := validateChannelSubscriberRequest(request); err != nil {
+	if err := request.Validate(); err != nil {
 		return nil, nil, err
 	}
 
@@ -425,18 +417,6 @@ func (c *Client) ChannelSubscribers(ctx context.Context, request ChannelSubscrib
 	return &response, result, err
 }
 
-func validateChannelSubscriberRequest(request ChannelSubscribersRequest) error {
-	if request.ChannelId == "" {
-		return fmt.Errorf("channel ID must be set")
-	}
-
-	if !validateGroup(*request.Group) {
-		return fmt.Errorf("improper group value")
-	}
-
-	return nil
-}
-
 func validateGroup(group string) bool {
 	switch group {
 	case
@@ -450,16 +430,25 @@ func validateGroup(group string) bool {
 }
 
 type ChannelViewsRequest struct {
-	ChannelId           string
-	StartDate			*string
-	EndDate             *string
-	Group               *string
+	ChannelId string
+	StartDate *string
+	EndDate   *string
+	Group     *string
+}
+
+func (channelViewsRequest ChannelViewsRequest) Validate() error {
+	return validation.ValidateStruct(&channelViewsRequest,
+		validation.Field(&channelViewsRequest.ChannelId, validation.Required),
+		validation.Field(&channelViewsRequest.StartDate, validation.Date("1643113399")),
+		validation.Field(&channelViewsRequest.EndDate, validation.Date("1643113399")),
+		validation.Field(&channelViewsRequest.Group, validation.In("day", "week", "month")),
+	)
 }
 
 func (c *Client) ChannelViews(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelViews, *http.Response, error) {
 	path := endpoints.ChannelsViews
 
-	if err := validateChannelViewsRequest(request); err != nil {
+	if err := request.Validate(); err != nil {
 		return nil, nil, err
 	}
 
@@ -486,29 +475,23 @@ func (c *Client) ChannelViews(ctx context.Context, request ChannelViewsRequest) 
 	return &response, result, err
 }
 
-func validateChannelViewsRequest(request ChannelViewsRequest) error {
-	if request.ChannelId == "" {
-		return fmt.Errorf("channel ID must be set")
-	}
-
-	if !validateGroup(*request.Group) {
-		return fmt.Errorf("improper group value")
-	}
-
-	return nil
+type ChannelAddRequest struct {
+	ChannelName string
+	Country     *string
+	Language    *string
+	Category    *string
 }
 
-type ChannelAddRequest struct {
-	ChannelName   string
-	Country	      *string
-	Language      *string
-	Category      *string
+func (channelAddRequest ChannelAddRequest) Validate() error {
+	return validation.ValidateStruct(&channelAddRequest,
+		validation.Field(&channelAddRequest.ChannelName, validation.Required),
+	)
 }
 
 func (c *Client) ChannelAdd(ctx context.Context, request ChannelAddRequest) (*schema.ChannelViews, *http.Response, error) {
 	path := endpoints.ChannelsAdd
 
-	if err := validateChannelAddRequest(request); err != nil {
+	if err := request.Validate(); err != nil {
 		return nil, nil, err
 	}
 
@@ -535,10 +518,62 @@ func (c *Client) ChannelAdd(ctx context.Context, request ChannelAddRequest) (*sc
 	return &response, result, err
 }
 
-func validateChannelAddRequest(request ChannelAddRequest) error {
-	if request.ChannelName == "" {
-		return fmt.Errorf("channel name must be set")
+func (c *Client) ChannelAvgPostsReach(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelAvgReach, *http.Response, error) {
+	path := endpoints.ChannelAVGPostsReach
+
+	if err := request.Validate(); err != nil {
+		return nil, nil, err
 	}
 
-	return nil
+	body := make(map[string]string)
+	body["channelId"] = request.ChannelId
+	body["startDate"] = *request.StartDate
+	body["endDate"] = *request.EndDate
+	body["group"] = *request.Group
+
+	req, err := c.NewRestRequest(ctx, "GET", path, body)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var response schema.ChannelAvgReach
+
+	result, err := c.Do(req, &response)
+	if err != nil {
+		return nil, result, err
+	}
+	_ = json.NewDecoder(result.Body).Decode(&response)
+
+	return &response, result, err
+}
+
+func (c *Client) ChannelErr(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelErr, *http.Response, error) {
+	path := endpoints.ChannelErr
+
+	if err := request.Validate(); err != nil {
+		return nil, nil, err
+	}
+
+	body := make(map[string]string)
+	body["channelId"] = request.ChannelId
+	body["startDate"] = *request.StartDate
+	body["endDate"] = *request.EndDate
+	body["group"] = *request.Group
+
+	req, err := c.NewRestRequest(ctx, "GET", path, body)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var response schema.ChannelErr
+
+	result, err := c.Do(req, &response)
+	if err != nil {
+		return nil, result, err
+	}
+	_ = json.NewDecoder(result.Body).Decode(&response)
+
+	return &response, result, err
 }
