@@ -1,4 +1,4 @@
-package tgstat
+package usage
 
 import (
 	"context"
@@ -14,7 +14,6 @@ import (
 func TestClient_UsageStat(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
-		client, _ := prepareClient()
 
 		_, _, err := client.UsageStat(context.Background())
 		Expect(err).To(HaveOccurred())
@@ -22,7 +21,7 @@ func TestClient_UsageStat(t *testing.T) {
 	})
 
 	t.Run("Test Usage Stat response Mapping", func(t *testing.T) {
-		server := newServer()
+		server := server.NewServer()
 		defer server.Teardown()
 
 		server.Mux.HandleFunc(endpoints.UsageStat, func(w http.ResponseWriter, r *http.Request) {

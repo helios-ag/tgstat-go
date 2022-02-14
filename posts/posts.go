@@ -1,4 +1,4 @@
-package tgstat
+package posts
 
 import (
 	"context"
@@ -7,11 +7,21 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"net/http"
 	"strconv"
+	tgstat "tgstat"
 	"tgstat/endpoints"
 	"tgstat/schema"
 )
 
-func (c *Client) PostGet(ctx context.Context, postId string) (*schema.PostResponse, *http.Response, error) {
+type Client struct {
+	API   tgstat.API
+	Token string
+}
+
+func PostGet(ctx context.Context, postId string) (*schema.PostResponse, *http.Response, error) {
+	return getClient().PostGet(ctx, postId)
+}
+
+func (c Client) PostGet(ctx context.Context, postId string) (*schema.PostResponse, *http.Response, error) {
 	path := endpoints.PostsGet
 
 	if postId == "" {
@@ -20,14 +30,14 @@ func (c *Client) PostGet(ctx context.Context, postId string) (*schema.PostRespon
 
 	body := make(map[string]string)
 	body["postId"] = postId
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.PostResponse
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -48,7 +58,11 @@ func (postStatRequest PostStatRequest) Validate() error {
 	)
 }
 
-func (c *Client) PostStat(ctx context.Context, request PostStatRequest) (*schema.PostStatResponse, *http.Response, error) {
+func PostStat(ctx context.Context, request PostStatRequest) (*schema.PostStatResponse, *http.Response, error) {
+	return getClient().PostStat(ctx, request)
+}
+
+func (c Client) PostStat(ctx context.Context, request PostStatRequest) (*schema.PostStatResponse, *http.Response, error) {
 	path := endpoints.PostsStat
 
 	if err := request.Validate(); err != nil {
@@ -58,14 +72,14 @@ func (c *Client) PostStat(ctx context.Context, request PostStatRequest) (*schema
 	body := make(map[string]string)
 	body["postId"] = request.PostId
 	body["group"] = *request.Group
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.PostStatResponse
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -96,7 +110,7 @@ func (postSearchRequest PostSearchRequest) Validate() error {
 	)
 }
 
-func (c *Client) PostSearch(ctx context.Context, request PostSearchRequest) (*schema.PostSearchResponse, *http.Response, error) {
+func (c Client) PostSearch(ctx context.Context, request PostSearchRequest) (*schema.PostSearchResponse, *http.Response, error) {
 	path := endpoints.PostsSearch
 
 	if err := request.Validate(); err != nil {
@@ -133,14 +147,14 @@ func (c *Client) PostSearch(ctx context.Context, request PostSearchRequest) (*sc
 		}
 	}()
 
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.PostSearchResponse
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -149,7 +163,7 @@ func (c *Client) PostSearch(ctx context.Context, request PostSearchRequest) (*sc
 	return &response, result, err
 }
 
-func (c *Client) PostSearchExtended(ctx context.Context, request PostSearchRequest) (*schema.PostSearchExtendedResponse, *http.Response, error) {
+func (c Client) PostSearchExtended(ctx context.Context, request PostSearchRequest) (*schema.PostSearchExtendedResponse, *http.Response, error) {
 	path := endpoints.PostsSearch
 
 	if err := request.Validate(); err != nil {
@@ -187,18 +201,22 @@ func (c *Client) PostSearchExtended(ctx context.Context, request PostSearchReque
 	}()
 	body["extended"] = "1"
 
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.PostSearchExtendedResponse
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
 	_ = json.NewDecoder(result.Body).Decode(&response)
 
 	return &response, result, err
+}
+
+func getClient() Client {
+	return Client{tgstat.GetAPI(), tgstat.Token}
 }
