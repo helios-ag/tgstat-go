@@ -1,14 +1,14 @@
 package schema
 
 type Channel struct {
-	Id                int    `json:"id,int"`
-	Link              string `json:"link"`
-	Username          string `json:"username"`
-	Title             string `json:"title"`
-	About             string `json:"about"`
-	Image100          string `json:"image100"`
-	Image640          string `json:"image640"`
-	ParticipantsCount int    `json:"participants_count"`
+	Id                int               `json:"id,int"`
+	Link              string            `json:"link"`
+	Username          string            `json:"username"`
+	Title             string            `json:"title"`
+	About             string            `json:"about"`
+	Image100          string            `json:"image100"`
+	Image640          string            `json:"image640"`
+	ParticipantsCount int               `json:"participants_count"`
 	TGStatRestriction TGStatRestriction `json:"tgstat_restrictions"`
 }
 
@@ -18,14 +18,14 @@ type TGStatRestriction struct {
 }
 
 type ChannelResponse struct {
-	Status   string `json:"status,string"`
+	Status   string  `json:"status,string"`
 	Response Channel `json:"response"`
 }
 
 type ChannelSearchResponse struct {
 	Status   string `json:"status,string"`
 	Response struct {
-		Count             int    `json:"count,int"`
+		Count int `json:"count,int"`
 		Items []struct {
 			Id                int    `json:"id,int"`
 			Link              string `json:"link"`
@@ -91,7 +91,7 @@ type ChannelPostsResponse struct {
 	Response struct {
 		Count      int `json:"count"`
 		TotalCount int `json:"total_count"`
-		Items []struct {
+		Items      []struct {
 			ID            int64       `json:"id"`
 			Date          int         `json:"date"`
 			Views         int         `json:"views"`
@@ -108,7 +108,6 @@ type ChannelPostsResponse struct {
 		} `json:"items"`
 	} `json:"response"`
 }
-
 
 type ChannelMentions struct {
 	UserID    int    `json:"userId"`
@@ -194,5 +193,21 @@ type ChannelViews struct {
 			Period     string `json:"period"`
 			ViewsCount int    `json:"views_count"`
 		} `json:"items"`
+	} `json:"response"`
+}
+
+type ChannelAvgReach struct {
+	Status   string `json:"status"`
+	Response []struct {
+		Period        string `json:"period"`
+		AvgPostsReach int    `json:"avg_posts_reach"`
+	} `json:"response"`
+}
+
+type ChannelErr struct {
+	Status   string `json:"status"`
+	Response []struct {
+		Period string `json:"period"`
+		Err    int    `json:"err"`
 	} `json:"response"`
 }
