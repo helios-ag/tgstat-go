@@ -1,54 +1,46 @@
-package tgstat
+package channels
 
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	tgstat "github.com/helios-ag/tgstat-go"
+	"github.com/helios-ag/tgstat-go/endpoints"
+	"github.com/helios-ag/tgstat-go/schema"
+	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
 	"net/http"
 	"testing"
-	"tgstat/endpoints"
-	"tgstat/schema"
 )
 
-var NewRestRequestStub = func(
-	c *Client,
-	ctx context.Context,
-	method,
-	urlPath string,
-	data map[string]string,
-	jsonParams map[string]string) (*http.Request, error) {
-	return nil, fmt.Errorf("error happened")
-}
-
-var NewRequestStub = func(
-	c *Client,
-	ctx context.Context,
-	method,
-	urlPath string,
-	data interface{},
-) (*http.Request, error) {
-	return nil, fmt.Errorf("error happened")
+func prepareClient(URL string) {
+	cfg := tgstat.ClientConfig{
+		"token",
+		false,
+		"http://local",
+	}
+	tgstat.SetConfig(cfg)
+	tgstat.WithEndpoint(URL)
 }
 
 func TestClient_ChannelGet(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test channel validation", func(t *testing.T) {
-		client, _ := prepareClient()
+		prepareClient("localhost")
 
 		channelId := ""
 
-		_, _, err := client.ChannelGet(context.Background(), channelId)
+		_, _, err := ChannelGet(context.Background(), channelId)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("ChannelID must be set"))
 	})
 
 	t.Run("Test channel Get response Mapping", func(t *testing.T) {
-		server := newServer()
-		defer server.Teardown()
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
 
-		server.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
+		testServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(schema.ChannelResponse{
@@ -72,7 +64,7 @@ func TestClient_ChannelGet(t *testing.T) {
 
 		channelId := "test"
 
-		response, _, err := server.Client.ChannelGet(context.Background(), channelId)
+		response, _, err := ChannelGet(context.Background(), channelId)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": Equal("ok"),
