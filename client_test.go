@@ -1,10 +1,12 @@
-package tgstat
+package tgstat_go
 
 import (
 	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/helios-ag/tgstat-go/endpoints"
+	"github.com/helios-ag/tgstat-go/schema"
 	. "github.com/onsi/gomega"
 	"io"
 	"io/ioutil"
@@ -12,27 +14,23 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"tgstat/endpoints"
-	"tgstat/schema"
 )
 
 // Test Environment
 type Server struct {
 	Server *httptest.Server
 	Mux    *http.ServeMux
-	Client *Client
 }
 
 func (server *Server) Teardown() {
 	server.Server.Close()
 	server.Server = nil
 	server.Mux = nil
-	server.Client = nil
 }
 
 func getCfg() *ClientConfig {
 	cfg := ClientConfig{
-		token: "token",
+		Token: "token",
 	}
 	return &cfg
 }
@@ -41,24 +39,18 @@ func newServer() Server {
 	mux := http.NewServeMux()
 	server := httptest.NewServer(mux)
 
-	client, _ := NewClient(
-		getCfg(),
-		WithEndpoint(server.URL),
-		WithToken("token"),
-	)
 	return Server{
 		Server: server,
 		Mux:    mux,
-		Client: client,
 	}
 }
 
 func TestNewClient(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test trailing slashes remove", func(t *testing.T) {
-		client, _ := NewClient(getCfg(), WithEndpoint("http://api-tgstat///"))
-		if strings.HasSuffix(client.Config.endpoint, "/") {
-			t.Fatalf("endpoint has trailing slashes: %q", client.Config.endpoint)
+		client, _ := NewClient(getCfg())
+		if strings.HasSuffix(client.Config.Endpoint, "/") {
+			t.Fatalf("endpoint has trailing slashes: %q", client.Config.Endpoint)
 		}
 	})
 	t.Run("Test getting error response", func(t *testing.T) {
@@ -71,9 +63,10 @@ func TestNewClient(t *testing.T) {
 				Error:  "empty_token",
 			})
 		})
+		client, _ := NewClient(getCfg())
 
 		ctx := context.Background()
-		_, err := server.Client.NewRestRequest(ctx, "GET", endpoints.ChannelsGet, nil)
+		_, err := client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
 		Expect(err).ShouldNot(HaveOccurred())
 	})
 }
@@ -95,8 +88,10 @@ func TestClientDo(t *testing.T) {
 			return nil, errors.New("buf overflow")
 		}
 		ctx := context.Background()
-		request, _ := server.Client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
-		_, err := server.Client.Do(request, nil)
+		client, _ := NewClient(getCfg())
+
+		request, _ := client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
+		_, err := client.Do(request, nil)
 
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("buf overflow"))
@@ -118,8 +113,9 @@ func TestClientDo(t *testing.T) {
 		})
 
 		ctx := context.Background()
-		request, _ := server.Client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
-		_, err := server.Client.Do(request, nil)
+		client, _ := NewClient(getCfg())
+		request, _ := client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
+		_, err := client.Do(request, nil)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -131,10 +127,10 @@ func TestClientDo(t *testing.T) {
 			http.Error(w, "Bad Request", http.StatusBadRequest)
 			return
 		})
-
+		client, _ := NewClient(getCfg())
 		ctx := context.Background()
-		request, _ := server.Client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
-		_, err := server.Client.Do(request, nil)
+		request, _ := client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
+		_, err := client.Do(request, nil)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("tgstat server responded with status code 400"))
 	})
@@ -204,7 +200,7 @@ func TestNewRequest(t *testing.T) {
 	t.Run("Add rest to path", func(t *testing.T) {
 		client, _ := NewClient(
 			&ClientConfig{
-				token: "token",
+				Token: "token",
 			},
 		)
 		ctx := context.Background()
@@ -232,7 +228,7 @@ func TestNewRequest(t *testing.T) {
 	t.Run("Trigger NewRequest errors", func(t *testing.T) {
 		client, _ := NewClient(
 			&ClientConfig{
-				token: "token",
+				Token: "token",
 			},
 		)
 		ctx := context.Background()
@@ -249,7 +245,7 @@ func TestNewRequest(t *testing.T) {
 	t.Run("Trigger NewRestRequest errors", func(t *testing.T) {
 		client, _ := NewClient(
 			&ClientConfig{
-				token: "token",
+				Token: "token",
 			},
 		)
 		ctx := context.Background()
@@ -266,7 +262,7 @@ func TestNewRequest(t *testing.T) {
 	t.Run("Test improper Config url", func(t *testing.T) {
 		_, err := NewClient(
 			&ClientConfig{
-				endpoint: "http\\:wrongUrl",
+				Endpoint: "http\\:wrongUrl",
 			},
 		)
 
