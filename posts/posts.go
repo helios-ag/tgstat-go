@@ -110,6 +110,10 @@ func (postSearchRequest PostSearchRequest) Validate() error {
 	)
 }
 
+func PostSearch(ctx context.Context, request PostSearchRequest) (*schema.PostSearchResponse, *http.Response, error) {
+	return getClient().PostSearch(ctx, request)
+}
+
 func (c Client) PostSearch(ctx context.Context, request PostSearchRequest) (*schema.PostSearchResponse, *http.Response, error) {
 	path := endpoints.PostsSearch
 
@@ -161,6 +165,10 @@ func (c Client) PostSearch(ctx context.Context, request PostSearchRequest) (*sch
 	_ = json.NewDecoder(result.Body).Decode(&response)
 
 	return &response, result, err
+}
+
+func PostSearchExtended(ctx context.Context, request PostSearchRequest) (*schema.PostSearchExtendedResponse, *http.Response, error) {
+	return getClient().PostSearchExtended(ctx, request)
 }
 
 func (c Client) PostSearchExtended(ctx context.Context, request PostSearchRequest) (*schema.PostSearchExtendedResponse, *http.Response, error) {
