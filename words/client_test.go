@@ -1,4 +1,4 @@
-package tgstat
+package words
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	. "github.com/onsi/gomega"
 	"net/http"
 	"testing"
+	"tgstat"
 	"tgstat/endpoints"
 	"tgstat/schema"
 )
@@ -13,7 +14,7 @@ import (
 func TestClient_ChannelMentionsByPeriod(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test mention order validation", func(t *testing.T) {
-		client, _ := prepareClient()
+		client, _ := tgstat.prepareClient()
 		req := MentionPeriodRequest{
 			Q:              "",
 			PeerType:       nil,
@@ -31,7 +32,7 @@ func TestClient_ChannelMentionsByPeriod(t *testing.T) {
 	})
 
 	t.Run("Test mention order response Mapping", func(t *testing.T) {
-		server := newServer()
+		server := tgstat_go.newServer()
 		defer server.Teardown()
 
 		server.Mux.HandleFunc(endpoints.WordsMentionsByPeriod, func(w http.ResponseWriter, r *http.Request) {
@@ -50,7 +51,7 @@ func TestClient_ChannelMentionsByPeriod(t *testing.T) {
 func TestClient_ChannelMentionsByChannels(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test mention order validation", func(t *testing.T) {
-		client, _ := prepareClient()
+		client, _ := tgstat.prepareClient()
 		req := MentionPeriodRequest{
 			Q:              "",
 			PeerType:       nil,
@@ -68,7 +69,7 @@ func TestClient_ChannelMentionsByChannels(t *testing.T) {
 	})
 
 	t.Run("Test mention order response Mapping", func(t *testing.T) {
-		server := newServer()
+		server := tgstat_go.newServer()
 		defer server.Teardown()
 
 		server.Mux.HandleFunc(endpoints.WordsMentionsByPeriod, func(w http.ResponseWriter, r *http.Request) {

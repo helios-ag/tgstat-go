@@ -1,4 +1,4 @@
-package tgstat
+package words
 
 import (
 	"context"
@@ -27,7 +27,7 @@ func (mentionPeriodRequest MentionPeriodRequest) Validate() error {
 	)
 }
 
-func (c *Client) ChannelMentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
+func (c *tgstat_go.Client) ChannelMentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
 	path := endpoints.WordsMentionsByPeriod
 
 	if err := request.Validate(); err != nil {
@@ -95,7 +95,7 @@ func (mentionsByChannelRequest MentionsByChannelRequest) Validate() error {
 	)
 }
 
-func (c *Client) WordsMentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
+func (c *tgstat_go.Client) WordsMentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
 	path := endpoints.WordsMentionsByChannels
 
 	if err := request.Validate(); err != nil {
