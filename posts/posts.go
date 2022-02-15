@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	tgstat "github.com/helios-ag/tgstat-go"
+	"github.com/helios-ag/tgstat-go/endpoints"
+	"github.com/helios-ag/tgstat-go/schema"
 	"net/http"
 	"strconv"
-	tgstat "tgstat"
-	"tgstat/endpoints"
-	"tgstat/schema"
 )
 
 type Client struct {
