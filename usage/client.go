@@ -3,10 +3,10 @@ package usage
 import (
 	"context"
 	"encoding/json"
+	tgstat "github.com/helios-ag/tgstat-go"
+	"github.com/helios-ag/tgstat-go/endpoints"
+	"github.com/helios-ag/tgstat-go/schema"
 	"net/http"
-	tgstat "tgstat"
-	"tgstat/endpoints"
-	"tgstat/schema"
 )
 
 type Client struct {
