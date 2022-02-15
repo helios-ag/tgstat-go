@@ -3,28 +3,41 @@ package usage
 import (
 	"context"
 	"encoding/json"
+	tgstat "github.com/helios-ag/tgstat-go"
+	"github.com/helios-ag/tgstat-go/endpoints"
+	"github.com/helios-ag/tgstat-go/schema"
+	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
 	"net/http"
 	"testing"
-	"tgstat/endpoints"
-	"tgstat/schema"
 )
+
+func prepareClient(URL string) {
+	cfg := tgstat.ClientConfig{
+		"token",
+		false,
+		"http://local",
+	}
+	tgstat.SetConfig(cfg)
+	tgstat.WithEndpoint(URL)
+}
 
 func TestClient_UsageStat(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
 
-		_, _, err := client.UsageStat(context.Background())
+		_, _, err := UsageStat(context.Background())
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("no such host"))
 	})
 
 	t.Run("Test Usage Stat response Mapping", func(t *testing.T) {
-		server := server.NewServer()
-		defer server.Teardown()
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
 
-		server.Mux.HandleFunc(endpoints.UsageStat, func(w http.ResponseWriter, r *http.Request) {
+		testServer.Mux.HandleFunc(endpoints.UsageStat, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(schema.StatResponse{
@@ -40,7 +53,7 @@ func TestClient_UsageStat(t *testing.T) {
 			})
 		})
 
-		response, _, err := server.Client.UsageStat(context.Background())
+		response, _, err := UsageStat(context.Background())
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"ServiceKey": ContainSubstring("stat"),
