@@ -36,6 +36,7 @@ func (mentionPeriodRequest MentionPeriodRequest) Validate() error {
 func ChannelMentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
 	return getClient().ChannelMentionsByPeriod(ctx, request)
 }
+
 func (c Client) ChannelMentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
 	path := endpoints.WordsMentionsByPeriod
 
