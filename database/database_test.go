@@ -64,8 +64,6 @@ func TestClient_CountriesGet(t *testing.T) {
 	})
 }
 
-
-
 func TestClient_CategoriesGet(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
@@ -106,7 +104,6 @@ func TestClient_CategoriesGet(t *testing.T) {
 		})))
 	})
 }
-
 
 func TestClient_LanguagesGet(t *testing.T) {
 	RegisterTestingT(t)
