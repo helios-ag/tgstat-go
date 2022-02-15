@@ -1,4 +1,4 @@
-package tgstat
+package tgstat_go
 
 import (
 	"bytes"
@@ -6,22 +6,41 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/helios-ag/tgstat-go/schema"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-	"tgstat/schema"
+	"sync"
 )
 
 const (
 	APIURI string = "https://api.tgstat.ru"
 )
 
+// APIs are the currently supported endpoints.
+type APIs struct {
+	Api API
+	mu  sync.RWMutex
+}
+
+var Extended = false
+
+var Token string
+
+var apis APIs
+
+type API interface {
+	NewRestRequest(ctx context.Context, method, urlPath string, data map[string]string) (*http.Request, error)
+	NewRequest(ctx context.Context, method, urlPath string, data interface{}) (*http.Request, error)
+	Do(r *http.Request, v interface{}) (*http.Response, error)
+}
+
 // ClientConfig is used to set client configuration
 type ClientConfig struct {
 	token    string
-	extended string
+	extended bool
 	endpoint string
 }
 
@@ -39,25 +58,14 @@ type Body struct {
 // ClientOption is used to configure a Client.
 type ClientOption func(*Client)
 
-// WithToken configures a Client to use the specified token for authentication.
-func WithToken(token string) ClientOption {
-	return func(client *Client) {
-		client.Config.token = token
-	}
-}
-
 // WithExtendedResponse configures a Client to receive extended response
-func WithExtendedResponse() ClientOption {
-	return func(client *Client) {
-		client.Config.extended = "1"
-	}
+func WithExtendedResponse() {
+	cfg.extended = true
 }
 
 // WithEndpoint configures a Client to use the specified API endpoint.
-func WithEndpoint(endpoint string) ClientOption {
-	return func(client *Client) {
-		client.Config.endpoint = strings.TrimRight(endpoint, "/")
-	}
+func WithEndpoint(endpoint string) {
+	cfg.endpoint = strings.TrimRight(endpoint, "/")
 }
 
 func (c *Client) NewRestRequest(ctx context.Context, method, urlPath string, data map[string]string) (*http.Request, error) {
@@ -212,4 +220,38 @@ func NewClient(cfg *ClientConfig, options ...ClientOption) (*Client, error) {
 	}
 
 	return client, nil
+}
+
+// newAPI creates a new client.
+func newAPI(cfg *ClientConfig, options ...ClientOption) *Client {
+	client := &Client{
+		Config:     cfg,
+		httpClient: &http.Client{},
+	}
+
+	for _, option := range options {
+		option(client)
+	}
+
+	return client
+}
+
+func GetAPI(options ...ClientOption) API {
+	var api API
+
+	apis.mu.RLock()
+	api = apis.Api
+	apis.mu.RUnlock()
+
+	if api != nil {
+		return api
+	}
+
+	return newAPI(&cfg, options...)
+}
+
+var cfg ClientConfig
+
+func SetConfig(config ClientConfig) {
+	cfg = config
 }
