@@ -1,19 +1,27 @@
-package tgstat
+package channels
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
-	//"github.com/helios-ag/tgstat-go/endpoints"
-	//"github.com/helios-ag/tgstat-go/schema"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	tgstat "github.com/helios-ag/tgstat-go"
+	"github.com/helios-ag/tgstat-go/endpoints"
+	"github.com/helios-ag/tgstat-go/schema"
 	"net/http"
 	"strconv"
-	"tgstat/endpoints"
-	"tgstat/schema"
 )
 
-func (c *Client) ChannelGet(ctx context.Context, channelId string) (*schema.ChannelResponse, *http.Response, error) {
+type Client struct {
+	API   tgstat.API
+	Token string
+}
+
+func ChannelGet(ctx context.Context, channelId string) (*schema.ChannelResponse, *http.Response, error) {
+	return getClient().ChannelGet(ctx, channelId)
+}
+
+func (c Client) ChannelGet(ctx context.Context, channelId string) (*schema.ChannelResponse, *http.Response, error) {
 	path := endpoints.ChannelsGet
 
 	if err := validateGetChannelId(channelId); err != nil {
@@ -22,14 +30,14 @@ func (c *Client) ChannelGet(ctx context.Context, channelId string) (*schema.Chan
 
 	body := make(map[string]string)
 	body["channelId"] = channelId
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.ChannelResponse
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -77,14 +85,14 @@ func (c *Client) ChannelSearch(ctx context.Context, request SearchRequest) (*sch
 	body["category"] = request.Category
 	body["limit"] = strconv.Itoa(request.Limit)
 
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.ChannelSearchResponse
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -93,7 +101,7 @@ func (c *Client) ChannelSearch(ctx context.Context, request SearchRequest) (*sch
 	return &response, result, err
 }
 
-func (c *Client) ChannelStat(ctx context.Context, channelId string) (*schema.ChannelStatResponse, *http.Response, error) {
+func (c Client) ChannelStat(ctx context.Context, channelId string) (*schema.ChannelStatResponse, *http.Response, error) {
 	path := endpoints.ChannelsStat
 
 	if err := validateGetChannelId(channelId); err != nil {
@@ -102,14 +110,14 @@ func (c *Client) ChannelStat(ctx context.Context, channelId string) (*schema.Cha
 
 	body := make(map[string]string)
 	body["channelId"] = channelId
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.ChannelStatResponse
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -140,7 +148,7 @@ func (postsRequest PostsRequest) Validate() error {
 	)
 }
 
-func (c *Client) ChannelPosts(ctx context.Context, request PostsRequest) (*schema.ChannelPostsResponse, *http.Response, error) {
+func (c Client) ChannelPosts(ctx context.Context, request PostsRequest) (*schema.ChannelPostsResponse, *http.Response, error) {
 	path := endpoints.ChannelsStat
 
 	if err := request.Validate(); err != nil {
@@ -157,14 +165,14 @@ func (c *Client) ChannelPosts(ctx context.Context, request PostsRequest) (*schem
 	body["hideDeleted"] = strconv.Itoa(*request.HideDeleted)
 	body["extended"] = "0"
 
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 	var response schema.ChannelPostsResponse
 
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -173,7 +181,7 @@ func (c *Client) ChannelPosts(ctx context.Context, request PostsRequest) (*schem
 	return &response, result, err
 }
 
-func (c *Client) ChannelPostsExtended(ctx context.Context, request PostsRequest) (*schema.ChannelPostsWithChannelResponse, *http.Response, error) {
+func (c Client) ChannelPostsExtended(ctx context.Context, request PostsRequest) (*schema.ChannelPostsWithChannelResponse, *http.Response, error) {
 	path := endpoints.ChannelsStat
 
 	if err := request.Validate(); err != nil {
@@ -190,7 +198,7 @@ func (c *Client) ChannelPostsExtended(ctx context.Context, request PostsRequest)
 	body["hideDeleted"] = strconv.Itoa(*request.HideDeleted)
 	body["extended"] = "1"
 
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -198,7 +206,7 @@ func (c *Client) ChannelPostsExtended(ctx context.Context, request PostsRequest)
 
 	var response schema.ChannelPostsWithChannelResponse
 
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -225,7 +233,7 @@ func (channelMentionsRequest ChannelMentionsRequest) Validate() error {
 	)
 }
 
-func (c *Client) ChannelMentions(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentions, *http.Response, error) {
+func (c Client) ChannelMentions(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentions, *http.Response, error) {
 	path := endpoints.ChannelsMentions
 
 	if err := request.Validate(); err != nil {
@@ -240,7 +248,7 @@ func (c *Client) ChannelMentions(ctx context.Context, request ChannelMentionsReq
 	body["endDate"] = *request.EndDate
 	body["extended"] = "0"
 
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -248,7 +256,7 @@ func (c *Client) ChannelMentions(ctx context.Context, request ChannelMentionsReq
 
 	var response schema.ChannelMentions
 
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -257,7 +265,7 @@ func (c *Client) ChannelMentions(ctx context.Context, request ChannelMentionsReq
 	return &response, result, err
 }
 
-func (c *Client) ChannelMentionsExtended(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentionsExtended, *http.Response, error) {
+func (c Client) ChannelMentionsExtended(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentionsExtended, *http.Response, error) {
 	path := endpoints.ChannelsMentions
 
 	if err := request.Validate(); err != nil {
@@ -272,7 +280,7 @@ func (c *Client) ChannelMentionsExtended(ctx context.Context, request ChannelMen
 	body["endDate"] = *request.EndDate
 	body["extended"] = "1"
 
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -280,7 +288,7 @@ func (c *Client) ChannelMentionsExtended(ctx context.Context, request ChannelMen
 
 	var response schema.ChannelMentionsExtended
 
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -307,7 +315,7 @@ func (channelForwardRequest ChannelForwardRequest) Validate() error {
 	)
 }
 
-func (c *Client) ChannelForwards(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwards, *http.Response, error) {
+func (c Client) ChannelForwards(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwards, *http.Response, error) {
 	path := endpoints.ChannelsForwards
 
 	if err := request.Validate(); err != nil {
@@ -322,7 +330,7 @@ func (c *Client) ChannelForwards(ctx context.Context, request ChannelForwardRequ
 	body["endDate"] = *request.EndDate
 	body["extended"] = "0"
 
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -330,7 +338,7 @@ func (c *Client) ChannelForwards(ctx context.Context, request ChannelForwardRequ
 
 	var response schema.ChannelForwards
 
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -339,7 +347,7 @@ func (c *Client) ChannelForwards(ctx context.Context, request ChannelForwardRequ
 	return &response, result, err
 }
 
-func (c *Client) ChannelForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwardsExtended, *http.Response, error) {
+func (c Client) ChannelForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwardsExtended, *http.Response, error) {
 	path := endpoints.ChannelsForwards
 
 	if err := request.Validate(); err != nil {
@@ -354,7 +362,7 @@ func (c *Client) ChannelForwardsExtended(ctx context.Context, request ChannelFor
 	body["endDate"] = *request.EndDate
 	body["extended"] = "1"
 
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -362,7 +370,7 @@ func (c *Client) ChannelForwardsExtended(ctx context.Context, request ChannelFor
 
 	var response schema.ChannelForwardsExtended
 
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -387,7 +395,7 @@ func (channelSubscribersRequest ChannelSubscribersRequest) Validate() error {
 	)
 }
 
-func (c *Client) ChannelSubscribers(ctx context.Context, request ChannelSubscribersRequest) (*schema.ChannelSubscribers, *http.Response, error) {
+func (c Client) ChannelSubscribers(ctx context.Context, request ChannelSubscribersRequest) (*schema.ChannelSubscribers, *http.Response, error) {
 	path := endpoints.ChannelsSubscribers
 
 	if err := request.Validate(); err != nil {
@@ -400,7 +408,7 @@ func (c *Client) ChannelSubscribers(ctx context.Context, request ChannelSubscrib
 	body["endDate"] = *request.EndDate
 	body["group"] = *request.Group
 
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -408,25 +416,13 @@ func (c *Client) ChannelSubscribers(ctx context.Context, request ChannelSubscrib
 
 	var response schema.ChannelSubscribers
 
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
 	_ = json.NewDecoder(result.Body).Decode(&response)
 
 	return &response, result, err
-}
-
-func validateGroup(group string) bool {
-	switch group {
-	case
-		"day",
-		"week",
-		"month":
-		return true
-	}
-
-	return false
 }
 
 type ChannelViewsRequest struct {
@@ -445,7 +441,7 @@ func (channelViewsRequest ChannelViewsRequest) Validate() error {
 	)
 }
 
-func (c *Client) ChannelViews(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelViews, *http.Response, error) {
+func (c Client) ChannelViews(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelViews, *http.Response, error) {
 	path := endpoints.ChannelsViews
 
 	if err := request.Validate(); err != nil {
@@ -458,7 +454,7 @@ func (c *Client) ChannelViews(ctx context.Context, request ChannelViewsRequest) 
 	body["endDate"] = *request.EndDate
 	body["group"] = *request.Group
 
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -466,7 +462,7 @@ func (c *Client) ChannelViews(ctx context.Context, request ChannelViewsRequest) 
 
 	var response schema.ChannelViews
 
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -488,7 +484,7 @@ func (channelAddRequest ChannelAddRequest) Validate() error {
 	)
 }
 
-func (c *Client) ChannelAdd(ctx context.Context, request ChannelAddRequest) (*schema.ChannelViews, *http.Response, error) {
+func (c Client) ChannelAdd(ctx context.Context, request ChannelAddRequest) (*schema.ChannelViews, *http.Response, error) {
 	path := endpoints.ChannelsAdd
 
 	if err := request.Validate(); err != nil {
@@ -501,7 +497,7 @@ func (c *Client) ChannelAdd(ctx context.Context, request ChannelAddRequest) (*sc
 	body["language"] = *request.Language
 	body["category"] = *request.Category
 
-	req, err := c.NewRestRequest(ctx, "POST", path, body)
+	req, err := c.API.NewRestRequest(ctx, "POST", path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -509,7 +505,7 @@ func (c *Client) ChannelAdd(ctx context.Context, request ChannelAddRequest) (*sc
 
 	var response schema.ChannelViews
 
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -518,7 +514,7 @@ func (c *Client) ChannelAdd(ctx context.Context, request ChannelAddRequest) (*sc
 	return &response, result, err
 }
 
-func (c *Client) ChannelAvgPostsReach(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelAvgReach, *http.Response, error) {
+func (c Client) ChannelAvgPostsReach(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelAvgReach, *http.Response, error) {
 	path := endpoints.ChannelAVGPostsReach
 
 	if err := request.Validate(); err != nil {
@@ -531,7 +527,7 @@ func (c *Client) ChannelAvgPostsReach(ctx context.Context, request ChannelViewsR
 	body["endDate"] = *request.EndDate
 	body["group"] = *request.Group
 
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -539,7 +535,7 @@ func (c *Client) ChannelAvgPostsReach(ctx context.Context, request ChannelViewsR
 
 	var response schema.ChannelAvgReach
 
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -548,7 +544,7 @@ func (c *Client) ChannelAvgPostsReach(ctx context.Context, request ChannelViewsR
 	return &response, result, err
 }
 
-func (c *Client) ChannelErr(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelErr, *http.Response, error) {
+func (c Client) ChannelErr(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelErr, *http.Response, error) {
 	path := endpoints.ChannelErr
 
 	if err := request.Validate(); err != nil {
@@ -561,7 +557,7 @@ func (c *Client) ChannelErr(ctx context.Context, request ChannelViewsRequest) (*
 	body["endDate"] = *request.EndDate
 	body["group"] = *request.Group
 
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -569,11 +565,15 @@ func (c *Client) ChannelErr(ctx context.Context, request ChannelViewsRequest) (*
 
 	var response schema.ChannelErr
 
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
 	_ = json.NewDecoder(result.Body).Decode(&response)
 
 	return &response, result, err
+}
+
+func getClient() Client {
+	return Client{tgstat.GetAPI(), tgstat.Token}
 }
