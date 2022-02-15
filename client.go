@@ -39,9 +39,9 @@ type API interface {
 
 // ClientConfig is used to set client configuration
 type ClientConfig struct {
-	token    string
-	extended bool
-	endpoint string
+	Token    string
+	Extended bool
+	Endpoint string
 }
 
 // Client is a client to SB API
@@ -60,12 +60,12 @@ type ClientOption func(*Client)
 
 // WithExtendedResponse configures a Client to receive extended response
 func WithExtendedResponse() {
-	cfg.extended = true
+	cfg.Extended = true
 }
 
 // WithEndpoint configures a Client to use the specified API endpoint.
 func WithEndpoint(endpoint string) {
-	cfg.endpoint = strings.TrimRight(endpoint, "/")
+	cfg.Endpoint = strings.TrimRight(endpoint, "/")
 }
 
 func (c *Client) NewRestRequest(ctx context.Context, method, urlPath string, data map[string]string) (*http.Request, error) {
@@ -75,8 +75,8 @@ func (c *Client) NewRestRequest(ctx context.Context, method, urlPath string, dat
 var newRestRequest = func(c *Client, ctx context.Context, method, urlPath string, data map[string]string) (*http.Request, error) {
 	uri := APIURI + urlPath
 
-	if c.Config.endpoint != "" {
-		uri = c.Config.endpoint + urlPath
+	if c.Config.Endpoint != "" {
+		uri = c.Config.Endpoint + urlPath
 	}
 
 	body := url.Values{}
@@ -85,7 +85,7 @@ var newRestRequest = func(c *Client, ctx context.Context, method, urlPath string
 		body.Add(key, value)
 	}
 
-	body.Add("token", c.Config.token)
+	body.Add("token", c.Config.Token)
 
 	reqData := body.Encode()
 	req, err := http.NewRequest(method, uri, strings.NewReader(reqData))
@@ -116,8 +116,8 @@ var newRequest = func(c *Client, ctx context.Context, method, urlPath string, da
 
 	uri := APIURI + urlPath
 
-	if c.Config.endpoint != "" {
-		uri = c.Config.endpoint + urlPath
+	if c.Config.Endpoint != "" {
+		uri = c.Config.Endpoint + urlPath
 	}
 
 	reqBodyData, _ := json.Marshal(data)
@@ -189,11 +189,11 @@ func errorFromResponse(resp *http.Response, body []byte) error {
 }
 
 func (c *ClientConfig) validate() error {
-	if c.token == "" {
+	if c.Token == "" {
 		return errors.New("token can't be empty")
 	}
 
-	if _, err := url.Parse(c.endpoint); err != nil {
+	if _, err := url.Parse(c.Endpoint); err != nil {
 		return fmt.Errorf("unable to parse URL: %v", err)
 	}
 
