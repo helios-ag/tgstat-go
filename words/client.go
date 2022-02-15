@@ -4,10 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	tgstat "github.com/helios-ag/tgstat-go"
+	"github.com/helios-ag/tgstat-go/endpoints"
+	"github.com/helios-ag/tgstat-go/schema"
 	"net/http"
-	"tgstat/endpoints"
-	"tgstat/schema"
 )
+
+type Client struct {
+	API   tgstat.API
+	Token string
+}
 
 type MentionPeriodRequest struct {
 	Q              string
@@ -27,7 +33,10 @@ func (mentionPeriodRequest MentionPeriodRequest) Validate() error {
 	)
 }
 
-func (c *tgstat_go.Client) ChannelMentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
+func ChannelMentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
+	return getClient().ChannelMentionsByPeriod(ctx, request)
+}
+func (c Client) ChannelMentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
 	path := endpoints.WordsMentionsByPeriod
 
 	if err := request.Validate(); err != nil {
@@ -62,14 +71,14 @@ func (c *tgstat_go.Client) ChannelMentionsByPeriod(ctx context.Context, request 
 			return "0"
 		}
 	}()
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.WordsMentionsResponse
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -95,7 +104,11 @@ func (mentionsByChannelRequest MentionsByChannelRequest) Validate() error {
 	)
 }
 
-func (c *tgstat_go.Client) WordsMentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
+func WordsMentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
+	return getClient().WordsMentionsByChannels(ctx, request)
+}
+
+func (c Client) WordsMentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
 	path := endpoints.WordsMentionsByChannels
 
 	if err := request.Validate(); err != nil {
@@ -130,18 +143,22 @@ func (c *tgstat_go.Client) WordsMentionsByChannels(ctx context.Context, request 
 		}
 	}()
 
-	req, err := c.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.WordsMentionsResponse
-	result, err := c.Do(req, &response)
+	result, err := c.API.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
 	_ = json.NewDecoder(result.Body).Decode(&response)
 
 	return &response, result, err
+}
+
+func getClient() Client {
+	return Client{tgstat.GetAPI(), tgstat.Token}
 }
