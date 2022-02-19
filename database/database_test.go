@@ -15,9 +15,8 @@ import (
 
 func prepareClient(URL string) {
 	cfg := tgstat.ClientConfig{
-		"token",
-		false,
-		"http://local",
+		Token:    "token",
+		Endpoint: "http://local",
 	}
 	tgstat.SetConfig(cfg)
 	tgstat.WithEndpoint(URL)
@@ -26,7 +25,7 @@ func prepareClient(URL string) {
 func TestClient_CountriesGet(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
-		prepareClient("localhost")
+		prepareClient("http://localhost123")
 
 		lang := "ru"
 		_, _, err := CountriesGet(context.Background(), lang)
@@ -39,27 +38,35 @@ func TestClient_CountriesGet(t *testing.T) {
 		defer testServer.Teardown()
 		prepareClient(testServer.URL)
 
-		testServer.Mux.HandleFunc(endpoints.UsageStat, func(w http.ResponseWriter, r *http.Request) {
+		testServer.Mux.HandleFunc(endpoints.DatabaseCountries, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.StatResponse{
+			russia := schema.Country{
+				Code: "Ru",
+				Name: "Russia",
+			}
+
+			us := schema.Country{
+				Code: "US",
+				Name: "United States",
+			}
+			json.NewEncoder(w).Encode(schema.CountryResponse{
 				Status: "ok",
-				Response: []struct {
-					ServiceKey    string `json:"serviceKey"`
-					Title         string `json:"title"`
-					SpentChannels string `json:"spentChannels,omitempty"`
-					SpentRequests string `json:"spentRequests"`
-					ExpiredAt     int    `json:"expiredAt"`
-					SpentWords    string `json:"spentWords,omitempty"`
-				}{{ServiceKey: "api_stat_l", Title: "Доступ к Stat API (тариф L)", SpentChannels: "1989/2500", SpentRequests: "89152/400000", ExpiredAt: 1542732689, SpentWords: "111/11"}},
+				Response: []schema.Country{
+					russia,
+					us,
+				},
 			})
 		})
 
 		response, _, err := CountriesGet(context.Background(), "ru")
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
-			"ServiceKey": ContainSubstring("stat"),
-			"Title":      ContainSubstring("Stat"),
+			"Status": ContainSubstring("ok"),
+			"Response": ContainElement(schema.Country{
+				Code: "Ru",
+				Name: "Russia",
+			}),
 		})))
 	})
 }
@@ -67,7 +74,7 @@ func TestClient_CountriesGet(t *testing.T) {
 func TestClient_CategoriesGet(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
-		prepareClient("localhost")
+		prepareClient("http://localhost123")
 
 		lang := "ru"
 		_, _, err := CategoriesGet(context.Background(), lang)
@@ -80,27 +87,36 @@ func TestClient_CategoriesGet(t *testing.T) {
 		defer testServer.Teardown()
 		prepareClient(testServer.URL)
 
-		testServer.Mux.HandleFunc(endpoints.UsageStat, func(w http.ResponseWriter, r *http.Request) {
+		testServer.Mux.HandleFunc(endpoints.DatabaseCategories, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.StatResponse{
+
+			tech := schema.Category{
+				Code: "tech",
+				Name: "Технологии",
+			}
+
+			news := schema.Category{
+				Code: "news",
+				Name: "Новости",
+			}
+			json.NewEncoder(w).Encode(schema.CategoryResponse{
 				Status: "ok",
-				Response: []struct {
-					ServiceKey    string `json:"serviceKey"`
-					Title         string `json:"title"`
-					SpentChannels string `json:"spentChannels,omitempty"`
-					SpentRequests string `json:"spentRequests"`
-					ExpiredAt     int    `json:"expiredAt"`
-					SpentWords    string `json:"spentWords,omitempty"`
-				}{{ServiceKey: "api_stat_l", Title: "Доступ к Stat API (тариф L)", SpentChannels: "1989/2500", SpentRequests: "89152/400000", ExpiredAt: 1542732689, SpentWords: "111/11"}},
+				Response: []schema.Category{
+					tech,
+					news,
+				},
 			})
 		})
 
 		response, _, err := CategoriesGet(context.Background(), "ru")
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
-			"ServiceKey": ContainSubstring("stat"),
-			"Title":      ContainSubstring("Stat"),
+			"Status": ContainSubstring("ok"),
+			"Response": ContainElement(schema.Category{
+				Code: "tech",
+				Name: "Технологии",
+			}),
 		})))
 	})
 }
@@ -108,7 +124,7 @@ func TestClient_CategoriesGet(t *testing.T) {
 func TestClient_LanguagesGet(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
-		prepareClient("localhost")
+		prepareClient("http://localhost23")
 
 		lang := "ru"
 		_, _, err := LanguagesGet(context.Background(), lang)
@@ -121,27 +137,37 @@ func TestClient_LanguagesGet(t *testing.T) {
 		defer testServer.Teardown()
 		prepareClient(testServer.URL)
 
-		testServer.Mux.HandleFunc(endpoints.UsageStat, func(w http.ResponseWriter, r *http.Request) {
+		testServer.Mux.HandleFunc(endpoints.DatabaseLanguages, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.StatResponse{
+
+			russia := schema.Language{
+				Code: "Ru",
+				Name: "Russia",
+			}
+
+			english := schema.Language{
+				Code: "US",
+				Name: "United States",
+			}
+
+			json.NewEncoder(w).Encode(schema.LanguageResponse{
 				Status: "ok",
-				Response: []struct {
-					ServiceKey    string `json:"serviceKey"`
-					Title         string `json:"title"`
-					SpentChannels string `json:"spentChannels,omitempty"`
-					SpentRequests string `json:"spentRequests"`
-					ExpiredAt     int    `json:"expiredAt"`
-					SpentWords    string `json:"spentWords,omitempty"`
-				}{{ServiceKey: "api_stat_l", Title: "Доступ к Stat API (тариф L)", SpentChannels: "1989/2500", SpentRequests: "89152/400000", ExpiredAt: 1542732689, SpentWords: "111/11"}},
+				Response: []schema.Language{
+					russia,
+					english,
+				},
 			})
 		})
 
 		response, _, err := LanguagesGet(context.Background(), "ru")
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
-			"ServiceKey": ContainSubstring("stat"),
-			"Title":      ContainSubstring("Stat"),
+			"Status": ContainSubstring("ok"),
+			"Response": ContainElement(schema.Language{
+				Code: "Ru",
+				Name: "Russian",
+			}),
 		})))
 	})
 }
