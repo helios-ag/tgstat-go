@@ -14,15 +14,15 @@ type Client struct {
 	Token string
 }
 
-func UsageStat(ctx context.Context) (*schema.StatResponse, *http.Response, error) {
-	return getClient().UsageStat(ctx)
+func Stat(ctx context.Context) (*schema.StatResponse, *http.Response, error) {
+	return getClient().Stat(ctx)
 }
 
-func (c Client) UsageStat(ctx context.Context) (*schema.StatResponse, *http.Response, error) {
+func (c Client) Stat(ctx context.Context) (*schema.StatResponse, *http.Response, error) {
 	path := endpoints.UsageStat
 
 	body := make(map[string]string)
-	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
