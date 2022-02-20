@@ -57,20 +57,23 @@ type SearchRequest struct {
 	Q                   string
 	SearchByDescription int
 	Country             string
-	Language            string
-	Category            string
-	Limit               int
+	Language            *string
+	Category            *string
+	Limit               *int
 }
 
 func (searchRequest SearchRequest) Validate() error {
 	return validation.ValidateStruct(&searchRequest,
 		validation.Field(&searchRequest.Country, validation.Required),
-		validation.Field(&searchRequest.Q, validation.Required.When(searchRequest.Category == "").Error("Either query or category is required.")),
+		validation.Field(&searchRequest.Q, validation.Required.When(*searchRequest.Category == "").Error("Either query or category is required.")),
 		validation.Field(&searchRequest.Category, validation.Required.When(searchRequest.Q == "").Error("Either query or category  is required.")),
 	)
 }
 
-func (c *Client) ChannelSearch(ctx context.Context, request SearchRequest) (*schema.ChannelSearchResponse, *http.Response, error) {
+func ChannelSearch(ctx context.Context, request SearchRequest) (*schema.ChannelSearchResponse, *http.Response, error) {
+	return getClient().ChannelSearch(ctx, request)
+}
+func (c Client) ChannelSearch(ctx context.Context, request SearchRequest) (*schema.ChannelSearchResponse, *http.Response, error) {
 	path := endpoints.ChannelsSearch
 
 	if err := request.Validate(); err != nil {
@@ -81,9 +84,16 @@ func (c *Client) ChannelSearch(ctx context.Context, request SearchRequest) (*sch
 	body["q"] = request.Q
 	body["search_by_description"] = strconv.Itoa(request.SearchByDescription)
 	body["country"] = request.Country
-	body["language"] = request.Language
-	body["category"] = request.Category
-	body["limit"] = strconv.Itoa(request.Limit)
+	if nil != request.Language {
+		body["language"] = *request.Language
+	}
+	if nil != request.Category {
+		body["category"] = *request.Category
+	}
+
+	if nil != request.Limit {
+		body["limit"] = strconv.Itoa(*request.Limit)
+	}
 
 	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
@@ -157,12 +167,29 @@ func (c Client) ChannelPosts(ctx context.Context, request PostsRequest) (*schema
 
 	body := make(map[string]string)
 	body["channelId"] = request.ChannelId
-	body["limit"] = strconv.FormatUint(*request.Limit, 10)
-	body["offset"] = strconv.FormatUint(*request.Offset, 10)
-	body["startTime"] = *request.StartTime
-	body["endTime"] = *request.EndTime
-	body["hideForwards"] = strconv.Itoa(*request.HideForwards)
-	body["hideDeleted"] = strconv.Itoa(*request.HideDeleted)
+	if nil != request.Limit {
+		body["limit"] = strconv.FormatUint(*request.Limit, 10)
+	}
+	if nil != request.Offset {
+		body["offset"] = strconv.FormatUint(*request.Offset, 10)
+	}
+
+	if nil != request.StartTime {
+		body["startTime"] = *request.StartTime
+	}
+
+	if nil != request.EndTime {
+		body["endTime"] = *request.EndTime
+	}
+
+	if nil != request.HideForwards {
+		body["hideForwards"] = strconv.Itoa(*request.HideForwards)
+	}
+
+	if nil != request.HideDeleted {
+		body["hideDeleted"] = strconv.Itoa(*request.HideDeleted)
+	}
+
 	body["extended"] = "0"
 
 	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
@@ -179,6 +206,10 @@ func (c Client) ChannelPosts(ctx context.Context, request PostsRequest) (*schema
 	_ = json.NewDecoder(result.Body).Decode(&response)
 
 	return &response, result, err
+}
+
+func ChannelPostsExtended(ctx context.Context, request PostsRequest) (*schema.ChannelPostsWithChannelResponse, *http.Response, error) {
+	return getClient().ChannelPostsExtended(ctx, request)
 }
 
 func (c Client) ChannelPostsExtended(ctx context.Context, request PostsRequest) (*schema.ChannelPostsWithChannelResponse, *http.Response, error) {
@@ -232,8 +263,11 @@ func (channelMentionsRequest ChannelMentionsRequest) Validate() error {
 		validation.Field(&channelMentionsRequest.EndDate, validation.Date("1643113399")),
 	)
 }
+func Mentions(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentions, *http.Response, error) {
+	return getClient().Mentions(ctx, request)
+}
 
-func (c Client) ChannelMentions(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentions, *http.Response, error) {
+func (c Client) Mentions(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentions, *http.Response, error) {
 	path := endpoints.ChannelsMentions
 
 	if err := request.Validate(); err != nil {
@@ -242,10 +276,23 @@ func (c Client) ChannelMentions(ctx context.Context, request ChannelMentionsRequ
 
 	body := make(map[string]string)
 	body["channelId"] = request.ChannelId
-	body["limit"] = strconv.FormatUint(*request.Limit, 10)
-	body["offset"] = strconv.FormatUint(*request.Offset, 10)
-	body["startDate"] = *request.StartDate
-	body["endDate"] = *request.EndDate
+
+	if nil != request.Limit {
+		body["limit"] = strconv.FormatUint(*request.Limit, 10)
+	}
+
+	if nil != request.Offset {
+		body["offset"] = strconv.FormatUint(*request.Offset, 10)
+	}
+
+	if nil != request.StartDate {
+		body["startDate"] = *request.StartDate
+	}
+
+	if nil != request.EndDate {
+		body["endDate"] = *request.EndDate
+	}
+
 	body["extended"] = "0"
 
 	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
@@ -265,7 +312,11 @@ func (c Client) ChannelMentions(ctx context.Context, request ChannelMentionsRequ
 	return &response, result, err
 }
 
-func (c Client) ChannelMentionsExtended(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentionsExtended, *http.Response, error) {
+func MentionsExtended(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentionsExtended, *http.Response, error) {
+	return getClient().MentionsExtended(ctx, request)
+}
+
+func (c Client) MentionsExtended(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentionsExtended, *http.Response, error) {
 	path := endpoints.ChannelsMentions
 
 	if err := request.Validate(); err != nil {
@@ -274,13 +325,26 @@ func (c Client) ChannelMentionsExtended(ctx context.Context, request ChannelMent
 
 	body := make(map[string]string)
 	body["channelId"] = request.ChannelId
-	body["limit"] = strconv.FormatUint(*request.Limit, 10)
-	body["offset"] = strconv.FormatUint(*request.Offset, 10)
-	body["startDate"] = *request.StartDate
-	body["endDate"] = *request.EndDate
+
+	if nil != request.Limit {
+		body["limit"] = strconv.FormatUint(*request.Limit, 10)
+	}
+
+	if nil != request.Offset {
+		body["offset"] = strconv.FormatUint(*request.Offset, 10)
+	}
+
+	if nil != request.StartDate {
+		body["startDate"] = *request.StartDate
+	}
+
+	if nil != request.EndDate {
+		body["endDate"] = *request.EndDate
+	}
+
 	body["extended"] = "1"
 
-	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.API.NewRestRequest(ctx, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -310,12 +374,14 @@ func (channelForwardRequest ChannelForwardRequest) Validate() error {
 		validation.Field(&channelForwardRequest.ChannelId, validation.Required),
 		validation.Field(&channelForwardRequest.Limit, validation.Min(0), validation.Max(50)),
 		validation.Field(&channelForwardRequest.Offset, validation.Min(0), validation.Max(1000)),
-		validation.Field(&channelForwardRequest.StartDate, validation.Date("1643113399")),
-		validation.Field(&channelForwardRequest.EndDate, validation.Date("1643113399")),
 	)
 }
 
-func (c Client) ChannelForwards(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwards, *http.Response, error) {
+func Forwards(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwards, *http.Response, error) {
+	return getClient().Forwards(ctx, request)
+}
+
+func (c Client) Forwards(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwards, *http.Response, error) {
 	path := endpoints.ChannelsForwards
 
 	if err := request.Validate(); err != nil {
@@ -324,10 +390,23 @@ func (c Client) ChannelForwards(ctx context.Context, request ChannelForwardReque
 
 	body := make(map[string]string)
 	body["channelId"] = request.ChannelId
-	body["limit"] = strconv.FormatUint(*request.Limit, 10)
-	body["offset"] = strconv.FormatUint(*request.Offset, 10)
-	body["startDate"] = *request.StartDate
-	body["endDate"] = *request.EndDate
+
+	if nil != request.Limit {
+		body["limit"] = strconv.FormatUint(*request.Limit, 10)
+	}
+
+	if nil != request.Offset {
+		body["offset"] = strconv.FormatUint(*request.Offset, 10)
+	}
+
+	if nil != request.StartDate {
+		body["startDate"] = *request.StartDate
+	}
+
+	if nil != request.EndDate {
+		body["endDate"] = *request.EndDate
+	}
+
 	body["extended"] = "0"
 
 	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
@@ -347,7 +426,11 @@ func (c Client) ChannelForwards(ctx context.Context, request ChannelForwardReque
 	return &response, result, err
 }
 
-func (c Client) ChannelForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwardsExtended, *http.Response, error) {
+func ForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwardsExtended, *http.Response, error) {
+	return getClient().ForwardsExtended(ctx, request)
+}
+
+func (c Client) ForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwardsExtended, *http.Response, error) {
 	path := endpoints.ChannelsForwards
 
 	if err := request.Validate(); err != nil {
@@ -356,10 +439,23 @@ func (c Client) ChannelForwardsExtended(ctx context.Context, request ChannelForw
 
 	body := make(map[string]string)
 	body["channelId"] = request.ChannelId
-	body["limit"] = strconv.FormatUint(*request.Limit, 10)
-	body["offset"] = strconv.FormatUint(*request.Offset, 10)
-	body["startDate"] = *request.StartDate
-	body["endDate"] = *request.EndDate
+
+	if nil != request.Limit {
+		body["limit"] = strconv.FormatUint(*request.Limit, 10)
+	}
+
+	if nil != request.Offset {
+		body["offset"] = strconv.FormatUint(*request.Offset, 10)
+	}
+
+	if nil != request.StartDate {
+		body["startDate"] = *request.StartDate
+	}
+
+	if nil != request.EndDate {
+		body["endDate"] = *request.EndDate
+	}
+
 	body["extended"] = "1"
 
 	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
@@ -389,8 +485,6 @@ type ChannelSubscribersRequest struct {
 func (channelSubscribersRequest ChannelSubscribersRequest) Validate() error {
 	return validation.ValidateStruct(&channelSubscribersRequest,
 		validation.Field(&channelSubscribersRequest.ChannelId, validation.Required),
-		validation.Field(&channelSubscribersRequest.StartDate, validation.Date("1643113399")),
-		validation.Field(&channelSubscribersRequest.EndDate, validation.Date("1643113399")),
 		validation.Field(&channelSubscribersRequest.Group, validation.In("hour", "day", "week", "month")),
 	)
 }
@@ -404,9 +498,17 @@ func (c Client) ChannelSubscribers(ctx context.Context, request ChannelSubscribe
 
 	body := make(map[string]string)
 	body["channelId"] = request.ChannelId
-	body["startDate"] = *request.StartDate
-	body["endDate"] = *request.EndDate
-	body["group"] = *request.Group
+	if nil != request.StartDate {
+		body["startDate"] = *request.StartDate
+	}
+
+	if nil != request.EndDate {
+		body["endDate"] = *request.EndDate
+	}
+
+	if nil != request.Group {
+		body["group"] = *request.Group
+	}
 
 	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
@@ -435,13 +537,15 @@ type ChannelViewsRequest struct {
 func (channelViewsRequest ChannelViewsRequest) Validate() error {
 	return validation.ValidateStruct(&channelViewsRequest,
 		validation.Field(&channelViewsRequest.ChannelId, validation.Required),
-		validation.Field(&channelViewsRequest.StartDate, validation.Date("1643113399")),
-		validation.Field(&channelViewsRequest.EndDate, validation.Date("1643113399")),
 		validation.Field(&channelViewsRequest.Group, validation.In("day", "week", "month")),
 	)
 }
 
-func (c Client) ChannelViews(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelViews, *http.Response, error) {
+func Views(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelViews, *http.Response, error) {
+	return getClient().Views(ctx, request)
+}
+
+func (c Client) Views(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelViews, *http.Response, error) {
 	path := endpoints.ChannelsViews
 
 	if err := request.Validate(); err != nil {
@@ -450,9 +554,17 @@ func (c Client) ChannelViews(ctx context.Context, request ChannelViewsRequest) (
 
 	body := make(map[string]string)
 	body["channelId"] = request.ChannelId
-	body["startDate"] = *request.StartDate
-	body["endDate"] = *request.EndDate
-	body["group"] = *request.Group
+	if nil != request.StartDate {
+		body["startDate"] = *request.StartDate
+	}
+
+	if nil != request.EndDate {
+		body["endDate"] = *request.EndDate
+	}
+
+	if nil != request.Group {
+		body["group"] = *request.Group
+	}
 
 	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
@@ -484,7 +596,11 @@ func (channelAddRequest ChannelAddRequest) Validate() error {
 	)
 }
 
-func (c Client) ChannelAdd(ctx context.Context, request ChannelAddRequest) (*schema.ChannelViews, *http.Response, error) {
+func Add(ctx context.Context, request ChannelAddRequest) (*schema.ChannelViews, *http.Response, error) {
+	return getClient().Add(ctx, request)
+}
+
+func (c Client) Add(ctx context.Context, request ChannelAddRequest) (*schema.ChannelViews, *http.Response, error) {
 	path := endpoints.ChannelsAdd
 
 	if err := request.Validate(); err != nil {
@@ -493,9 +609,18 @@ func (c Client) ChannelAdd(ctx context.Context, request ChannelAddRequest) (*sch
 
 	body := make(map[string]string)
 	body["channelName"] = request.ChannelName
-	body["country"] = *request.Country
-	body["language"] = *request.Language
-	body["category"] = *request.Category
+
+	if nil != request.Country {
+		body["country"] = *request.Country
+	}
+
+	if nil != request.Language {
+		body["language"] = *request.Language
+	}
+
+	if nil != request.Category {
+		body["category"] = *request.Category
+	}
 
 	req, err := c.API.NewRestRequest(ctx, "POST", path, body)
 
@@ -514,7 +639,11 @@ func (c Client) ChannelAdd(ctx context.Context, request ChannelAddRequest) (*sch
 	return &response, result, err
 }
 
-func (c Client) ChannelAvgPostsReach(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelAvgReach, *http.Response, error) {
+func AvgPostsReach(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelAvgReach, *http.Response, error) {
+	return getClient().AvgPostsReach(ctx, request)
+}
+
+func (c Client) AvgPostsReach(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelAvgReach, *http.Response, error) {
 	path := endpoints.ChannelAVGPostsReach
 
 	if err := request.Validate(); err != nil {
@@ -523,9 +652,17 @@ func (c Client) ChannelAvgPostsReach(ctx context.Context, request ChannelViewsRe
 
 	body := make(map[string]string)
 	body["channelId"] = request.ChannelId
-	body["startDate"] = *request.StartDate
-	body["endDate"] = *request.EndDate
-	body["group"] = *request.Group
+	if nil != request.StartDate {
+		body["startDate"] = *request.StartDate
+	}
+
+	if nil != request.EndDate {
+		body["endDate"] = *request.EndDate
+	}
+
+	if nil != request.Group {
+		body["group"] = *request.Group
+	}
 
 	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
@@ -544,7 +681,11 @@ func (c Client) ChannelAvgPostsReach(ctx context.Context, request ChannelViewsRe
 	return &response, result, err
 }
 
-func (c Client) ChannelErr(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelErr, *http.Response, error) {
+func Err(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelErr, *http.Response, error) {
+	return getClient().Err(ctx, request)
+}
+
+func (c Client) Err(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelErr, *http.Response, error) {
 	path := endpoints.ChannelErr
 
 	if err := request.Validate(); err != nil {
@@ -553,9 +694,17 @@ func (c Client) ChannelErr(ctx context.Context, request ChannelViewsRequest) (*s
 
 	body := make(map[string]string)
 	body["channelId"] = request.ChannelId
-	body["startDate"] = *request.StartDate
-	body["endDate"] = *request.EndDate
-	body["group"] = *request.Group
+	if nil != request.StartDate {
+		body["startDate"] = *request.StartDate
+	}
+
+	if nil != request.EndDate {
+		body["endDate"] = *request.EndDate
+	}
+
+	if nil != request.Group {
+		body["group"] = *request.Group
+	}
 
 	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
