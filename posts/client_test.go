@@ -15,9 +15,8 @@ import (
 
 func prepareClient(URL string) {
 	cfg := tgstat.ClientConfig{
-		"token",
-		false,
-		"http://local",
+		Token:    "token",
+		Endpoint: "http://local",
 	}
 	tgstat.SetConfig(cfg)
 	tgstat.WithEndpoint(URL)
@@ -26,7 +25,7 @@ func prepareClient(URL string) {
 func TestClient_PostsGet(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
-
+		prepareClient("http://local123")
 		_, _, err := PostGet(context.Background(), "t.me/123")
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("no such host"))
@@ -59,7 +58,7 @@ func TestClient_PostsGet(t *testing.T) {
 					ID:            0,
 					Date:          0,
 					Views:         0,
-					Link:          "",
+					Link:          "t.me/",
 					ChannelID:     0,
 					ForwardedFrom: nil,
 					IsDeleted:     0,
@@ -96,19 +95,19 @@ func TestClient_PostsStat(t *testing.T) {
 		}
 		_, _, err := PostStat(context.Background(), req)
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("no such host"))
+		Expect(err.Error()).To(ContainSubstring("PostId: cannot be blank"))
 	})
 
-	t.Run("Test PostsGet response Mapping", func(t *testing.T) {
+	t.Run("Test PostsStat response Mapping", func(t *testing.T) {
 		testServer := server.NewServer()
 		defer testServer.Teardown()
 		prepareClient(testServer.URL)
 
-		testServer.Mux.HandleFunc(endpoints.PostsGet, func(w http.ResponseWriter, r *http.Request) {
+		testServer.Mux.HandleFunc(endpoints.PostsStat, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(schema.PostStatResponse{
-				Status: "",
+				Status: "ok",
 				Response: struct {
 					ViewsCount    int `json:"viewsCount"`
 					ForwardsCount int `json:"forwardsCount"`
@@ -130,9 +129,9 @@ func TestClient_PostsStat(t *testing.T) {
 						ViewsGrowth int    `json:"viewsGrowth"`
 					} `json:"views"`
 				}{
-					ViewsCount:    0,
-					ForwardsCount: 0,
-					MentionsCount: 0,
+					ViewsCount:    123,
+					ForwardsCount: 5,
+					MentionsCount: 3,
 					Forwards:      nil,
 					Mentions:      nil,
 					Views:         nil,
@@ -141,7 +140,7 @@ func TestClient_PostsStat(t *testing.T) {
 		})
 
 		req := PostStatRequest{
-			PostId: "",
+			PostId: "321",
 			Group:  nil,
 		}
 		response, _, err := PostStat(context.Background(), req)
@@ -155,29 +154,19 @@ func TestClient_PostsStat(t *testing.T) {
 func TestClient_PostsSearch(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
-		testServer := server.NewServer()
-		defer testServer.Teardown()
-		prepareClient(testServer.URL)
+		//testServer := server.NewServer()
+		//defer testServer.Teardown()
+		prepareClient("http://localhost123")
 
 		req := PostSearchRequest{
-			Q:              "Query",
-			Limit:          nil,
-			Offset:         nil,
-			PeerType:       nil,
-			StartDate:      nil,
-			EndDate:        nil,
-			HideForwards:   nil,
-			HideDeleted:    nil,
-			StrongSearch:   nil,
-			MinusWords:     nil,
-			ExtendedSyntax: nil,
+			Q: "Query",
 		}
 		_, _, err := PostSearch(context.Background(), req)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("no such host"))
 	})
 
-	t.Run("Test PostsGet response Mapping", func(t *testing.T) {
+	t.Run("Test PostsSearch response Mapping", func(t *testing.T) {
 		testServer := server.NewServer()
 		defer testServer.Teardown()
 		prepareClient(testServer.URL)
@@ -186,7 +175,7 @@ func TestClient_PostsSearch(t *testing.T) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(schema.PostSearchResponse{
-				Status: "",
+				Status: "ok",
 				Response: struct {
 					Count      int `json:"count"`
 					TotalCount int `json:"total_count"`
@@ -214,11 +203,10 @@ func TestClient_PostsSearch(t *testing.T) {
 			})
 		})
 
-		req := PostStatRequest{
-			PostId: "t.me/123",
-			Group:  nil,
+		req := PostSearchRequest{
+			Q: "test",
 		}
-		response, _, err := PostStat(context.Background(), req)
+		response, _, err := PostSearch(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": ContainSubstring("ok"),
@@ -234,17 +222,7 @@ func TestClient_PostsSearchExtended(t *testing.T) {
 		prepareClient(testServer.URL)
 
 		req := PostSearchRequest{
-			Q:              "",
-			Limit:          nil,
-			Offset:         nil,
-			PeerType:       nil,
-			StartDate:      nil,
-			EndDate:        nil,
-			HideForwards:   nil,
-			HideDeleted:    nil,
-			StrongSearch:   nil,
-			MinusWords:     nil,
-			ExtendedSyntax: nil,
+			Q: "Test",
 		}
 		_, _, err := PostSearchExtended(context.Background(), req)
 		Expect(err).To(HaveOccurred())
@@ -260,7 +238,7 @@ func TestClient_PostsSearchExtended(t *testing.T) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(schema.PostStatResponse{
-				Status: "",
+				Status: "ok",
 				Response: struct {
 					ViewsCount    int `json:"viewsCount"`
 					ForwardsCount int `json:"forwardsCount"`
@@ -285,15 +263,12 @@ func TestClient_PostsSearchExtended(t *testing.T) {
 					ViewsCount:    0,
 					ForwardsCount: 0,
 					MentionsCount: 0,
-					Forwards:      nil,
-					Mentions:      nil,
-					Views:         nil,
 				},
 			})
 		})
 
 		req := PostStatRequest{
-			PostId: "",
+			PostId: "123123",
 			Group:  nil,
 		}
 		response, _, err := PostStat(context.Background(), req)

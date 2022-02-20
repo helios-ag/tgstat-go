@@ -71,7 +71,10 @@ func (c Client) PostStat(ctx context.Context, request PostStatRequest) (*schema.
 
 	body := make(map[string]string)
 	body["postId"] = request.PostId
-	body["group"] = *request.Group
+	if nil != request.Group {
+		body["group"] = *request.Group
+	}
+
 	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
@@ -121,35 +124,7 @@ func (c Client) PostSearch(ctx context.Context, request PostSearchRequest) (*sch
 		return nil, nil, err
 	}
 
-	body := make(map[string]string)
-	body["q"] = request.Q
-	body["limit"] = strconv.Itoa(*request.Limit)
-	body["offset"] = strconv.Itoa(*request.Offset)
-	body["peerType"] = *request.PeerType
-	body["startDate"] = *request.StartDate
-	body["EndDate"] = *request.EndDate
-	body["hideForwards"] = func() string {
-		if *request.HideForwards == true {
-			return "1"
-		} else {
-			return "0"
-		}
-	}()
-	body["hideDeleted"] = func() string {
-		if *request.HideDeleted == true {
-			return "1"
-		} else {
-			return "0"
-		}
-	}()
-	body["minusWords"] = *request.MinusWords
-	body["extendedSyntax"] = func() string {
-		if *request.ExtendedSyntax == true {
-			return "1"
-		} else {
-			return "0"
-		}
-	}()
+	body := makeRequestBody(request)
 
 	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
 
@@ -178,35 +153,8 @@ func (c Client) PostSearchExtended(ctx context.Context, request PostSearchReques
 		return nil, nil, err
 	}
 
-	body := make(map[string]string)
-	body["q"] = request.Q
-	body["limit"] = strconv.Itoa(*request.Limit)
-	body["offset"] = strconv.Itoa(*request.Offset)
-	body["peerType"] = *request.PeerType
-	body["startDate"] = *request.StartDate
-	body["EndDate"] = *request.EndDate
-	body["hideForwards"] = func() string {
-		if *request.HideForwards == true {
-			return "1"
-		} else {
-			return "0"
-		}
-	}()
-	body["hideDeleted"] = func() string {
-		if *request.HideDeleted == true {
-			return "1"
-		} else {
-			return "0"
-		}
-	}()
-	body["minusWords"] = *request.MinusWords
-	body["extendedSyntax"] = func() string {
-		if *request.ExtendedSyntax == true {
-			return "1"
-		} else {
-			return "0"
-		}
-	}()
+	body := makeRequestBody(request)
+
 	body["extended"] = "1"
 
 	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
@@ -223,6 +171,59 @@ func (c Client) PostSearchExtended(ctx context.Context, request PostSearchReques
 	_ = json.NewDecoder(result.Body).Decode(&response)
 
 	return &response, result, err
+}
+
+func makeRequestBody(request PostSearchRequest) map[string]string {
+	body := make(map[string]string)
+	body["q"] = request.Q
+	if nil != request.Limit {
+		body["limit"] = strconv.Itoa(*request.Limit)
+	}
+
+	if nil != request.Offset {
+		body["offset"] = strconv.Itoa(*request.Offset)
+	}
+
+	if nil != request.PeerType {
+		body["peerType"] = *request.PeerType
+	}
+
+	if nil != request.StartDate {
+		body["startDate"] = *request.StartDate
+	}
+
+	if nil != request.EndDate {
+		body["EndDate"] = *request.EndDate
+	}
+
+	body["hideForwards"] = func() string {
+		if nil != request.HideForwards && *request.HideForwards == true {
+			return "1"
+		} else {
+			return "0"
+		}
+	}()
+
+	body["hideDeleted"] = func() string {
+		if nil != request.HideDeleted && *request.HideDeleted == true {
+			return "1"
+		} else {
+			return "0"
+		}
+	}()
+	if nil != request.MinusWords {
+		body["minusWords"] = *request.MinusWords
+	}
+
+	body["extendedSyntax"] = func() string {
+		if nil != request.ExtendedSyntax && *request.ExtendedSyntax == true {
+			return "1"
+		} else {
+			return "0"
+		}
+	}()
+
+	return body
 }
 
 func getClient() Client {
