@@ -211,3 +211,14 @@ type ChannelErr struct {
 		Err    int    `json:"err"`
 	} `json:"response"`
 }
+
+type ChannelAddPendingResponse struct {
+	Status string `json:"status"`
+}
+
+type ChannelAddSuccessResponse struct {
+	Status   string `json:"status"`
+	Response []struct {
+		ChannelId string `json:"channelId"`
+	} `json:"response"`
+}
