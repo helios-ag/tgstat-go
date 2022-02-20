@@ -25,8 +25,6 @@ type APIs struct {
 	mu  sync.RWMutex
 }
 
-var Extended = false
-
 var Token string
 
 var apis APIs
@@ -40,7 +38,6 @@ type API interface {
 // ClientConfig is used to set client configuration
 type ClientConfig struct {
 	Token    string
-	Extended bool
 	Endpoint string
 }
 
@@ -57,11 +54,6 @@ type Body struct {
 
 // ClientOption is used to configure a Client.
 type ClientOption func(*Client)
-
-// WithExtendedResponse configures a Client to receive extended response
-func WithExtendedResponse() {
-	cfg.Extended = true
-}
 
 // WithEndpoint configures a Client to use the specified API endpoint.
 func WithEndpoint(endpoint string) {

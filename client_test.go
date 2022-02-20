@@ -7,15 +7,16 @@ import (
 	"errors"
 	"github.com/helios-ag/tgstat-go/endpoints"
 	"github.com/helios-ag/tgstat-go/schema"
+	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"net/http/httptest"
 	"strings"
 	"testing"
 )
 
+/*
 // Test Environment
 type Server struct {
 	Server *httptest.Server
@@ -26,44 +27,35 @@ func (server *Server) Teardown() {
 	server.Server.Close()
 	server.Server = nil
 	server.Mux = nil
-}
+}*/
 
-func getCfg() *ClientConfig {
+func getCfg(url string) *ClientConfig {
 	cfg := ClientConfig{
-		Token: "token",
+		Token:    "token",
+		Endpoint: url,
 	}
 	return &cfg
-}
-
-func newServer() Server {
-	mux := http.NewServeMux()
-	server := httptest.NewServer(mux)
-
-	return Server{
-		Server: server,
-		Mux:    mux,
-	}
 }
 
 func TestNewClient(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test trailing slashes remove", func(t *testing.T) {
-		client, _ := NewClient(getCfg())
+		client, _ := NewClient(getCfg("localhost"))
 		if strings.HasSuffix(client.Config.Endpoint, "/") {
 			t.Fatalf("endpoint has trailing slashes: %q", client.Config.Endpoint)
 		}
 	})
 	t.Run("Test getting error response", func(t *testing.T) {
-		server := newServer()
-		defer server.Teardown()
+		newServer := server.NewServer()
+		defer newServer.Teardown()
 
-		server.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
+		newServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(schema.ErrorResponse{
 				Status: "error",
 				Error:  "empty_token",
 			})
 		})
-		client, _ := NewClient(getCfg())
+		client, _ := NewClient(getCfg(newServer.URL))
 
 		ctx := context.Background()
 		_, err := client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
@@ -74,10 +66,10 @@ func TestNewClient(t *testing.T) {
 func TestClientDo(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test client do with external api", func(t *testing.T) {
-		server := newServer()
-		defer server.Teardown()
+		newServer := server.NewServer()
+		defer newServer.Teardown()
 
-		server.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
+		newServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(schema.ErrorResponse{
 				Status: "error",
 				Error:  "empty_token",
@@ -88,7 +80,7 @@ func TestClientDo(t *testing.T) {
 			return nil, errors.New("buf overflow")
 		}
 		ctx := context.Background()
-		client, _ := NewClient(getCfg())
+		client, _ := NewClient(getCfg(newServer.URL))
 
 		request, _ := client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
 		_, err := client.Do(request, nil)
@@ -102,10 +94,10 @@ func TestClientDo(t *testing.T) {
 	})
 
 	t.Run("Test response body decode", func(t *testing.T) {
-		server := newServer()
-		defer server.Teardown()
+		newServer := server.NewServer()
+		defer newServer.Teardown()
 
-		server.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
+		newServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(schema.ErrorResponse{
 				Status: "error",
 				Error:  "empty_token",
@@ -113,21 +105,22 @@ func TestClientDo(t *testing.T) {
 		})
 
 		ctx := context.Background()
-		client, _ := NewClient(getCfg())
+		client, _ := NewClient(getCfg(newServer.URL))
 		request, _ := client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
 		_, err := client.Do(request, nil)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	t.Run("Test Bad Response Code", func(t *testing.T) {
-		server := newServer()
-		defer server.Teardown()
+		newServer := server.NewServer()
+		defer newServer.Teardown()
 
-		server.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
+		//prepareClient(newServer.URL)
+		newServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Bad Request", http.StatusBadRequest)
 			return
 		})
-		client, _ := NewClient(getCfg())
+		client, _ := NewClient(getCfg(newServer.URL))
 		ctx := context.Background()
 		request, _ := client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
 		_, err := client.Do(request, nil)
@@ -171,18 +164,6 @@ func TestErrorFromResponse(t *testing.T) {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	t.Run("Expect Error", func(t *testing.T) {
-		resp := http.Response{
-			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
-			Header: make(http.Header, 0),
-		}
-		resp.Header.Set("Content-Type", "application/json")
-		body := []byte(`{"errorCode": 5, "errorMessage": "Ошибка"}`)
-		err := errorFromResponse(&resp, body)
-		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("Ошибка"))
-	})
-
 	t.Run("Dont expect Error", func(t *testing.T) {
 		resp := http.Response{
 			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
@@ -197,18 +178,6 @@ func TestErrorFromResponse(t *testing.T) {
 
 func TestNewRequest(t *testing.T) {
 	RegisterTestingT(t)
-	t.Run("Add rest to path", func(t *testing.T) {
-		client, _ := NewClient(
-			&ClientConfig{
-				Token: "token",
-			},
-		)
-		ctx := context.Background()
-		_, err := client.NewRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
-		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("path contains rest request, use NewRestRequest instead"))
-	})
-
 	t.Run("Invalid config test", func(t *testing.T) {
 		_, err := NewClient(
 			&ClientConfig{},
@@ -262,6 +231,7 @@ func TestNewRequest(t *testing.T) {
 	t.Run("Test improper Config url", func(t *testing.T) {
 		_, err := NewClient(
 			&ClientConfig{
+				Token:    "asdad",
 				Endpoint: "http\\:wrongUrl",
 			},
 		)
