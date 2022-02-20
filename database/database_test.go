@@ -166,7 +166,7 @@ func TestClient_LanguagesGet(t *testing.T) {
 			"Status": ContainSubstring("ok"),
 			"Response": ContainElement(schema.Language{
 				Code: "Ru",
-				Name: "Russian",
+				Name: "Russia",
 			}),
 		})))
 	})
