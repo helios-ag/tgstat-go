@@ -30,14 +30,15 @@ type MentionPeriodRequest struct {
 func (mentionPeriodRequest MentionPeriodRequest) Validate() error {
 	return validation.ValidateStruct(&mentionPeriodRequest,
 		validation.Field(&mentionPeriodRequest.Q, validation.Required),
+		validation.Field(&mentionPeriodRequest.Group, validation.In("channel", "chat", "all")),
 	)
 }
 
-func ChannelMentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
-	return getClient().ChannelMentionsByPeriod(ctx, request)
+func MentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
+	return getClient().MentionsByPeriod(ctx, request)
 }
 
-func (c Client) ChannelMentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
+func (c Client) MentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
 	path := endpoints.WordsMentionsByPeriod
 
 	if err := request.Validate(); err != nil {
@@ -46,27 +47,42 @@ func (c Client) ChannelMentionsByPeriod(ctx context.Context, request MentionPeri
 
 	body := make(map[string]string)
 	body["q"] = request.Q
-	body["peerType"] = *request.PeerType
-	body["startDate"] = *request.StartDate
-	body["EndDate"] = *request.EndDate
+	if nil != request.PeerType {
+		body["peerType"] = *request.PeerType
+	}
+	if nil != request.StartDate {
+		body["startDate"] = *request.StartDate
+	}
+
+	if nil != request.EndDate {
+		body["EndDate"] = *request.EndDate
+	}
+
 	body["hideForwards"] = func() string {
-		if *request.HideForwards == true {
+		if nil != request.HideForwards && *request.HideForwards == true {
 			return "1"
 		} else {
 			return "0"
 		}
 	}()
 	body["strongSearch"] = func() string {
-		if *request.StrongSearch == true {
+		if nil != request.StrongSearch && *request.StrongSearch == true {
 			return "1"
 		} else {
 			return "0"
 		}
 	}()
-	body["minusWords"] = *request.MinusWords
-	body["group"] = *request.Group
+
+	if nil != request.MinusWords {
+		body["minusWords"] = *request.MinusWords
+	}
+
+	if nil != request.Group {
+		body["group"] = *request.Group
+	}
+
 	body["extendedSyntax"] = func() string {
-		if *request.ExtendedSyntax == true {
+		if nil != request.ExtendedSyntax && *request.ExtendedSyntax == true {
 			return "1"
 		} else {
 			return "0"
@@ -102,14 +118,15 @@ type MentionsByChannelRequest struct {
 func (mentionsByChannelRequest MentionsByChannelRequest) Validate() error {
 	return validation.ValidateStruct(&mentionsByChannelRequest,
 		validation.Field(&mentionsByChannelRequest.Q, validation.Required),
+		validation.Field(&mentionsByChannelRequest.PeerType, validation.In("channel", "chat", "all")),
 	)
 }
 
-func WordsMentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
-	return getClient().WordsMentionsByChannels(ctx, request)
+func MentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
+	return getClient().MentionsByChannels(ctx, request)
 }
 
-func (c Client) WordsMentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
+func (c Client) MentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
 	path := endpoints.WordsMentionsByChannels
 
 	if err := request.Validate(); err != nil {
@@ -118,26 +135,38 @@ func (c Client) WordsMentionsByChannels(ctx context.Context, request MentionsByC
 
 	body := make(map[string]string)
 	body["q"] = request.Q
-	body["peerType"] = *request.PeerType
-	body["startDate"] = *request.StartDate
-	body["EndDate"] = *request.EndDate
+	if nil != request.PeerType {
+		body["peerType"] = *request.PeerType
+	}
+	if nil != request.StartDate {
+		body["startDate"] = *request.StartDate
+	}
+
+	if nil != request.EndDate {
+		body["EndDate"] = *request.EndDate
+	}
+
 	body["hideForwards"] = func() string {
-		if *request.HideForwards == true {
+		if nil != request.HideForwards && *request.HideForwards == true {
 			return "1"
 		} else {
 			return "0"
 		}
 	}()
 	body["strongSearch"] = func() string {
-		if *request.StrongSearch == true {
+		if nil != request.StrongSearch && *request.StrongSearch == true {
 			return "1"
 		} else {
 			return "0"
 		}
 	}()
-	body["minusWords"] = *request.MinusWords
+
+	if nil != request.MinusWords {
+		body["minusWords"] = *request.MinusWords
+	}
+
 	body["extendedSyntax"] = func() string {
-		if *request.ExtendedSyntax == true {
+		if nil != request.ExtendedSyntax && *request.ExtendedSyntax == true {
 			return "1"
 		} else {
 			return "0"
