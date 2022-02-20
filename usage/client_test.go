@@ -15,9 +15,8 @@ import (
 
 func prepareClient(URL string) {
 	cfg := tgstat.ClientConfig{
-		"token",
-		false,
-		"http://local",
+		Token:    "token",
+		Endpoint: "http://local",
 	}
 	tgstat.SetConfig(cfg)
 	tgstat.WithEndpoint(URL)
@@ -26,8 +25,11 @@ func prepareClient(URL string) {
 func TestClient_UsageStat(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
+		//testServer := server.NewServer()
+		//defer testServer.Teardown()
+		prepareClient("http://localhost123")
 
-		_, _, err := UsageStat(context.Background())
+		_, _, err := Stat(context.Background())
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("no such host"))
 	})
@@ -49,15 +51,22 @@ func TestClient_UsageStat(t *testing.T) {
 					SpentRequests string `json:"spentRequests"`
 					ExpiredAt     int    `json:"expiredAt"`
 					SpentWords    string `json:"spentWords,omitempty"`
-				}{{ServiceKey: "api_stat_l", Title: "Доступ к Stat API (тариф L)", SpentChannels: "1989/2500", SpentRequests: "89152/400000", ExpiredAt: 1542732689, SpentWords: "111/11"}},
+				}{{
+					ServiceKey:    "api_stat_l",
+					Title:         "Доступ к Stat API (тариф L)",
+					SpentChannels: "1989/2500",
+					SpentRequests: "89152/400000",
+					ExpiredAt:     1542732689,
+					SpentWords:    "111/11",
+				}},
 			})
 		})
 
-		response, _, err := UsageStat(context.Background())
+		response, _, err := Stat(context.Background())
 		Expect(err).ToNot(HaveOccurred())
+
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
-			"ServiceKey": ContainSubstring("stat"),
-			"Title":      ContainSubstring("Stat"),
+			"Status": ContainSubstring("ok"),
 		})))
 	})
 }
