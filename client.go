@@ -31,7 +31,6 @@ var apis APIs
 
 type API interface {
 	NewRestRequest(ctx context.Context, method, urlPath string, data map[string]string) (*http.Request, error)
-	NewRequest(ctx context.Context, method, urlPath string, data interface{}) (*http.Request, error)
 	Do(r *http.Request, v interface{}) (*http.Response, error)
 }
 
@@ -90,41 +89,6 @@ var newRestRequest = func(c *Client, ctx context.Context, method, urlPath string
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	req = req.WithContext(ctx)
-	return req, nil
-}
-
-// NewRequest creates an HTTP request against the API (mobile payments). The returned request
-// is assigned with ctx and has all necessary headers set (auth, user agent, etc.).
-// NewRestRequest creates an HTTP request against the API with 'rest' in path. The returned request
-// is assigned with ctx and has all necessary headers set (auth, user agent, etc.).
-func (c *Client) NewRequest(ctx context.Context, method, urlPath string, data interface{}) (*http.Request, error) {
-	return newRequest(c, ctx, method, urlPath, data)
-}
-
-var newRequest = func(c *Client, ctx context.Context, method, urlPath string, data interface{}) (*http.Request, error) {
-	if strings.Contains(urlPath, "rest") {
-		return nil, fmt.Errorf("path contains rest request, use NewRestRequest instead")
-	}
-
-	uri := APIURI + urlPath
-
-	if c.Config.Endpoint != "" {
-		uri = c.Config.Endpoint + urlPath
-	}
-
-	reqBodyData, _ := json.Marshal(data)
-
-	req, err := http.NewRequest(method, uri, bytes.NewReader(reqBodyData))
-
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Cache-Control", "no-cache")
-	req.Header.Set("Content-Type", "application/json")
-
-	req = req.WithContext(ctx)
-
 	return req, nil
 }
 
