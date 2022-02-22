@@ -13,8 +13,8 @@ import (
 )
 
 type Client struct {
-	API   tgstat.API
-	Token string
+	api   tgstat.API
+	token string
 }
 
 func PostGet(ctx context.Context, postId string) (*schema.PostResponse, *http.Response, error) {
@@ -30,14 +30,14 @@ func (c Client) PostGet(ctx context.Context, postId string) (*schema.PostRespons
 
 	body := make(map[string]string)
 	body["postId"] = postId
-	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.PostResponse
-	result, err := c.API.Do(req, &response)
+	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -75,14 +75,14 @@ func (c Client) PostStat(ctx context.Context, request PostStatRequest) (*schema.
 		body["group"] = *request.Group
 	}
 
-	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.PostStatResponse
-	result, err := c.API.Do(req, &response)
+	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -126,14 +126,14 @@ func (c Client) PostSearch(ctx context.Context, request PostSearchRequest) (*sch
 
 	body := makeRequestBody(request)
 
-	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.PostSearchResponse
-	result, err := c.API.Do(req, &response)
+	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -157,14 +157,14 @@ func (c Client) PostSearchExtended(ctx context.Context, request PostSearchReques
 
 	body["extended"] = "1"
 
-	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.PostSearchExtendedResponse
-	result, err := c.API.Do(req, &response)
+	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
