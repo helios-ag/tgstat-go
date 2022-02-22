@@ -10,8 +10,8 @@ import (
 )
 
 type Client struct {
-	API   tgstat.API
-	Token string
+	api   tgstat.API
+	token string
 }
 
 func CountriesGet(ctx context.Context, lang string) (*schema.CountryResponse, *http.Response, error) {
@@ -23,14 +23,14 @@ func (c Client) CountriesGet(ctx context.Context, lang string) (*schema.CountryR
 
 	body := make(map[string]string)
 	body["lang"] = lang
-	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.CountryResponse
-	result, err := c.API.Do(req, &response)
+	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -49,14 +49,14 @@ func (c Client) CategoriesGet(ctx context.Context, lang string) (*schema.Categor
 	body := make(map[string]string)
 	body["lang"] = lang
 
-	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.CategoryResponse
-	result, err := c.API.Do(req, &response)
+	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -74,14 +74,14 @@ func (c Client) LanguagesGet(ctx context.Context, lang string) (*schema.Language
 
 	body := make(map[string]string)
 	body["lang"] = lang
-	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.LanguageResponse
-	result, err := c.API.Do(req, &response)
+	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
