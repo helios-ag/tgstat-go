@@ -46,11 +46,6 @@ type Client struct {
 	httpClient *http.Client
 }
 
-// Body struct
-type Body struct {
-	Token *string `json:"token"`
-}
-
 // ClientOption is used to configure a Client.
 type ClientOption func(*Client)
 
