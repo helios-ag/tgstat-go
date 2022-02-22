@@ -10,8 +10,8 @@ import (
 )
 
 type Client struct {
-	API   tgstat.API
-	Token string
+	api   tgstat.API
+	token string
 }
 
 func Stat(ctx context.Context) (*schema.StatResponse, *http.Response, error) {
@@ -22,14 +22,14 @@ func (c Client) Stat(ctx context.Context) (*schema.StatResponse, *http.Response,
 	path := endpoints.UsageStat
 
 	body := make(map[string]string)
-	req, err := c.API.NewRestRequest(ctx, http.MethodGet, path, body)
+	req, err := c.api.NewRestRequest(ctx, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.StatResponse
-	result, err := c.API.Do(req, &response)
+	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}

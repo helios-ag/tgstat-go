@@ -15,8 +15,8 @@ import (
 
 func prepareClient(URL string) {
 	cfg := tgstat.ClientConfig{
-		Token:    "token",
-		Endpoint: "http://local",
+		Token: "token",
+		URL:   "http://local",
 	}
 	tgstat.SetConfig(cfg)
 	tgstat.WithEndpoint(URL)
@@ -25,8 +25,6 @@ func prepareClient(URL string) {
 func TestClient_UsageStat(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
-		//testServer := server.NewServer()
-		//defer testServer.Teardown()
 		prepareClient("http://localhost123")
 
 		_, _, err := Stat(context.Background())
