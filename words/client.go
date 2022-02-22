@@ -11,8 +11,8 @@ import (
 )
 
 type Client struct {
-	API   tgstat.API
-	Token string
+	api   tgstat.API
+	token string
 }
 
 type MentionPeriodRequest struct {
@@ -88,14 +88,14 @@ func (c Client) MentionsByPeriod(ctx context.Context, request MentionPeriodReque
 			return "0"
 		}
 	}()
-	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.WordsMentionsResponse
-	result, err := c.API.Do(req, &response)
+	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
@@ -173,14 +173,14 @@ func (c Client) MentionsByChannels(ctx context.Context, request MentionsByChanne
 		}
 	}()
 
-	req, err := c.API.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var response schema.WordsMentionsResponse
-	result, err := c.API.Do(req, &response)
+	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
 	}
