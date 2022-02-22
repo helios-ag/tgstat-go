@@ -18,8 +18,8 @@ import (
 
 func getCfg(url string) *ClientConfig {
 	cfg := ClientConfig{
-		Token:    "token",
-		Endpoint: url,
+		Token: "token",
+		URL:   url,
 	}
 	return &cfg
 }
@@ -28,8 +28,8 @@ func TestNewClient(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test trailing slashes remove", func(t *testing.T) {
 		client, _ := NewClient(getCfg("localhost"))
-		if strings.HasSuffix(client.Config.Endpoint, "/") {
-			t.Fatalf("endpoint has trailing slashes: %q", client.Config.Endpoint)
+		if strings.HasSuffix(client.Config.URL, "/") {
+			t.Fatalf("endpoint has trailing slashes: %q", client.Config.URL)
 		}
 	})
 	t.Run("Test getting error response", func(t *testing.T) {
@@ -218,8 +218,8 @@ func TestNewRequest(t *testing.T) {
 	t.Run("Test improper Config url", func(t *testing.T) {
 		_, err := NewClient(
 			&ClientConfig{
-				Token:    "asdad",
-				Endpoint: "http\\:wrongUrl",
+				Token: "asdad",
+				URL:   "http\\:wrongUrl",
 			},
 		)
 

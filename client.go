@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	APIURI string = "https://api.tgstat.ru"
+	APIURL string = "https://api.tgstat.ru"
 )
 
 // APIs are the currently supported endpoints.
@@ -36,8 +36,8 @@ type API interface {
 
 // ClientConfig is used to set client configuration
 type ClientConfig struct {
-	Token    string
-	Endpoint string
+	Token string
+	URL   string
 }
 
 // Client is a client to SB API
@@ -56,7 +56,7 @@ type ClientOption func(*Client)
 
 // WithEndpoint configures a Client to use the specified API endpoint.
 func WithEndpoint(endpoint string) {
-	cfg.Endpoint = strings.TrimRight(endpoint, "/")
+	cfg.URL = strings.TrimRight(endpoint, "/")
 }
 
 func (c *Client) NewRestRequest(ctx context.Context, method, urlPath string, data map[string]string) (*http.Request, error) {
@@ -64,10 +64,10 @@ func (c *Client) NewRestRequest(ctx context.Context, method, urlPath string, dat
 }
 
 var newRestRequest = func(c *Client, ctx context.Context, method, urlPath string, data map[string]string) (*http.Request, error) {
-	uri := APIURI + urlPath
+	uri := APIURL + urlPath
 
-	if c.Config.Endpoint != "" {
-		uri = c.Config.Endpoint + urlPath
+	if c.Config.URL != "" {
+		uri = c.Config.URL + urlPath
 	}
 
 	body := url.Values{}
@@ -149,7 +149,7 @@ func (c *ClientConfig) validate() error {
 		return errors.New("token can't be empty")
 	}
 
-	if _, err := url.Parse(c.Endpoint); err != nil {
+	if _, err := url.Parse(c.URL); err != nil {
 		return fmt.Errorf("unable to parse URL: %v", err)
 	}
 
@@ -201,6 +201,10 @@ func GetAPI(options ...ClientOption) API {
 
 	if api != nil {
 		return api
+	}
+
+	if cfg.URL == "" {
+		cfg.URL = APIURL
 	}
 
 	return newAPI(&cfg, options...)
