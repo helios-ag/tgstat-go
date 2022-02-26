@@ -32,7 +32,7 @@ func (c Client) Get(ctx context.Context, channelId string) (*schema.ChannelRespo
 
 	body := make(map[string]string)
 	body["channelId"] = channelId
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -98,7 +98,7 @@ func (c Client) Search(ctx context.Context, request SearchRequest) (*schema.Chan
 		body["limit"] = strconv.Itoa(*request.Limit)
 	}
 
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -127,7 +127,7 @@ func (c Client) Stat(ctx context.Context, channelId string) (*schema.ChannelStat
 
 	body := make(map[string]string)
 	body["channelId"] = channelId
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -203,7 +203,7 @@ func (c Client) Posts(ctx context.Context, request PostsRequest) (*schema.Channe
 
 	body["extended"] = "0"
 
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -258,7 +258,7 @@ func (c Client) PostsExtended(ctx context.Context, request PostsRequest) (*schem
 
 	body["extended"] = "1"
 
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -324,7 +324,7 @@ func (c Client) Mentions(ctx context.Context, request ChannelMentionsRequest) (*
 
 	body["extended"] = "0"
 
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -373,7 +373,7 @@ func (c Client) MentionsExtended(ctx context.Context, request ChannelMentionsReq
 
 	body["extended"] = "1"
 
-	req, err := c.api.NewRestRequest(ctx, http.MethodGet, path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -438,7 +438,7 @@ func (c Client) Forwards(ctx context.Context, request ChannelForwardRequest) (*s
 
 	body["extended"] = "0"
 
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -487,7 +487,7 @@ func (c Client) ForwardsExtended(ctx context.Context, request ChannelForwardRequ
 
 	body["extended"] = "1"
 
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -543,7 +543,7 @@ func (c Client) Subscribers(ctx context.Context, request ChannelSubscribersReque
 		body["group"] = *request.Group
 	}
 
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -599,7 +599,7 @@ func (c Client) Views(ctx context.Context, request ChannelViewsRequest) (*schema
 		body["group"] = *request.Group
 	}
 
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -655,7 +655,7 @@ func (c Client) Add(ctx context.Context, request ChannelAddRequest) (*schema.Cha
 		body["category"] = *request.Category
 	}
 
-	req, err := c.api.NewRestRequest(ctx, "POST", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodPost, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -697,7 +697,7 @@ func (c Client) AvgPostsReach(ctx context.Context, request ChannelViewsRequest) 
 		body["group"] = *request.Group
 	}
 
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -739,7 +739,7 @@ func (c Client) Err(ctx context.Context, request ChannelViewsRequest) (*schema.C
 		body["group"] = *request.Group
 	}
 
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err

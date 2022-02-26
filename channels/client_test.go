@@ -16,7 +16,7 @@ import (
 func prepareClient(URL string) {
 	cfg := tgstat.ClientConfig{
 		Token: "token",
-		URL:   "http://local",
+		Url:   "http://local",
 	}
 	tgstat.SetConfig(cfg)
 	tgstat.WithEndpoint(URL)
@@ -29,7 +29,7 @@ func TestClient_ChannelGet(t *testing.T) {
 
 		channelId := ""
 
-		_, _, err := ChannelGet(context.Background(), channelId)
+		_, _, err := Get(context.Background(), channelId)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("ChannelID must be set"))
 	})
@@ -63,7 +63,7 @@ func TestClient_ChannelGet(t *testing.T) {
 
 		channelId := "test"
 
-		response, _, err := ChannelGet(context.Background(), channelId)
+		response, _, err := Get(context.Background(), channelId)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": Equal("ok"),

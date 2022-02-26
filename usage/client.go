@@ -22,7 +22,7 @@ func (c Client) Stat(ctx context.Context) (*schema.StatResponse, *http.Response,
 	path := endpoints.UsageStat
 
 	body := make(map[string]string)
-	req, err := c.api.NewRestRequest(ctx, http.MethodGet, path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -39,5 +39,8 @@ func (c Client) Stat(ctx context.Context) (*schema.StatResponse, *http.Response,
 }
 
 func getClient() Client {
-	return Client{tgstat.GetAPI(), tgstat.Token}
+	return Client{
+		tgstat.GetAPI(),
+		tgstat.Token,
+	}
 }

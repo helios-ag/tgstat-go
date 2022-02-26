@@ -30,14 +30,14 @@ var Token string
 var apis APIs
 
 type API interface {
-	NewRestRequest(ctx context.Context, method, urlPath string, data map[string]string) (*http.Request, error)
+	NewRestRequest(ctx context.Context, token, method, urlPath string, data map[string]string) (*http.Request, error)
 	Do(r *http.Request, v interface{}) (*http.Response, error)
 }
 
 // ClientConfig is used to set client configuration
 type ClientConfig struct {
 	Token string
-	URL   string
+	Url   string
 }
 
 // Client is a client to SB API
@@ -51,37 +51,45 @@ type ClientOption func(*Client)
 
 // WithEndpoint configures a Client to use the specified API endpoint.
 func WithEndpoint(endpoint string) {
-	cfg.URL = strings.TrimRight(endpoint, "/")
+	cfg.Url = strings.TrimRight(endpoint, "/")
 }
 
-func (c *Client) NewRestRequest(ctx context.Context, method, urlPath string, data map[string]string) (*http.Request, error) {
-	return newRestRequest(c, ctx, method, urlPath, data)
+func (c *Client) NewRestRequest(ctx context.Context, token, method, urlPath string, data map[string]string) (*http.Request, error) {
+	return newRestRequest(c, ctx, token, method, urlPath, data)
 }
 
-var newRestRequest = func(c *Client, ctx context.Context, method, urlPath string, data map[string]string) (*http.Request, error) {
+var newRestRequest = func(c *Client, ctx context.Context, token, method, urlPath string, data map[string]string) (*http.Request, error) {
 	uri := APIURL + urlPath
 
-	if c.Config.URL != "" {
-		uri = c.Config.URL + urlPath
+	if c.Config.Url != "" {
+		uri = c.Config.Url + urlPath
 	}
-
+	//var body string
 	body := url.Values{}
 
 	for key, value := range data {
 		body.Add(key, value)
 	}
 
-	body.Add("token", c.Config.Token)
+	body.Add("token", token)
 
-	reqData := body.Encode()
-	req, err := http.NewRequest(method, uri, strings.NewReader(reqData))
+	reqBodyData, _ := json.Marshal(body)
+	// On `GET`, move the payload into the URL
+	if method == http.MethodGet {
+		uri += "?" + body.Encode()
+		reqBodyData = nil
+	}
+	//bodyBuffer := bytes.NewBufferString(body.Encode())
+
+	//reqBodyData, _ := json.Marshal(body)
+	req, err := http.NewRequest(method, uri, bytes.NewReader(reqBodyData))
 
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Set("Cache-Control", "no-cache")
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Content-Type", "application/json")
 
 	req = req.WithContext(ctx)
 	return req, nil
@@ -144,7 +152,7 @@ func (c *ClientConfig) validate() error {
 		return errors.New("token can't be empty")
 	}
 
-	if _, err := url.Parse(c.URL); err != nil {
+	if _, err := url.Parse(c.Url); err != nil {
 		return fmt.Errorf("unable to parse URL: %v", err)
 	}
 
@@ -198,8 +206,8 @@ func GetAPI(options ...ClientOption) API {
 		return api
 	}
 
-	if cfg.URL == "" {
-		cfg.URL = APIURL
+	if cfg.Url == "" {
+		cfg.Url = APIURL
 	}
 
 	return newAPI(&cfg, options...)

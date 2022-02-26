@@ -88,7 +88,7 @@ func (c Client) MentionsByPeriod(ctx context.Context, request MentionPeriodReque
 			return "0"
 		}
 	}()
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -173,7 +173,7 @@ func (c Client) MentionsByChannels(ctx context.Context, request MentionsByChanne
 		}
 	}()
 
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err

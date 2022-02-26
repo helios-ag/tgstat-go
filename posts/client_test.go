@@ -16,7 +16,7 @@ import (
 func prepareClient(URL string) {
 	cfg := tgstat.ClientConfig{
 		Token: "token",
-		URL:   "http://local",
+		Url:   "http://local",
 	}
 	tgstat.SetConfig(cfg)
 	tgstat.WithEndpoint(URL)
@@ -26,7 +26,7 @@ func TestClient_PostsGet(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
 		prepareClient("http://local123")
-		_, _, err := PostGet(context.Background(), "t.me/123")
+		_, _, err := Get(context.Background(), "t.me/123")
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("no such host"))
 	})
@@ -74,7 +74,7 @@ func TestClient_PostsGet(t *testing.T) {
 			})
 		})
 
-		response, _, err := PostGet(context.Background(), "t.me/123")
+		response, _, err := Get(context.Background(), "t.me/123")
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": ContainSubstring("ok"),

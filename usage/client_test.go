@@ -16,7 +16,7 @@ import (
 func prepareClient(URL string) {
 	cfg := tgstat.ClientConfig{
 		Token: "token",
-		URL:   "http://local",
+		Url:   "http://local",
 	}
 	tgstat.SetConfig(cfg)
 	tgstat.WithEndpoint(URL)
@@ -47,7 +47,7 @@ func TestClient_UsageStat(t *testing.T) {
 					Title         string `json:"title"`
 					SpentChannels string `json:"spentChannels,omitempty"`
 					SpentRequests string `json:"spentRequests"`
-					ExpiredAt     int    `json:"expiredAt"`
+					ExpiredAt     int64  `json:"expiredAt"`
 					SpentWords    string `json:"spentWords,omitempty"`
 				}{{
 					ServiceKey:    "api_stat_l",

@@ -17,11 +17,11 @@ type Client struct {
 	token string
 }
 
-func PostGet(ctx context.Context, postId string) (*schema.PostResponse, *http.Response, error) {
-	return getClient().PostGet(ctx, postId)
+func Get(ctx context.Context, postId string) (*schema.PostResponse, *http.Response, error) {
+	return getClient().Get(ctx, postId)
 }
 
-func (c Client) PostGet(ctx context.Context, postId string) (*schema.PostResponse, *http.Response, error) {
+func (c Client) Get(ctx context.Context, postId string) (*schema.PostResponse, *http.Response, error) {
 	path := endpoints.PostsGet
 
 	if postId == "" {
@@ -30,7 +30,7 @@ func (c Client) PostGet(ctx context.Context, postId string) (*schema.PostRespons
 
 	body := make(map[string]string)
 	body["postId"] = postId
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -75,7 +75,7 @@ func (c Client) PostStat(ctx context.Context, request PostStatRequest) (*schema.
 		body["group"] = *request.Group
 	}
 
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -126,7 +126,7 @@ func (c Client) PostSearch(ctx context.Context, request PostSearchRequest) (*sch
 
 	body := makeRequestBody(request)
 
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -157,7 +157,7 @@ func (c Client) PostSearchExtended(ctx context.Context, request PostSearchReques
 
 	body["extended"] = "1"
 
-	req, err := c.api.NewRestRequest(ctx, "GET", path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err

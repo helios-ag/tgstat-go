@@ -7,7 +7,7 @@ type StatResponse struct {
 		Title         string `json:"title"`
 		SpentChannels string `json:"spentChannels,omitempty"`
 		SpentRequests string `json:"spentRequests"`
-		ExpiredAt     int    `json:"expiredAt"`
+		ExpiredAt     int64  `json:"expiredAt"`
 		SpentWords    string `json:"spentWords,omitempty"`
 	} `json:"response"`
 }

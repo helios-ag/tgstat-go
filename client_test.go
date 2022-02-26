@@ -19,7 +19,7 @@ import (
 func getCfg(url string) *ClientConfig {
 	cfg := ClientConfig{
 		Token: "token",
-		URL:   url,
+		Url:   url,
 	}
 	return &cfg
 }
@@ -28,8 +28,8 @@ func TestNewClient(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test trailing slashes remove", func(t *testing.T) {
 		client, _ := NewClient(getCfg("localhost"))
-		if strings.HasSuffix(client.Config.URL, "/") {
-			t.Fatalf("endpoint has trailing slashes: %q", client.Config.URL)
+		if strings.HasSuffix(client.Config.Url, "/") {
+			t.Fatalf("endpoint has trailing slashes: %q", client.Config.Url)
 		}
 	})
 	t.Run("Test getting error response", func(t *testing.T) {
@@ -45,7 +45,7 @@ func TestNewClient(t *testing.T) {
 		client, _ := NewClient(getCfg(newServer.URL))
 
 		ctx := context.Background()
-		_, err := client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
+		_, err := client.NewRestRequest(ctx, client.Config.Token, http.MethodGet, endpoints.ChannelsGet, nil)
 		Expect(err).ShouldNot(HaveOccurred())
 	})
 }
@@ -69,7 +69,7 @@ func TestClientDo(t *testing.T) {
 		ctx := context.Background()
 		client, _ := NewClient(getCfg(newServer.URL))
 
-		request, _ := client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
+		request, _ := client.NewRestRequest(ctx, client.Config.Token, http.MethodGet, endpoints.ChannelsGet, nil)
 		_, err := client.Do(request, nil)
 
 		Expect(err).To(HaveOccurred())
@@ -93,7 +93,7 @@ func TestClientDo(t *testing.T) {
 
 		ctx := context.Background()
 		client, _ := NewClient(getCfg(newServer.URL))
-		request, _ := client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
+		request, _ := client.NewRestRequest(ctx, client.Config.Token, http.MethodGet, endpoints.ChannelsGet, nil)
 		_, err := client.Do(request, nil)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -105,11 +105,10 @@ func TestClientDo(t *testing.T) {
 		//prepareClient(newServer.URL)
 		newServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Bad Request", http.StatusBadRequest)
-			return
 		})
 		client, _ := NewClient(getCfg(newServer.URL))
 		ctx := context.Background()
-		request, _ := client.NewRestRequest(ctx, http.MethodGet, endpoints.ChannelsGet, nil)
+		request, _ := client.NewRestRequest(ctx, client.Config.Token, http.MethodGet, endpoints.ChannelsGet, nil)
 		_, err := client.Do(request, nil)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("tgstat server responded with status code 400"))
@@ -206,11 +205,11 @@ func TestNewRequest(t *testing.T) {
 		)
 		ctx := context.Background()
 		// Cyrillic M
-		_, err := client.NewRestRequest(ctx, "М", endpoints.ChannelsGet, nil)
+		_, err := client.NewRestRequest(ctx, client.Config.Token, "М", endpoints.ChannelsGet, nil)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("invalid method"))
 
-		_, err = client.NewRestRequest(ctx, "GET", "htt\\wrongUrl", nil)
+		_, err = client.NewRestRequest(ctx, client.Config.Token, http.MethodGet, "htt\\wrongUrl", nil)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("invalid character"))
 	})
@@ -219,7 +218,7 @@ func TestNewRequest(t *testing.T) {
 		_, err := NewClient(
 			&ClientConfig{
 				Token: "asdad",
-				URL:   "http\\:wrongUrl",
+				Url:   "http\\:wrongUrl",
 			},
 		)
 

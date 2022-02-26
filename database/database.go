@@ -23,7 +23,7 @@ func (c Client) CountriesGet(ctx context.Context, lang string) (*schema.CountryR
 
 	body := make(map[string]string)
 	body["lang"] = lang
-	req, err := c.api.NewRestRequest(ctx, http.MethodGet, path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -49,7 +49,7 @@ func (c Client) CategoriesGet(ctx context.Context, lang string) (*schema.Categor
 	body := make(map[string]string)
 	body["lang"] = lang
 
-	req, err := c.api.NewRestRequest(ctx, http.MethodGet, path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
@@ -74,7 +74,7 @@ func (c Client) LanguagesGet(ctx context.Context, lang string) (*schema.Language
 
 	body := make(map[string]string)
 	body["lang"] = lang
-	req, err := c.api.NewRestRequest(ctx, http.MethodGet, path, body)
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
 	if err != nil {
 		return nil, nil, err
