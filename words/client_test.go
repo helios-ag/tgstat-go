@@ -13,11 +13,7 @@ import (
 )
 
 func prepareClient(URL string) {
-	cfg := tgstat.ClientConfig{
-		Token: "token",
-		Url:   "http://local",
-	}
-	tgstat.SetConfig(cfg)
+	tgstat.Token = "token"
 	tgstat.WithEndpoint(URL)
 }
 

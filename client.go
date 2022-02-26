@@ -34,24 +34,20 @@ type API interface {
 	Do(r *http.Request, v interface{}) (*http.Response, error)
 }
 
-// ClientConfig is used to set client configuration
-type ClientConfig struct {
-	Token string
-	Url   string
-}
-
-// Client is a client to SB API
+// Client is a client to TG Stat API
 type Client struct {
-	Config     *ClientConfig
+	Url        string
 	httpClient *http.Client
 }
+
+var TGStatClient Client
 
 // ClientOption is used to configure a Client.
 type ClientOption func(*Client)
 
 // WithEndpoint configures a Client to use the specified API endpoint.
 func WithEndpoint(endpoint string) {
-	cfg.Url = strings.TrimRight(endpoint, "/")
+	TGStatClient.Url = strings.TrimRight(endpoint, "/")
 }
 
 func (c *Client) NewRestRequest(ctx context.Context, token, method, urlPath string, data map[string]string) (*http.Request, error) {
@@ -61,9 +57,18 @@ func (c *Client) NewRestRequest(ctx context.Context, token, method, urlPath stri
 var newRestRequest = func(c *Client, ctx context.Context, token, method, urlPath string, data map[string]string) (*http.Request, error) {
 	uri := APIURL + urlPath
 
-	if c.Config.Url != "" {
-		uri = c.Config.Url + urlPath
+	if c == nil {
+		return nil, errors.New("client not configured")
 	}
+
+	if c.Url != "" {
+		uri = c.Url + urlPath
+	}
+
+	if token == "" {
+		return nil, errors.New("token not found")
+	}
+
 	//var body string
 	body := url.Values{}
 
@@ -72,16 +77,13 @@ var newRestRequest = func(c *Client, ctx context.Context, token, method, urlPath
 	}
 
 	body.Add("token", token)
-
 	reqBodyData, _ := json.Marshal(body)
 	// On `GET`, move the payload into the URL
 	if method == http.MethodGet {
 		uri += "?" + body.Encode()
 		reqBodyData = nil
 	}
-	//bodyBuffer := bytes.NewBufferString(body.Encode())
 
-	//reqBodyData, _ := json.Marshal(body)
 	req, err := http.NewRequest(method, uri, bytes.NewReader(reqBodyData))
 
 	if err != nil {
@@ -147,30 +149,19 @@ func errorFromResponse(resp *http.Response, body []byte) error {
 	return fmt.Errorf(respBody.Error)
 }
 
-func (c *ClientConfig) validate() error {
-	if c.Token == "" {
-		return errors.New("token can't be empty")
-	}
-
-	if _, err := url.Parse(c.Url); err != nil {
-		return fmt.Errorf("unable to parse URL: %v", err)
-	}
-
-	return nil
-}
-
 // NewClient creates a new client.
-func NewClient(cfg *ClientConfig, options ...ClientOption) (*Client, error) {
-	if cfg == nil {
-		return nil, fmt.Errorf("passed in config cannot be nil")
+func newClient(uri string, options ...ClientOption) (*Client, error) {
+
+	if uri == "" {
+		return nil, errors.New("URL is empty")
 	}
 
-	if err := cfg.validate(); err != nil {
-		return nil, fmt.Errorf("unable to validate given config: %v", err)
+	if _, err := url.ParseRequestURI(uri); err != nil {
+		return nil, fmt.Errorf("unable to parse URL: %v", err)
 	}
 
 	client := &Client{
-		Config:     cfg,
+		Url:        uri,
 		httpClient: &http.Client{},
 	}
 
@@ -182,9 +173,9 @@ func NewClient(cfg *ClientConfig, options ...ClientOption) (*Client, error) {
 }
 
 // newAPI creates a new client.
-func newAPI(cfg *ClientConfig, options ...ClientOption) *Client {
+func newAPI(url string, options ...ClientOption) *Client {
 	client := &Client{
-		Config:     cfg,
+		Url:        url,
 		httpClient: &http.Client{},
 	}
 
@@ -206,15 +197,9 @@ func GetAPI(options ...ClientOption) API {
 		return api
 	}
 
-	if cfg.Url == "" {
-		cfg.Url = APIURL
+	if TGStatClient.Url == "" {
+		TGStatClient.Url = APIURL
 	}
 
-	return newAPI(&cfg, options...)
-}
-
-var cfg ClientConfig
-
-func SetConfig(config ClientConfig) {
-	cfg = config
+	return newAPI(TGStatClient.Url, options...)
 }

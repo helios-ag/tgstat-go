@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/usage"
 	"os"
 	"time"
@@ -18,7 +19,6 @@ func getToken() (key string, err error) {
 }
 
 func main() {
-
 	token, err := getToken()
 
 	if err != nil {
@@ -26,13 +26,15 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Printf("Token is %s\n", token)
+
+	tgstat.Token = token
 	stat, _, err := usage.Stat(context.Background())
 
 	if err != nil {
 		fmt.Printf("error getting data: %v\n", err)
 		os.Exit(1)
 	}
-	fmt.Printf("No error\n")
+
 	for _, info := range stat.Response {
 		fmt.Printf("ServiceKey: %s\n", info.ServiceKey)
 		fmt.Printf("Title: %s\n", info.Title)
