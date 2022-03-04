@@ -116,13 +116,11 @@ func (c *Client) Do(r *http.Request, v interface{}) (*http.Response, error) {
 	resp.Body.Close()
 	resp.Body = ioutil.NopCloser(bytes.NewReader(body))
 
-	if resp.StatusCode >= 400 && resp.StatusCode <= 599 {
-		err = errorFromResponse(resp, body)
-		if err == nil {
-			err = fmt.Errorf("tgstat server responded with status code %d", resp.StatusCode)
-		}
+	err = errorFromResponse(resp, body)
+	if err != nil {
 		return resp, err
 	}
+
 	if v != nil {
 		if w, ok := v.(io.Writer); ok {
 			_, err = io.Copy(w, bytes.NewReader(body))
