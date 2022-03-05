@@ -14,10 +14,14 @@ type Client struct {
 	token string
 }
 
+// Stat request
+// see https://api.tgstat.ru/docs/ru/usage/stat.html
 func Stat(ctx context.Context) (*schema.StatResponse, *http.Response, error) {
 	return getClient().Stat(ctx)
 }
 
+// Stat request
+// see https://api.tgstat.ru/docs/ru/usage/stat.html
 func (c Client) Stat(ctx context.Context) (*schema.StatResponse, *http.Response, error) {
 	path := endpoints.UsageStat
 
