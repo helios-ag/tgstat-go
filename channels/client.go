@@ -72,7 +72,8 @@ func (searchRequest SearchRequest) Validate() error {
 	)
 }
 
-// Search
+// Search request
+// see https://api.tgstat.ru/docs/ru/channels/search.html
 func Search(ctx context.Context, request SearchRequest) (*schema.ChannelSearchResponse, *http.Response, error) {
 	return getClient().Search(ctx, request)
 }
@@ -114,10 +115,14 @@ func (c Client) Search(ctx context.Context, request SearchRequest) (*schema.Chan
 	return &response, result, err
 }
 
+// Stat request
+// See https://api.tgstat.ru/docs/ru/channels/stat.html
 func Stat(ctx context.Context, channelId string) (*schema.ChannelStatResponse, *http.Response, error) {
 	return getClient().Stat(ctx, channelId)
 }
 
+// Stat request
+// See https://api.tgstat.ru/docs/ru/channels/stat.html
 func (c Client) Stat(ctx context.Context, channelId string) (*schema.ChannelStatResponse, *http.Response, error) {
 	path := endpoints.ChannelsStat
 
@@ -165,10 +170,14 @@ func (postsRequest PostsRequest) Validate() error {
 	)
 }
 
+// Posts request
+// see https://api.tgstat.ru/docs/ru/channels/posts.html
 func Posts(ctx context.Context, request PostsRequest) (*schema.ChannelPostsResponse, *http.Response, error) {
 	return getClient().Posts(ctx, request)
 }
 
+// Posts request
+// see https://api.tgstat.ru/docs/ru/channels/posts.html
 func (c Client) Posts(ctx context.Context, request PostsRequest) (*schema.ChannelPostsResponse, *http.Response, error) {
 	path := endpoints.ChannelsStat
 
@@ -219,10 +228,14 @@ func (c Client) Posts(ctx context.Context, request PostsRequest) (*schema.Channe
 	return &response, result, err
 }
 
+// PostsExtended request extended
+// see https://api.tgstat.ru/docs/ru/channels/posts.html
 func PostsExtended(ctx context.Context, request PostsRequest) (*schema.ChannelPostsWithChannelResponse, *http.Response, error) {
 	return getClient().PostsExtended(ctx, request)
 }
 
+// PostsExtended request extended
+// see https://api.tgstat.ru/docs/ru/channels/posts.html
 func (c Client) PostsExtended(ctx context.Context, request PostsRequest) (*schema.ChannelPostsWithChannelResponse, *http.Response, error) {
 	path := endpoints.ChannelsStat
 
@@ -292,10 +305,15 @@ func (channelMentionsRequest ChannelMentionsRequest) Validate() error {
 		validation.Field(&channelMentionsRequest.EndDate, validation.Date("1643113399")),
 	)
 }
+
+// Mentions request
+// see https://api.tgstat.ru/docs/ru/channels/mentions.html
 func Mentions(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentions, *http.Response, error) {
 	return getClient().Mentions(ctx, request)
 }
 
+// Mentions request
+// see https://api.tgstat.ru/docs/ru/channels/mentions.html
 func (c Client) Mentions(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentions, *http.Response, error) {
 	path := endpoints.ChannelsMentions
 
@@ -341,10 +359,14 @@ func (c Client) Mentions(ctx context.Context, request ChannelMentionsRequest) (*
 	return &response, result, err
 }
 
+// MentionsExtended request
+// see https://api.tgstat.ru/docs/ru/channels/mentions.html
 func MentionsExtended(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentionsExtended, *http.Response, error) {
 	return getClient().MentionsExtended(ctx, request)
 }
 
+// MentionsExtended Mentions request
+// see https://api.tgstat.ru/docs/ru/channels/mentions.html
 func (c Client) MentionsExtended(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentionsExtended, *http.Response, error) {
 	path := endpoints.ChannelsMentions
 
@@ -406,10 +428,14 @@ func (channelForwardRequest ChannelForwardRequest) Validate() error {
 	)
 }
 
+// Forwards request
+// see https://api.tgstat.ru/docs/ru/channels/forwards.html
 func Forwards(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwards, *http.Response, error) {
 	return getClient().Forwards(ctx, request)
 }
 
+// Forwards request
+// see https://api.tgstat.ru/docs/ru/channels/forwards.html
 func (c Client) Forwards(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwards, *http.Response, error) {
 	path := endpoints.ChannelsForwards
 
@@ -455,10 +481,14 @@ func (c Client) Forwards(ctx context.Context, request ChannelForwardRequest) (*s
 	return &response, result, err
 }
 
+// ForwardsExtended Forwards request extended
+// see https://api.tgstat.ru/docs/ru/channels/forwards.html
 func ForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwardsExtended, *http.Response, error) {
 	return getClient().ForwardsExtended(ctx, request)
 }
 
+// ForwardsExtended request extended
+// see https://api.tgstat.ru/docs/ru/channels/forwards.html
 func (c Client) ForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwardsExtended, *http.Response, error) {
 	path := endpoints.ChannelsForwards
 
@@ -518,10 +548,14 @@ func (channelSubscribersRequest ChannelSubscribersRequest) Validate() error {
 	)
 }
 
+// Subscribers request
+// see https://api.tgstat.ru/docs/ru/channels/subscribers.html
 func Subscribers(ctx context.Context, request ChannelSubscribersRequest) (*schema.ChannelSubscribers, *http.Response, error) {
 	return getClient().Subscribers(ctx, request)
 }
 
+// Subscribers request
+// see https://api.tgstat.ru/docs/ru/channels/subscribers.html
 func (c Client) Subscribers(ctx context.Context, request ChannelSubscribersRequest) (*schema.ChannelSubscribers, *http.Response, error) {
 	path := endpoints.ChannelsSubscribers
 
@@ -574,10 +608,14 @@ func (channelViewsRequest ChannelViewsRequest) Validate() error {
 	)
 }
 
+// Views request
+// see https://api.tgstat.ru/docs/ru/channels/views.html
 func Views(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelViews, *http.Response, error) {
 	return getClient().Views(ctx, request)
 }
 
+// Views request
+// see https://api.tgstat.ru/docs/ru/channels/views.html
 func (c Client) Views(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelViews, *http.Response, error) {
 	path := endpoints.ChannelsViews
 
@@ -629,10 +667,14 @@ func (channelAddRequest ChannelAddRequest) Validate() error {
 	)
 }
 
+// Add request
+// see https://api.tgstat.ru/docs/ru/channels/add.html
 func Add(ctx context.Context, request ChannelAddRequest) (*schema.ChannelViews, *http.Response, error) {
 	return getClient().Add(ctx, request)
 }
 
+// Add request
+// see https://api.tgstat.ru/docs/ru/channels/add.html
 func (c Client) Add(ctx context.Context, request ChannelAddRequest) (*schema.ChannelViews, *http.Response, error) {
 	path := endpoints.ChannelsAdd
 
@@ -672,10 +714,14 @@ func (c Client) Add(ctx context.Context, request ChannelAddRequest) (*schema.Cha
 	return &response, result, err
 }
 
+// AvgPostsReach request
+// See https://api.tgstat.ru/docs/ru/channels/avg-posts-reach.html
 func AvgPostsReach(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelAvgReach, *http.Response, error) {
 	return getClient().AvgPostsReach(ctx, request)
 }
 
+// AvgPostsReach request
+// See https://api.tgstat.ru/docs/ru/channels/avg-posts-reach.html
 func (c Client) AvgPostsReach(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelAvgReach, *http.Response, error) {
 	path := endpoints.ChannelAVGPostsReach
 
@@ -714,10 +760,14 @@ func (c Client) AvgPostsReach(ctx context.Context, request ChannelViewsRequest) 
 	return &response, result, err
 }
 
+// Err request
+// See https://api.tgstat.ru/docs/ru/channels/err.html
 func Err(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelErr, *http.Response, error) {
 	return getClient().Err(ctx, request)
 }
 
+// Err request
+// See https://api.tgstat.ru/docs/ru/channels/err.html
 func (c Client) Err(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelErr, *http.Response, error) {
 	path := endpoints.ChannelErr
 
