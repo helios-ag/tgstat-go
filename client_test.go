@@ -12,18 +12,11 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"testing"
 )
 
 func TestNewClient(t *testing.T) {
 	RegisterTestingT(t)
-	t.Run("Test trailing slashes remove", func(t *testing.T) {
-		client, _ := newClient("localhost")
-		if strings.HasSuffix(client.Url, "/") {
-			t.Fatalf("endpoint has trailing slashes: %q", client.Url)
-		}
-	})
 	t.Run("Test getting error response", func(t *testing.T) {
 		newServer := server.NewServer()
 		defer newServer.Teardown()
@@ -94,13 +87,12 @@ func TestClientDo(t *testing.T) {
 		newServer := server.NewServer()
 		defer newServer.Teardown()
 
-		//prepareClient(newServer.URL)
 		newServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Bad Request", http.StatusBadRequest)
 		})
 		client, _ := newClient(newServer.URL)
 		ctx := context.Background()
-		request, _ := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, nil)
+		request, _ := client.NewRestRequest(ctx, "Token", http.MethodGet, endpoints.ChannelsGet, nil)
 		_, err := client.Do(request, nil)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("tgstat server responded with status code 400"))

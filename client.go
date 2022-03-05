@@ -121,6 +121,11 @@ func (c *Client) Do(r *http.Request, v interface{}) (*http.Response, error) {
 		return resp, err
 	}
 
+	if resp.StatusCode >= 400 && resp.StatusCode <= 599 {
+		err = fmt.Errorf("tgstat server responded with status code %d", resp.StatusCode)
+		return resp, err
+	}
+
 	if v != nil {
 		if w, ok := v.(io.Writer); ok {
 			_, err = io.Copy(w, bytes.NewReader(body))
