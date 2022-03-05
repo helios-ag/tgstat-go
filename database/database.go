@@ -14,10 +14,14 @@ type Client struct {
 	token string
 }
 
+// CountriesGet request
+// See https://api.tgstat.ru/docs/ru/database/countries.html
 func CountriesGet(ctx context.Context, lang string) (*schema.CountryResponse, *http.Response, error) {
 	return getClient().CountriesGet(ctx, lang)
 }
 
+// CountriesGet request
+// See https://api.tgstat.ru/docs/ru/database/countries.html
 func (c Client) CountriesGet(ctx context.Context, lang string) (*schema.CountryResponse, *http.Response, error) {
 	path := endpoints.DatabaseCountries
 
@@ -39,10 +43,14 @@ func (c Client) CountriesGet(ctx context.Context, lang string) (*schema.CountryR
 	return &response, result, err
 }
 
+// CategoriesGet request
+// See https://api.tgstat.ru/docs/ru/database/categories.html
 func CategoriesGet(ctx context.Context, lang string) (*schema.CategoryResponse, *http.Response, error) {
 	return getClient().CategoriesGet(ctx, lang)
 }
 
+// CategoriesGet request
+// See https://api.tgstat.ru/docs/ru/database/categories.html
 func (c Client) CategoriesGet(ctx context.Context, lang string) (*schema.CategoryResponse, *http.Response, error) {
 	path := endpoints.DatabaseCategories
 
@@ -65,10 +73,14 @@ func (c Client) CategoriesGet(ctx context.Context, lang string) (*schema.Categor
 	return &response, result, err
 }
 
+// LanguagesGet request
+// See https://api.tgstat.ru/docs/ru/database/languages.html
 func LanguagesGet(ctx context.Context, lang string) (*schema.LanguageResponse, *http.Response, error) {
 	return getClient().LanguagesGet(ctx, lang)
 }
 
+// LanguagesGet request
+// See https://api.tgstat.ru/docs/ru/database/languages.html
 func (c Client) LanguagesGet(ctx context.Context, lang string) (*schema.LanguageResponse, *http.Response, error) {
 	path := endpoints.DatabaseLanguages
 
