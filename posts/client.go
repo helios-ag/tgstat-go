@@ -17,10 +17,14 @@ type Client struct {
 	token string
 }
 
+// Get request
+// see https://api.tgstat.ru/docs/ru/posts/get.html
 func Get(ctx context.Context, postId string) (*schema.PostResponse, *http.Response, error) {
 	return getClient().Get(ctx, postId)
 }
 
+// Get request
+// see https://api.tgstat.ru/docs/ru/posts/get.html
 func (c Client) Get(ctx context.Context, postId string) (*schema.PostResponse, *http.Response, error) {
 	path := endpoints.PostsGet
 
@@ -58,10 +62,14 @@ func (postStatRequest PostStatRequest) Validate() error {
 	)
 }
 
+// PostStat request
+// see https://api.tgstat.ru/docs/ru/posts/get.html
 func PostStat(ctx context.Context, request PostStatRequest) (*schema.PostStatResponse, *http.Response, error) {
 	return getClient().PostStat(ctx, request)
 }
 
+// PostStat request
+// see https://api.tgstat.ru/docs/ru/posts/stat.html
 func (c Client) PostStat(ctx context.Context, request PostStatRequest) (*schema.PostStatResponse, *http.Response, error) {
 	path := endpoints.PostsStat
 
@@ -113,10 +121,14 @@ func (postSearchRequest PostSearchRequest) Validate() error {
 	)
 }
 
+// PostSearch request
+// see https://api.tgstat.ru/docs/ru/posts/search.html
 func PostSearch(ctx context.Context, request PostSearchRequest) (*schema.PostSearchResponse, *http.Response, error) {
 	return getClient().PostSearch(ctx, request)
 }
 
+// PostSearch request
+// see https://api.tgstat.ru/docs/ru/posts/search.html
 func (c Client) PostSearch(ctx context.Context, request PostSearchRequest) (*schema.PostSearchResponse, *http.Response, error) {
 	path := endpoints.PostsSearch
 
@@ -142,10 +154,14 @@ func (c Client) PostSearch(ctx context.Context, request PostSearchRequest) (*sch
 	return &response, result, err
 }
 
+// PostSearchExtended request
+// see https://api.tgstat.ru/docs/ru/posts/search.html
 func PostSearchExtended(ctx context.Context, request PostSearchRequest) (*schema.PostSearchExtendedResponse, *http.Response, error) {
 	return getClient().PostSearchExtended(ctx, request)
 }
 
+// PostSearchExtended request
+// see https://api.tgstat.ru/docs/ru/posts/search.html
 func (c Client) PostSearchExtended(ctx context.Context, request PostSearchRequest) (*schema.PostSearchExtendedResponse, *http.Response, error) {
 	path := endpoints.PostsSearch
 
