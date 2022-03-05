@@ -34,10 +34,14 @@ func (mentionPeriodRequest MentionPeriodRequest) Validate() error {
 	)
 }
 
+// MentionsByPeriod request
+// See https://api.tgstat.ru/docs/ru/words/mentions-by-period.html
 func MentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
 	return getClient().MentionsByPeriod(ctx, request)
 }
 
+// MentionsByPeriod request
+// See https://api.tgstat.ru/docs/ru/words/mentions-by-period.html
 func (c Client) MentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
 	path := endpoints.WordsMentionsByPeriod
 
@@ -122,10 +126,14 @@ func (mentionsByChannelRequest MentionsByChannelRequest) Validate() error {
 	)
 }
 
+// MentionsByChannels request
+// See https://api.tgstat.ru/docs/ru/words/mentions-by-channels.html
 func MentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
 	return getClient().MentionsByChannels(ctx, request)
 }
 
+// MentionsByChannels request
+// See https://api.tgstat.ru/docs/ru/words/mentions-by-channels.html
 func (c Client) MentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
 	path := endpoints.WordsMentionsByChannels
 
