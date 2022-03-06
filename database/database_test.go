@@ -21,6 +21,8 @@ func prepareClient(URL string) {
 func TestClient_CountriesGet(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
+		testServer := server.NewServer()
+		defer testServer.Teardown()
 		prepareClient("http://localhost123")
 
 		lang := "ru"
