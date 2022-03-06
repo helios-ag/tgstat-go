@@ -63,14 +63,14 @@ func (c Client) MentionsByPeriod(ctx context.Context, request MentionPeriodReque
 	}
 
 	body["hideForwards"] = func() string {
-		if nil != request.HideForwards && *request.HideForwards == true {
+		if nil != request.HideForwards && *request.HideForwards {
 			return "1"
 		} else {
 			return "0"
 		}
 	}()
 	body["strongSearch"] = func() string {
-		if nil != request.StrongSearch && *request.StrongSearch == true {
+		if nil != request.StrongSearch && *request.StrongSearch {
 			return "1"
 		} else {
 			return "0"
@@ -86,7 +86,7 @@ func (c Client) MentionsByPeriod(ctx context.Context, request MentionPeriodReque
 	}
 
 	body["extendedSyntax"] = func() string {
-		if nil != request.ExtendedSyntax && *request.ExtendedSyntax == true {
+		if nil != request.ExtendedSyntax && *request.ExtendedSyntax {
 			return "1"
 		} else {
 			return "0"
@@ -155,14 +155,14 @@ func (c Client) MentionsByChannels(ctx context.Context, request MentionsByChanne
 	}
 
 	body["hideForwards"] = func() string {
-		if nil != request.HideForwards && *request.HideForwards == true {
+		if nil != request.HideForwards && *request.HideForwards {
 			return "1"
 		} else {
 			return "0"
 		}
 	}()
 	body["strongSearch"] = func() string {
-		if nil != request.StrongSearch && *request.StrongSearch == true {
+		if nil != request.StrongSearch && *request.StrongSearch {
 			return "1"
 		} else {
 			return "0"
@@ -174,7 +174,7 @@ func (c Client) MentionsByChannels(ctx context.Context, request MentionsByChanne
 	}
 
 	body["extendedSyntax"] = func() string {
-		if nil != request.ExtendedSyntax && *request.ExtendedSyntax == true {
+		if nil != request.ExtendedSyntax && *request.ExtendedSyntax {
 			return "1"
 		} else {
 			return "0"

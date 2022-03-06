@@ -59,7 +59,7 @@ installdeps: ## Install needed dependencies for various middlewares
 	go get -t -v ./...
 
 staticcheck:
-	staticcheck
+	staticcheck ./...
 
 generate: ## Run generate for non-vendor packages only
 	go list ./... | xargs go generate

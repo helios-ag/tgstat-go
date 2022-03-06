@@ -11,7 +11,7 @@ import (
 
 func getToken() (key string, err error) {
 	key = os.Getenv("TOKEN")
-	if "" == key {
+	if key == "" {
 		return "", fmt.Errorf("token not found")
 	}
 

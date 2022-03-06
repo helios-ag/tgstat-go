@@ -213,7 +213,7 @@ func makeRequestBody(request PostSearchRequest) map[string]string {
 	}
 
 	body["hideForwards"] = func() string {
-		if nil != request.HideForwards && *request.HideForwards == true {
+		if nil != request.HideForwards && *request.HideForwards {
 			return "1"
 		} else {
 			return "0"
@@ -221,7 +221,7 @@ func makeRequestBody(request PostSearchRequest) map[string]string {
 	}()
 
 	body["hideDeleted"] = func() string {
-		if nil != request.HideDeleted && *request.HideDeleted == true {
+		if nil != request.HideDeleted && *request.HideDeleted {
 			return "1"
 		} else {
 			return "0"
@@ -232,7 +232,7 @@ func makeRequestBody(request PostSearchRequest) map[string]string {
 	}
 
 	body["extendedSyntax"] = func() string {
-		if nil != request.ExtendedSyntax && *request.ExtendedSyntax == true {
+		if nil != request.ExtendedSyntax && *request.ExtendedSyntax {
 			return "1"
 		} else {
 			return "0"

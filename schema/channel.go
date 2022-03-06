@@ -1,7 +1,7 @@
 package schema
 
 type Channel struct {
-	Id                int               `json:"id,int"`
+	Id                int               `json:"id"`
 	Link              string            `json:"link"`
 	Username          string            `json:"username"`
 	Title             string            `json:"title"`
@@ -25,9 +25,9 @@ type ChannelResponse struct {
 type ChannelSearchResponse struct {
 	Status   string `json:"status,string"`
 	Response struct {
-		Count int `json:"count,int"`
+		Count int `json:"count"`
 		Items []struct {
-			Id                int    `json:"id,int"`
+			Id                int    `json:"id"`
 			Link              string `json:"link"`
 			Username          string `json:"username"`
 			Title             string `json:"title"`
@@ -42,7 +42,7 @@ type ChannelSearchResponse struct {
 type ChannelStatResponse struct {
 	Status   string `json:"status,string"`
 	Response struct {
-		Id                int    `json:"id,int"`
+		Id                int    `json:"id"`
 		Title             string `json:"title"`
 		Username          string `json:"username"`
 		ParticipantsCount int    `json:"participants_count"`
