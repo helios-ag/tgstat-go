@@ -78,7 +78,7 @@ func TestClient_WordsMentionsByPeriod(t *testing.T) {
 		}
 		_, _, err := MentionsByPeriod(context.Background(), req)
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("no such host"))
+		Expect(err.Error()).To(ContainSubstring("dial tcp"))
 	})
 
 	t.Run("Test mention order response Mapping", func(t *testing.T) {

@@ -21,8 +21,9 @@ func prepareClient(URL string) {
 func TestClient_ChannelGet(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test channel validation", func(t *testing.T) {
-		prepareClient("localhost")
-
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
 		channelId := ""
 
 		_, _, err := Get(context.Background(), channelId)

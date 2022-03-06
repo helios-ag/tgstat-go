@@ -25,7 +25,7 @@ func TestClient_UsageStat(t *testing.T) {
 
 		_, _, err := Stat(context.Background())
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("no such host"))
+		Expect(err.Error()).To(ContainSubstring("dial tcp"))
 	})
 
 	t.Run("Test Usage Stat response Mapping", func(t *testing.T) {

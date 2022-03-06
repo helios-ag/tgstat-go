@@ -24,7 +24,7 @@ func TestClient_PostsGet(t *testing.T) {
 		prepareClient("http://local123")
 		_, _, err := Get(context.Background(), "t.me/123")
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("no such host"))
+		Expect(err.Error()).To(ContainSubstring("dial tcp"))
 	})
 
 	t.Run("Test PostsGet response Mapping", func(t *testing.T) {
@@ -157,7 +157,7 @@ func TestClient_PostsSearch(t *testing.T) {
 		}
 		_, _, err := PostSearch(context.Background(), req)
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("no such host"))
+		Expect(err.Error()).To(ContainSubstring("dial tcp"))
 	})
 
 	t.Run("Test PostsSearch response Mapping", func(t *testing.T) {
@@ -218,7 +218,7 @@ func TestClient_PostsSearchExtended(t *testing.T) {
 		}
 		_, _, err := PostSearchExtended(context.Background(), req)
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("no such host"))
+		Expect(err.Error()).To(ContainSubstring("dial tcp"))
 	})
 
 	t.Run("Test PostsGet response Mapping", func(t *testing.T) {

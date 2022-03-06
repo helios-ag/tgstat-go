@@ -21,14 +21,12 @@ func prepareClient(URL string) {
 func TestClient_CountriesGet(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
-		testServer := server.NewServer()
-		defer testServer.Teardown()
 		prepareClient("http://localhost123")
 
 		lang := "ru"
 		_, _, err := CountriesGet(context.Background(), lang)
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("no such host"))
+		Expect(err.Error()).To(ContainSubstring("dial tcp"))
 	})
 
 	t.Run("Test Countries get data", func(t *testing.T) {
@@ -77,7 +75,7 @@ func TestClient_CategoriesGet(t *testing.T) {
 		lang := "ru"
 		_, _, err := CategoriesGet(context.Background(), lang)
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("no such host"))
+		Expect(err.Error()).To(ContainSubstring("dial tcp"))
 	})
 
 	t.Run("Test Countries get data", func(t *testing.T) {
@@ -127,7 +125,7 @@ func TestClient_LanguagesGet(t *testing.T) {
 		lang := "ru"
 		_, _, err := LanguagesGet(context.Background(), lang)
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("no such host"))
+		Expect(err.Error()).To(ContainSubstring("dial tcp"))
 	})
 
 	t.Run("Test Countries get data", func(t *testing.T) {
