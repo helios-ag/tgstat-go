@@ -60,14 +60,14 @@ type SearchRequest struct {
 	SearchByDescription int
 	Country             string
 	Language            *string
-	Category            *string
+	Category            string
 	Limit               *int
 }
 
 func (searchRequest SearchRequest) Validate() error {
 	return validation.ValidateStruct(&searchRequest,
 		validation.Field(&searchRequest.Country, validation.Required),
-		validation.Field(&searchRequest.Q, validation.Required.When(*searchRequest.Category == "").Error("Either query or category is required.")),
+		validation.Field(&searchRequest.Q, validation.Required.When(searchRequest.Category == "").Error("Either query or category is required.")),
 		validation.Field(&searchRequest.Category, validation.Required.When(searchRequest.Q == "").Error("Either query or category  is required.")),
 	)
 }
@@ -91,8 +91,8 @@ func (c Client) Search(ctx context.Context, request SearchRequest) (*schema.Chan
 	if nil != request.Language {
 		body["language"] = *request.Language
 	}
-	if nil != request.Category {
-		body["category"] = *request.Category
+	if "" != request.Category {
+		body["category"] = request.Category
 	}
 
 	if nil != request.Limit {
@@ -172,14 +172,14 @@ func (postsRequest PostsRequest) Validate() error {
 
 // Posts request
 // see https://api.tgstat.ru/docs/ru/channels/posts.html
-func Posts(ctx context.Context, request PostsRequest) (*schema.ChannelPostsResponse, *http.Response, error) {
+func Posts(ctx context.Context, request PostsRequest) (*schema.ChannelPosts, *http.Response, error) {
 	return getClient().Posts(ctx, request)
 }
 
 // Posts request
 // see https://api.tgstat.ru/docs/ru/channels/posts.html
-func (c Client) Posts(ctx context.Context, request PostsRequest) (*schema.ChannelPostsResponse, *http.Response, error) {
-	path := endpoints.ChannelsStat
+func (c Client) Posts(ctx context.Context, request PostsRequest) (*schema.ChannelPosts, *http.Response, error) {
+	path := endpoints.ChannelsPosts
 
 	if err := request.Validate(); err != nil {
 		return nil, nil, err
@@ -217,7 +217,7 @@ func (c Client) Posts(ctx context.Context, request PostsRequest) (*schema.Channe
 	if err != nil {
 		return nil, nil, err
 	}
-	var response schema.ChannelPostsResponse
+	var response schema.ChannelPosts
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {

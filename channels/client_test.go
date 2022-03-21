@@ -41,7 +41,7 @@ func TestClient_ChannelGet(t *testing.T) {
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(schema.ChannelResponse{
 				Status: "ok",
-				Response: schema.Channel{
+				Response: schema.ChannelWithRestriction{
 					Id:                321,
 					Link:              "t.me/varlamov",
 					Username:          "@varlamov",
@@ -67,6 +67,117 @@ func TestClient_ChannelGet(t *testing.T) {
 			"Response": MatchFields(IgnoreExtras, Fields{
 				"Title": ContainSubstring("Varlam"),
 			}),
+		})))
+	})
+}
+
+func TestClient_ChannelSearch(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test channel request validation", func(t *testing.T) {
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
+		request := SearchRequest{
+			Q:                   "",
+			SearchByDescription: 0,
+			Country:             "russia",
+			Language:            nil,
+			Category:            "",
+			Limit:               nil,
+		}
+		_, _, err := Search(context.Background(), request)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("Category: Either query or category  is required.; Q: Either query or category is required"))
+	})
+
+	t.Run("Test channel Search response Mapping", func(t *testing.T) {
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
+
+		testServer.Mux.HandleFunc(endpoints.ChannelsSearch, func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			items := make([]schema.ChannelSearchItem, 0)
+			items = append(items, schema.ChannelSearchItem{
+				Id:                0,
+				Link:              "t.me/varlamov",
+				Username:          "varlamov",
+				Title:             "Varlam",
+				About:             "abc",
+				Image100:          "",
+				Image640:          "",
+				ParticipantsCount: 5,
+			})
+
+			json.NewEncoder(w).Encode(schema.ChannelSearchResponse{
+				Status: "ok",
+				Response: schema.ChannelSearch{
+					Count: 0,
+					Items: items,
+				},
+			})
+		})
+		request := SearchRequest{
+			Q:                   "test",
+			SearchByDescription: 0,
+			Country:             "russia",
+			Language:            nil,
+			Category:            "",
+			Limit:               nil,
+		}
+		response, _, err := Search(context.Background(), request)
+
+		Expect(err).ToNot(HaveOccurred())
+		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
+			"Status": Equal("ok"),
+		})))
+	})
+}
+
+func TestClient_ChannelStat(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test channel stat validation", func(t *testing.T) {
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
+		channelId := ""
+
+		_, _, err := Stat(context.Background(), channelId)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("ChannelID must be set"))
+	})
+
+	t.Run("Test channel Stat response mapping", func(t *testing.T) {
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
+
+		testServer.Mux.HandleFunc(endpoints.ChannelsStat, func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(schema.ChannelStatResponse{
+				Status: "ok",
+				Response: schema.ChannelStat{
+					Id:                0,
+					Title:             "Varlam",
+					Username:          "Varlam",
+					ParticipantsCount: 0,
+					AvgPostReach:      0,
+					ErrPercent:        0,
+					DailyReach:        0,
+					CiIndex:           0,
+				},
+			})
+		})
+
+		channelId := "test"
+
+		response, _, err := Stat(context.Background(), channelId)
+
+		Expect(err).ToNot(HaveOccurred())
+		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
+			"Status": Equal("ok"),
 		})))
 	})
 }
