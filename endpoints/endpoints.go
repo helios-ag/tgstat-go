@@ -4,6 +4,7 @@ package endpoints
 const (
 	ChannelsGet          string = "/channels/get"
 	ChannelsSearch       string = "/channels/search"
+	ChannelsPosts        string = "/channels/posts"
 	ChannelsStat         string = "/channels/stat"
 	ChannelsMentions     string = "/channels/mentions"
 	ChannelsForwards     string = "/channels/forwards"
