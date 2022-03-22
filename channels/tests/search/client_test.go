@@ -82,4 +82,3 @@ func TestClient_ChannelSearch(t *testing.T) {
 		})))
 	})
 }
-

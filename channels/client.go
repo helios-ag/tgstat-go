@@ -91,7 +91,7 @@ func (c Client) Search(ctx context.Context, request SearchRequest) (*schema.Chan
 	if nil != request.Language {
 		body["language"] = *request.Language
 	}
-	if "" != request.Category {
+	if request.Category != "" {
 		body["category"] = request.Category
 	}
 
