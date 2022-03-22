@@ -25,18 +25,54 @@ func TestClient_ChannelPosts(t *testing.T) {
 		testServer := server.NewServer()
 		defer testServer.Teardown()
 		prepareClient(testServer.URL)
+
+		testServer.Mux.HandleFunc(endpoints.ChannelsPosts, func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			items := make([]schema.ChannelPostsResponseItem, 0)
+			items = append(items, schema.ChannelPostsResponseItem{
+				ID:            7377,
+				Date:          1540123429,
+				Views:         148382,
+				Link:          "t.me/breakingmash",
+				ChannelID:     0,
+				ForwardedFrom: nil,
+				IsDeleted:     0,
+				Text:          "",
+				Media: schema.Media{
+					MediaType: "",
+					MimeType:  "",
+					Size:      0,
+				},
+			})
+			channel := schema.Channel{
+				ID:                7377,
+				Link:              "t.me/breakingmash",
+				Username:          "@breakingmash",
+				Title:             "Mash",
+				About:             "Помахаться и обсудить новости - @mash_chat ...",
+				Image100:          "//static2.tgstat.com/public/images/channels/_100/a7/a76c0abe2b7b1b79e70f0073f43c3b44.jpg",
+				Image640:          "//static2.tgstat.com/public/images/channels/_0/a7/a76c0abe2b7b1b79e70f0073f43c3b44.jpg",
+				ParticipantsCount: 0,
+			}
+
+			json.NewEncoder(w).Encode(schema.ChannelPosts{
+				Status: "ok",
+				Response: schema.ChannelPostsResponse{
+					Channel:    channel,
+					Count:      50,
+					TotalCount: 150,
+					Items:      items,
+				},
+			})
+		})
+
 		request := channels.PostsRequest{
-			ChannelId:    "t.me/test",
-			Limit:        nil,
-			Offset:       nil,
-			StartTime:    nil,
-			EndTime:      nil,
-			HideForwards: nil,
-			HideDeleted:  nil,
+			ChannelId: "",
 		}
 		_, _, err := channels.Posts(context.Background(), request)
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("Category: Either query or category  is required.; Q: Either query or category is required"))
+		Expect(err.Error()).To(ContainSubstring("ChannelId: cannot be blank"))
 	})
 
 	t.Run("Test channel posts response Mapping", func(t *testing.T) {
@@ -80,7 +116,7 @@ func TestClient_ChannelPosts(t *testing.T) {
 					Channel:    channel,
 					Count:      50,
 					TotalCount: 150,
-					Items:      nil,
+					Items:      items,
 				},
 			})
 		})
