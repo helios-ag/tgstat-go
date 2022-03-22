@@ -104,7 +104,7 @@ func TestErrorFromResponse(t *testing.T) {
 	t.Run("Expect application/json", func(t *testing.T) {
 		resp := http.Response{
 			Body:   ioutil.NopCloser(bytes.NewBufferString("Hello World")),
-			Header: make(http.Header, 0),
+			Header: make(http.Header),
 		}
 		resp.Header.Set("Content-Type", "application/json")
 		body := []byte("abc")
@@ -115,7 +115,7 @@ func TestErrorFromResponse(t *testing.T) {
 	t.Run("Expect wrong json", func(t *testing.T) {
 		resp := http.Response{
 			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
-			Header: make(http.Header, 0),
+			Header: make(http.Header),
 		}
 		resp.Header.Set("Content-Type", "application/json")
 		body := []byte("{\"test\": \"test\"}")
@@ -126,7 +126,7 @@ func TestErrorFromResponse(t *testing.T) {
 	t.Run("Expect wrong json header", func(t *testing.T) {
 		resp := http.Response{
 			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
-			Header: make(http.Header, 0),
+			Header: make(http.Header),
 		}
 		resp.Header.Set("Content-Type", "application_json")
 		body := []byte("{\"test\": test\"}")
@@ -137,7 +137,7 @@ func TestErrorFromResponse(t *testing.T) {
 	t.Run("Dont expect Error", func(t *testing.T) {
 		resp := http.Response{
 			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
-			Header: make(http.Header, 0),
+			Header: make(http.Header),
 		}
 		resp.Header.Set("Content-Type", "application/json")
 		body := []byte(`{"errorCode": 0, "errorMessage": ""}`)
