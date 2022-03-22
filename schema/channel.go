@@ -1,6 +1,6 @@
 package schema
 
-type Channel struct {
+type ChannelWithRestriction struct {
 	Id                int               `json:"id"`
 	Link              string            `json:"link"`
 	Username          string            `json:"username"`
@@ -18,172 +18,180 @@ type TGStatRestriction struct {
 }
 
 type ChannelResponse struct {
-	Status   string  `json:"status,string"`
-	Response Channel `json:"response"`
+	Status   string                 `json:"status,string"`
+	Response ChannelWithRestriction `json:"response"`
 }
 
 type ChannelSearchResponse struct {
-	Status   string `json:"status,string"`
-	Response struct {
-		Count int `json:"count"`
-		Items []struct {
-			Id                int    `json:"id"`
-			Link              string `json:"link"`
-			Username          string `json:"username"`
-			Title             string `json:"title"`
-			About             string `json:"about"`
-			Image100          string `json:"image100"`
-			Image640          string `json:"image640"`
-			ParticipantsCount int    `json:"participants_count"`
-		} `json:"items"`
-	} `json:"response"`
+	Status   string        `json:"status,string"`
+	Response ChannelSearch `json:"response"`
+}
+
+type ChannelSearchItem struct {
+	Id                int    `json:"id"`
+	Link              string `json:"link"`
+	Username          string `json:"username"`
+	Title             string `json:"title"`
+	About             string `json:"about"`
+	Image100          string `json:"image100"`
+	Image640          string `json:"image640"`
+	ParticipantsCount int    `json:"participants_count"`
+}
+
+type ChannelSearch struct {
+	Count int                 `json:"count"`
+	Items []ChannelSearchItem `json:"items"`
 }
 
 type ChannelStatResponse struct {
-	Status   string `json:"status,string"`
-	Response struct {
-		Id                int    `json:"id"`
-		Title             string `json:"title"`
-		Username          string `json:"username"`
-		ParticipantsCount int    `json:"participants_count"`
-		AvgPostReach      int    `json:"avg_post_reach"`
-		ErrPercent        int    `json:"err_percent"`
-		DailyReach        int    `json:"daily_reach"`
-		CiIndex           int    `json:"ci_index"`
-	} `json:"response"`
+	Status   string      `json:"status,string"`
+	Response ChannelStat `json:"response"`
+}
+
+type ChannelStat struct {
+	Id                int    `json:"id"`
+	Title             string `json:"title"`
+	Username          string `json:"username"`
+	ParticipantsCount int    `json:"participants_count"`
+	AvgPostReach      int    `json:"avg_post_reach"`
+	ErrPercent        int    `json:"err_percent"`
+	DailyReach        int    `json:"daily_reach"`
+	CiIndex           int    `json:"ci_index"`
+}
+
+type ChannelPostsWithChannelResponseItem struct {
+	ID            int64       `json:"id"`
+	Date          int         `json:"date"`
+	Views         int         `json:"views"`
+	Link          string      `json:"link"`
+	ChannelID     int         `json:"channel_id"`
+	ForwardedFrom interface{} `json:"forwarded_from"`
+	IsDeleted     int         `json:"is_deleted"`
+	Text          string      `json:"text"`
+	Media         Media       `json:"media"`
+}
+
+type Media struct {
+	MediaType string `json:"media_type"`
+	MimeType  string `json:"mime_type"`
+	Size      int    `json:"size"`
+}
+
+type Channel struct {
+	ID                int    `json:"id"`
+	Link              string `json:"link"`
+	Username          string `json:"username"`
+	Title             string `json:"title"`
+	About             string `json:"about"`
+	Image100          string `json:"image100"`
+	Image640          string `json:"image640"`
+	ParticipantsCount int    `json:"participants_count"`
 }
 
 type ChannelPostsWithChannelResponse struct {
-	Status   string `json:"status"`
-	Response struct {
-		Count      int `json:"count"`
-		TotalCount int `json:"total_count"`
-		Channel    struct {
-			ID                int    `json:"id"`
-			Link              string `json:"link"`
-			Username          string `json:"username"`
-			Title             string `json:"title"`
-			About             string `json:"about"`
-			Image100          string `json:"image100"`
-			Image640          string `json:"image640"`
-			ParticipantsCount int    `json:"participants_count"`
-		} `json:"channel"`
-		Items []struct {
-			ID            int64       `json:"id"`
-			Date          int         `json:"date"`
-			Views         int         `json:"views"`
-			Link          string      `json:"link"`
-			ChannelID     int         `json:"channel_id"`
-			ForwardedFrom interface{} `json:"forwarded_from"`
-			IsDeleted     int         `json:"is_deleted"`
-			Text          string      `json:"text"`
-			Media         struct {
-				MediaType string `json:"media_type"`
-				MimeType  string `json:"mime_type"`
-				Size      int    `json:"size"`
-			} `json:"media"`
-		} `json:"items"`
-	} `json:"response"`
+	Count      int                                   `json:"count"`
+	TotalCount int                                   `json:"total_count"`
+	Channel    Channel                               `json:"channel"`
+	Items      []ChannelPostsWithChannelResponseItem `json:"items"`
+}
+
+type ChannelPostsWithChannel struct {
+	Status   string                          `json:"status"`
+	Response ChannelPostsWithChannelResponse `json:"response"`
+}
+
+type ChannelPostsResponseItem struct {
+	ID            int64       `json:"id"`
+	Date          int         `json:"date"`
+	Views         int         `json:"views"`
+	Link          string      `json:"link"`
+	ChannelID     int         `json:"channel_id"`
+	ForwardedFrom interface{} `json:"forwarded_from"`
+	IsDeleted     int         `json:"is_deleted"`
+	Text          string      `json:"text"`
+	Media         Media       `json:"media"`
 }
 
 type ChannelPostsResponse struct {
-	Status   string `json:"status"`
-	Response struct {
-		Count      int `json:"count"`
-		TotalCount int `json:"total_count"`
-		Items      []struct {
-			ID            int64       `json:"id"`
-			Date          int         `json:"date"`
-			Views         int         `json:"views"`
-			Link          string      `json:"link"`
-			ChannelID     int         `json:"channel_id"`
-			ForwardedFrom interface{} `json:"forwarded_from"`
-			IsDeleted     int         `json:"is_deleted"`
-			Text          string      `json:"text"`
-			Media         struct {
-				MediaType string `json:"media_type"`
-				MimeType  string `json:"mime_type"`
-				Size      int    `json:"size"`
-			} `json:"media"`
-		} `json:"items"`
-	} `json:"response"`
+	Count      int                        `json:"count"`
+	TotalCount int                        `json:"total_count"`
+	Channel    Channel                    `json:"channel"`
+	Items      []ChannelPostsResponseItem `json:"items"`
+}
+
+type ChannelPosts struct {
+	Status   string               `json:"status"`
+	Response ChannelPostsResponse `json:"response"`
+}
+
+//type ChannelMentions struct {
+//	UserID    int    `json:"userId"`
+//	ID        int    `json:"id"`
+//	Title     string `json:"title"`
+//	Completed bool   `json:"completed"`
+//}
+
+type MentionItem struct {
+	MentionID   int    `json:"mentionId"`
+	MentionType string `json:"mentionType"`
+	PostID      int64  `json:"postId"`
+	PostLink    string `json:"postLink"`
+	PostDate    int    `json:"postDate"`
+	ChannelID   int    `json:"channelId"`
+}
+
+type ChannelMentionsResponse struct {
+	Items []MentionItem `json:"items"`
+}
+
+type ChannelMentionsResponseExtended struct {
+	Items    []MentionItem `json:"items"`
+	Channels []Channel     `json:"channels"`
 }
 
 type ChannelMentions struct {
-	UserID    int    `json:"userId"`
-	ID        int    `json:"id"`
-	Title     string `json:"title"`
-	Completed bool   `json:"completed"`
+	Status   string                  `json:"status"`
+	Response ChannelMentionsResponse `json:"response"`
 }
 
 type ChannelMentionsExtended struct {
-	Status   string `json:"status"`
-	Response struct {
-		Items []struct {
-			MentionID   int    `json:"mentionId"`
-			MentionType string `json:"mentionType"`
-			PostID      int64  `json:"postId"`
-			PostLink    string `json:"postLink"`
-			PostDate    int    `json:"postDate"`
-			ChannelID   int    `json:"channelId"`
-		} `json:"items"`
-		Channels []struct {
-			ID                int    `json:"id"`
-			Link              string `json:"link"`
-			Username          string `json:"username"`
-			Title             string `json:"title"`
-			About             string `json:"about"`
-			Image100          string `json:"image100"`
-			Image640          string `json:"image640"`
-			ParticipantsCount int    `json:"participants_count"`
-		} `json:"channels"`
-	} `json:"response"`
+	Status   string                          `json:"status"`
+	Response ChannelMentionsResponseExtended `json:"response"`
+}
+
+type ForwardItem struct {
+	ForwardID int    `json:"forwardId"`
+	PostID    int64  `json:"postId"`
+	PostLink  string `json:"postLink"`
+	PostDate  int    `json:"postDate"`
+	ChannelID int    `json:"channelId"`
 }
 
 type ChannelForwardsExtended struct {
 	Status   string `json:"status"`
 	Response struct {
-		Items []struct {
-			ForwardID int    `json:"forwardId"`
-			PostID    int64  `json:"postId"`
-			PostLink  string `json:"postLink"`
-			PostDate  int    `json:"postDate"`
-			ChannelID int    `json:"channelId"`
-		} `json:"items"`
-		Channels []struct {
-			ID                int    `json:"id"`
-			Link              string `json:"link"`
-			Username          string `json:"username"`
-			Title             string `json:"title"`
-			About             string `json:"about"`
-			Image100          string `json:"image100"`
-			Image640          string `json:"image640"`
-			ParticipantsCount int    `json:"participants_count"`
-		} `json:"channels"`
+		Items    []ForwardItem `json:"items"`
+		Channels []Channel     `json:"channels"`
 	} `json:"response"`
 }
 
 type ChannelForwards struct {
 	Status   string `json:"status"`
 	Response struct {
-		Items []struct {
-			ForwardID int    `json:"forwardId"`
-			PostID    int64  `json:"postId"`
-			PostLink  string `json:"postLink"`
-			PostDate  int    `json:"postDate"`
-			ChannelID int    `json:"channelId"`
-		} `json:"items"`
+		Items []ForwardItem `json:"items"`
 	} `json:"response"`
 }
 
+type ChannelSubscribersResponse struct {
+	Items []struct {
+		Period            string `json:"period"`
+		ParticipantsCount int    `json:"participants_count"`
+	} `json:"items"`
+}
+
 type ChannelSubscribers struct {
-	Status   string `json:"status"`
-	Response struct {
-		Items []struct {
-			Period            string `json:"period"`
-			ParticipantsCount int    `json:"participants_count"`
-		} `json:"items"`
-	} `json:"response"`
+	Status   string               `json:"status"`
+	Response ChannelPostsResponse `json:"response"`
 }
 
 type ChannelViews struct {
@@ -196,20 +204,24 @@ type ChannelViews struct {
 	} `json:"response"`
 }
 
+type ChannelAvgReachResponse struct {
+	Period        string `json:"period"`
+	AvgPostsReach int    `json:"avg_posts_reach"`
+}
+
 type ChannelAvgReach struct {
-	Status   string `json:"status"`
-	Response []struct {
-		Period        string `json:"period"`
-		AvgPostsReach int    `json:"avg_posts_reach"`
-	} `json:"response"`
+	Status   string                    `json:"status"`
+	Response []ChannelAvgReachResponse `json:"response"`
+}
+
+type ChannelErrResponse struct {
+	Period string `json:"period"`
+	Err    int    `json:"err"`
 }
 
 type ChannelErr struct {
-	Status   string `json:"status"`
-	Response []struct {
-		Period string `json:"period"`
-		Err    int    `json:"err"`
-	} `json:"response"`
+	Status   string               `json:"status"`
+	Response []ChannelErrResponse `json:"response"`
 }
 
 type ChannelAddPendingResponse struct {
