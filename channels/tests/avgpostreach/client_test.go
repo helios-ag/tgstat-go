@@ -19,7 +19,7 @@ func prepareClient(URL string) {
 	tgstat.WithEndpoint(URL)
 }
 
-func TestClient_ChannelForwards(t *testing.T) {
+func TestClient_ChannelAVGPostsReach(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test channel validation", func(t *testing.T) {
 		testServer := server.NewServer()
