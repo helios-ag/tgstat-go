@@ -19,7 +19,7 @@ func prepareClient(URL string) {
 	tgstat.WithEndpoint(URL)
 }
 
-func TestClient_ChannelPosts(t *testing.T) {
+func TestClient_Mentions(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test channel mentions request validation", func(t *testing.T) {
 		testServer := server.NewServer()
@@ -121,7 +121,7 @@ func TestClient_ChannelPosts(t *testing.T) {
 			Limit:     nil,
 			Offset:    nil,
 		}
-		response, _, err := channels.Mentions(context.Background(), request)
+		response, _, err := channels.MentionsExtended(context.Background(), request)
 
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
