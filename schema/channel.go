@@ -180,31 +180,38 @@ type ChannelForwardsResponseExtended struct {
 type ChannelForwardsResponse struct {
 	Items []ForwardItem `json:"items"`
 }
+
 type ChannelForwards struct {
 	Status   string                  `json:"status"`
 	Response ChannelForwardsResponse `json:"response"`
 }
 
+type SubscribersItem struct {
+	Period            string `json:"period"`
+	ParticipantsCount int    `json:"participants_count"`
+}
+
 type ChannelSubscribersResponse struct {
-	Items []struct {
-		Period            string `json:"period"`
-		ParticipantsCount int    `json:"participants_count"`
-	} `json:"items"`
+	Items []SubscribersItem `json:"items"`
 }
 
 type ChannelSubscribers struct {
-	Status   string               `json:"status"`
-	Response ChannelPostsResponse `json:"response"`
+	Status   string                     `json:"status"`
+	Response ChannelSubscribersResponse `json:"response"`
+}
+
+type ViewItem struct {
+	Period     string `json:"period"`
+	ViewsCount int    `json:"views_count"`
+}
+
+type ChannelViewsResponse struct {
+	Items []ViewItem `json:"items"`
 }
 
 type ChannelViews struct {
-	Status   string `json:"status"`
-	Response struct {
-		Items []struct {
-			Period     string `json:"period"`
-			ViewsCount int    `json:"views_count"`
-		} `json:"items"`
-	} `json:"response"`
+	Status   string               `json:"status"`
+	Response ChannelViewsResponse `json:"response"`
 }
 
 type ChannelAvgReachResponse struct {
