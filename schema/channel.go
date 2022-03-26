@@ -168,18 +168,21 @@ type ForwardItem struct {
 }
 
 type ChannelForwardsExtended struct {
-	Status   string `json:"status"`
-	Response struct {
-		Items    []ForwardItem `json:"items"`
-		Channels []Channel     `json:"channels"`
-	} `json:"response"`
+	Status   string                          `json:"status"`
+	Response ChannelForwardsResponseExtended `json:"response"`
 }
 
+type ChannelForwardsResponseExtended struct {
+	Items    []ForwardItem `json:"items"`
+	Channels []Channel     `json:"channels"`
+}
+
+type ChannelForwardsResponse struct {
+	Items []ForwardItem `json:"items"`
+}
 type ChannelForwards struct {
-	Status   string `json:"status"`
-	Response struct {
-		Items []ForwardItem `json:"items"`
-	} `json:"response"`
+	Status   string                  `json:"status"`
+	Response ChannelForwardsResponse `json:"response"`
 }
 
 type ChannelSubscribersResponse struct {
