@@ -19,7 +19,7 @@ func prepareClient(URL string) {
 	tgstat.WithEndpoint(URL)
 }
 
-func TestClient_ChannelForwards(t *testing.T) {
+func TestClient_ChannelAdd(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test channel validation", func(t *testing.T) {
 		testServer := server.NewServer()
@@ -60,10 +60,7 @@ func TestClient_ChannelForwards(t *testing.T) {
 		response, _, err := channels.Forwards(context.Background(), request)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
-			"Status": Equal("ok"),
-			"Response": MatchFields(IgnoreExtras, Fields{
-				"Title": ContainSubstring("Varlam"),
-			}),
+			"Status": Equal("pending"),
 		})))
 	})
 
@@ -72,7 +69,7 @@ func TestClient_ChannelForwards(t *testing.T) {
 		defer testServer.Teardown()
 		prepareClient(testServer.URL)
 
-		testServer.Mux.HandleFunc(endpoints.ChannelsForwards, func(w http.ResponseWriter, r *http.Request) {
+		testServer.Mux.HandleFunc(endpoints.ChannelsAdd, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(schema.ChannelAddSuccess{

@@ -62,9 +62,6 @@ func TestClient_ChannelAVGPostsReach(t *testing.T) {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": Equal("ok"),
-			"Response": MatchFields(IgnoreExtras, Fields{
-				"Title": ContainSubstring("Varlam"),
-			}),
 		})))
 	})
 }
