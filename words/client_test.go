@@ -28,7 +28,7 @@ func makeBoolP(b bool) *bool {
 func TestClient_MentionsByPeriod(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test words request validation", func(t *testing.T) {
-		prepareClient("localhost")
+		prepareClient("http://nonexisting")
 		req := MentionPeriodRequest{
 			Q: "",
 		}
@@ -103,24 +103,33 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 	})
 
 	t.Run("Test mention order validation", func(t *testing.T) {
-		prepareClient("http://nonexistinghost")
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
+		testServer.Mux.HandleFunc(endpoints.WordsMentionsByPeriod, func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(schema.WordsMentions{
+				Status: "ok",
+			})
+		})
 
 		req := MentionPeriodRequest{
 			Q:        "q",
-			PeerType: makeStrP("p"),
+			PeerType: makeStrP("all"),
 		}
 		_, _, err := MentionsByPeriod(context.Background(), req)
 
 		req = MentionPeriodRequest{
 			Q:         "q",
-			PeerType:  makeStrP("p"),
+			PeerType:  makeStrP("all"),
 			StartDate: makeStrP("2020-01-19 03:14:07"),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
 
 		req = MentionPeriodRequest{
 			Q:            "q",
-			PeerType:     makeStrP("p"),
+			PeerType:     makeStrP("all"),
 			EndDate:      makeStrP("2020-01-19 03:14:07"),
 			HideForwards: makeBoolP(true),
 		}
@@ -128,7 +137,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 
 		req = MentionPeriodRequest{
 			Q:            "q",
-			PeerType:     makeStrP("p"),
+			PeerType:     makeStrP("all"),
 			EndDate:      makeStrP("2020-01-19 03:14:07"),
 			HideForwards: makeBoolP(true),
 			StrongSearch: makeBoolP(false),
@@ -137,7 +146,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 
 		req = MentionPeriodRequest{
 			Q:            "q",
-			PeerType:     makeStrP("p"),
+			PeerType:     makeStrP("all"),
 			EndDate:      makeStrP("2020-01-19 03:14:07"),
 			HideForwards: makeBoolP(true),
 			StrongSearch: makeBoolP(false),
@@ -147,29 +156,28 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 
 		req = MentionPeriodRequest{
 			Q:            "q",
-			PeerType:     makeStrP("p"),
+			PeerType:     makeStrP("all"),
 			EndDate:      makeStrP("2020-01-19 03:14:07"),
 			HideForwards: makeBoolP(true),
 			StrongSearch: makeBoolP(true),
 			MinusWords:   makeStrP("something"),
-			Group:        makeStrP("hope"),
+			Group:        makeStrP("all"),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
 
 		req = MentionPeriodRequest{
 			Q:              "q",
-			PeerType:       makeStrP("p"),
+			PeerType:       makeStrP("all"),
 			EndDate:        makeStrP("2020-01-19 03:14:07"),
 			HideForwards:   makeBoolP(true),
 			StrongSearch:   makeBoolP(true),
 			MinusWords:     makeStrP("something"),
-			Group:          makeStrP("hope"),
+			Group:          makeStrP("all"),
 			ExtendedSyntax: makeBoolP(true),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
 
-		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("dial tcp"))
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 }
@@ -199,7 +207,17 @@ func TestClient_MentionsByChannels(t *testing.T) {
 	})
 
 	t.Run("Test mention order response Mapping", func(t *testing.T) {
-		prepareClient("http://nonexisting")
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
+
+		testServer.Mux.HandleFunc(endpoints.WordsMentionsByChannels, func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(schema.WordsMentions{
+				Status: "ok",
+			})
+		})
 
 		req := MentionsByChannelRequest{
 			Q:        "q",
