@@ -27,4 +27,12 @@ const (
 	DatabaseCategories string = "/database/categories"
 	DatabaseCountries  string = "/database/countries"
 	DatabaseLanguages  string = "/database/languages"
+
+	SetCallbackURL string = "/callback/set-callback-url"
+	GetCallbackURL string = "/callback/get-callback-info"
+
+	SubscribeChannel string = "/callback/subscribe-channel"
+	SubscribeWord    string = "/callback/subscribe-word"
+	SubscriptionList string = "/callback/subscriptions-list"
+	Unsubscribe      string = "/callback/unsubscribe"
 )
