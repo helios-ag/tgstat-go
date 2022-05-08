@@ -3,12 +3,13 @@ package callback
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/endpoints"
 	"github.com/helios-ag/tgstat-go/schema"
 	"net/http"
+	"net/url"
 )
 
 type Client struct {
@@ -16,30 +17,20 @@ type Client struct {
 	token string
 }
 
-type SetCallbackRequest struct {
-	CallbackUrl string
-}
-
-func (setCallbackRequest SetCallbackRequest) Validate() error {
-	return validation.ValidateStruct(&setCallbackRequest,
-		validation.Field(&setCallbackRequest.CallbackUrl, validation.Required, is.URL),
-	)
-}
-
 // SetCallback request
 // https://api.tgstat.ru/docs/ru/callback/set-callback-url.html
-func SetCallback(ctx context.Context, request SetCallbackRequest) (*schema.SetCallbackResponse, *http.Response, error) {
-	return getClient().SetCallback(ctx, request)
+func SetCallback(ctx context.Context, callbackUrl string) (*schema.SetCallbackVerificationResponse, *http.Response, error) {
+	return getClient().SetCallback(ctx, callbackUrl)
 }
-func (c Client) SetCallback(ctx context.Context, request SetCallbackRequest) (*schema.SetCallbackResponse, *http.Response, error) {
+func (c Client) SetCallback(ctx context.Context, callbackUrl string) (*schema.SetCallbackVerificationResponse, *http.Response, error) {
 	path := endpoints.SetCallbackURL
 
-	if err := request.Validate(); err != nil {
+	if err := validateCallbackUrl(callbackUrl); err != nil {
 		return nil, nil, err
 	}
 
 	body := make(map[string]string)
-	body["callback_url"] = request.CallbackUrl
+	body["callback_url"] = callbackUrl
 
 	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodPost, path, body)
 
@@ -47,7 +38,7 @@ func (c Client) SetCallback(ctx context.Context, request SetCallbackRequest) (*s
 		return nil, nil, err
 	}
 
-	var response schema.SetCallbackResponse
+	var response schema.SetCallbackVerificationResponse
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -56,6 +47,18 @@ func (c Client) SetCallback(ctx context.Context, request SetCallbackRequest) (*s
 	_ = json.NewDecoder(result.Body).Decode(&response)
 
 	return &response, result, err
+}
+
+func validateCallbackUrl(callbackUrl string) error {
+	if callbackUrl == "" {
+		return fmt.Errorf("CallbackUrl must be set")
+	}
+
+	if _, err := url.ParseRequestURI(callbackUrl); err != nil {
+		return fmt.Errorf("unable to parse URL: %v", err)
+	}
+
+	return nil
 }
 
 // GetCallbackInfo request
