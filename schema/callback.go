@@ -24,31 +24,35 @@ type SubscribeResponse struct {
 }
 
 type SubscriptionList struct {
-	Status   string `json:"status"`
-	Response struct {
-		TotalCount    int `json:"total_count"`
-		Subscriptions []struct {
-			SubscriptionId int      `json:"subscription_id"`
-			EventTypes     []string `json:"event_types"`
-			Type           string   `json:"type"`
-			Channel        struct {
-				Id                int    `json:"id"`
-				Link              string `json:"link"`
-				Username          string `json:"username"`
-				Title             string `json:"title"`
-				About             string `json:"about"`
-				Image100          string `json:"image100"`
-				Image640          string `json:"image640"`
-				ParticipantsCount int    `json:"participants_count"`
-			} `json:"channel,omitempty"`
-			CreatedAt int `json:"created_at"`
-			Keyword   struct {
-				Q              string `json:"q"`
-				StrongSearch   bool   `json:"strong_search"`
-				MinusWords     string `json:"minus_words"`
-				ExtendedSyntax bool   `json:"extended_syntax"`
-				PeerTypes      string `json:"peer_types"`
-			} `json:"keyword,omitempty"`
-		} `json:"subscriptions"`
-	} `json:"response"`
+	Status   string                   `json:"status"`
+	Response SubscriptionListResponse `json:"response"`
+}
+
+type SubscriptionListResponse struct {
+	TotalCount    int            `json:"total_count"`
+	Subscriptions []Subscription `json:"subscriptions"`
+}
+
+type Subscription struct {
+	SubscriptionId int      `json:"subscription_id"`
+	EventTypes     []string `json:"event_types"`
+	Type           string   `json:"type"`
+	Channel        struct {
+		Id                int    `json:"id"`
+		Link              string `json:"link"`
+		Username          string `json:"username"`
+		Title             string `json:"title"`
+		About             string `json:"about"`
+		Image100          string `json:"image100"`
+		Image640          string `json:"image640"`
+		ParticipantsCount int    `json:"participants_count"`
+	} `json:"channel,omitempty"`
+	CreatedAt int `json:"created_at"`
+	Keyword   struct {
+		Q              string `json:"q"`
+		StrongSearch   bool   `json:"strong_search"`
+		MinusWords     string `json:"minus_words"`
+		ExtendedSyntax bool   `json:"extended_syntax"`
+		PeerTypes      string `json:"peer_types"`
+	} `json:"keyword,omitempty"`
 }
