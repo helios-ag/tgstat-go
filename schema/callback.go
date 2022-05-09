@@ -1,7 +1,13 @@
 package schema
 
-type SetCallbackResponse struct {
+type SetCallbackSuccessResponse struct {
 	Status string `json:"status,string"`
+}
+
+type SetCallbackVerificationResponse struct {
+	Status     string `json:"status"`
+	Error      string `json:"error"`
+	VerifyCode string `json:"verify_code"`
 }
 
 type GetCallbackResponse struct {
@@ -16,11 +22,13 @@ type CallbackResponse struct {
 	LastErrorMessage   string `json:"last_error_message"`
 }
 
+type Subscribe struct {
+	Status   string            `json:"status"`
+	Response SubscribeResponse `json:"response"`
+}
+
 type SubscribeResponse struct {
-	Status   string `json:"status"`
-	Response struct {
-		SubscriptionId int `json:"subscription_id"`
-	} `json:"response"`
+	SubscriptionId int `json:"subscription_id"`
 }
 
 type SubscriptionList struct {
@@ -37,22 +45,15 @@ type Subscription struct {
 	SubscriptionId int      `json:"subscription_id"`
 	EventTypes     []string `json:"event_types"`
 	Type           string   `json:"type"`
-	Channel        struct {
-		Id                int    `json:"id"`
-		Link              string `json:"link"`
-		Username          string `json:"username"`
-		Title             string `json:"title"`
-		About             string `json:"about"`
-		Image100          string `json:"image100"`
-		Image640          string `json:"image640"`
-		ParticipantsCount int    `json:"participants_count"`
-	} `json:"channel,omitempty"`
-	CreatedAt int `json:"created_at"`
-	Keyword   struct {
-		Q              string `json:"q"`
-		StrongSearch   bool   `json:"strong_search"`
-		MinusWords     string `json:"minus_words"`
-		ExtendedSyntax bool   `json:"extended_syntax"`
-		PeerTypes      string `json:"peer_types"`
-	} `json:"keyword,omitempty"`
+	Channel        Channel  `json:"channel,omitempty"`
+	CreatedAt      int      `json:"created_at"`
+	Keyword        Keyword  `json:"keyword,omitempty"`
+}
+
+type Keyword struct {
+	Q              string `json:"q"`
+	StrongSearch   bool   `json:"strong_search"`
+	MinusWords     string `json:"minus_words"`
+	ExtendedSyntax bool   `json:"extended_syntax"`
+	PeerTypes      string `json:"peer_types"`
 }
