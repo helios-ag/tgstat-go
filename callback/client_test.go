@@ -25,7 +25,7 @@ func TestClient_SetCallback(t *testing.T) {
 
 		_, _, err := SetCallback(context.Background(), "t.me/123")
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("dial tcp"))
+		Expect(err.Error()).To(ContainSubstring("unable to parse URL"))
 	})
 
 	t.Run("Test SetCallback response Mapping", func(t *testing.T) {
@@ -43,7 +43,7 @@ func TestClient_SetCallback(t *testing.T) {
 			})
 		})
 
-		response, _, err := SetCallback(context.Background(), "t.me/123")
+		response, _, err := SetCallback(context.Background(), "https://myserver.me/callback")
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": ContainSubstring("error"),
@@ -56,11 +56,11 @@ func TestClient_GetCallbackInfo(t *testing.T) {
 	t.Run("Test host not reachable", func(t *testing.T) {
 		testServer := server.NewServer()
 		defer testServer.Teardown()
-		prepareClient(testServer.URL)
+		prepareClient("http://local123.tld")
 
 		_, _, err := GetCallbackInfo(context.Background())
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("PostId: cannot be blank"))
+		Expect(err.Error()).To(ContainSubstring("no such host"))
 	})
 
 	t.Run("Test GetCallbackInfo response Mapping", func(t *testing.T) {
@@ -114,7 +114,7 @@ func TestClient_SubscribeChannel(t *testing.T) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(schema.SubscribeResponse{
-				SubscriptionId: 0,
+				SubscriptionId: 123,
 			})
 		})
 
@@ -127,7 +127,7 @@ func TestClient_SubscribeChannel(t *testing.T) {
 		response, _, err := SubscribeChannel(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
-			"Status": ContainSubstring("ok"),
+			"SubscriptionId": Equal(123),
 		})))
 	})
 }
@@ -135,10 +135,13 @@ func TestClient_SubscribeChannel(t *testing.T) {
 func TestClient_SubscribeWord(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
-		prepareClient("http://localhost123")
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient("http://localhost123.tld")
 
 		req := SubscribeWordRequest{
-			Q: "Test",
+			Q:          "Test",
+			EventTypes: "new_post",
 		}
 		_, _, err := SubscribeWord(context.Background(), req)
 		Expect(err).To(HaveOccurred())
@@ -153,13 +156,17 @@ func TestClient_SubscribeWord(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.SubscribeWord, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.SubscribeResponse{
-				SubscriptionId: 123123,
+			json.NewEncoder(w).Encode(schema.Subscribe{
+				Status: "ok",
+				Response: schema.SubscribeResponse{
+					SubscriptionId: 123,
+				},
 			})
 		})
 
 		req := SubscribeWordRequest{
-			Q: "Test",
+			Q:          "Test",
+			EventTypes: "new_post",
 		}
 		response, _, err := SubscribeWord(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
