@@ -1,8 +1,9 @@
 package schema
 
 type ErrorResponse struct {
-	Status string `json:"status"`
-	Error  string `json:"error"`
+	Status     string `json:"status"`
+	Error      string `json:"error"`
+	VerifyCode string `json:"verify_code"`
 }
 
 type Country = struct {
