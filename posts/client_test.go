@@ -80,7 +80,7 @@ func TestClient_PostsGet(t *testing.T) {
 
 func TestClient_PostsStat(t *testing.T) {
 	RegisterTestingT(t)
-	t.Run("Test host not reachable", func(t *testing.T) {
+	t.Run("Test PostStat request validation", func(t *testing.T) {
 		testServer := server.NewServer()
 		defer testServer.Teardown()
 		prepareClient(testServer.URL)

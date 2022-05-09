@@ -146,7 +146,7 @@ func errorFromResponse(resp *http.Response, body []byte) error {
 	if err := json.Unmarshal(body, &respBody); err != nil {
 		return nil
 	}
-	if respBody.Error == "" {
+	if respBody.Error == "" || respBody.VerifyCode != "" {
 		return nil
 	}
 	return fmt.Errorf(respBody.Error)

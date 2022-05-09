@@ -1,8 +1,13 @@
 package schema
 
 type ErrorResponse struct {
+	Status     string `json:"status"`
+	Error      string `json:"error"`
+	VerifyCode string `json:"verify_code"`
+}
+
+type SuccessResponse struct {
 	Status string `json:"status"`
-	Error  string `json:"error"`
 }
 
 type Country = struct {
@@ -15,7 +20,7 @@ type CountryResponse struct {
 	Response []Country `json:"response"`
 }
 
-type Category = struct {
+type Category struct {
 	Code string `json:"code"`
 	Name string `json:"name"`
 }

@@ -119,6 +119,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 			PeerType: makeStrP("all"),
 		}
 		_, _, err := MentionsByPeriod(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionPeriodRequest{
 			Q:         "q",
@@ -126,6 +127,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 			StartDate: makeStrP("2020-01-19 03:14:07"),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionPeriodRequest{
 			Q:            "q",
@@ -134,6 +136,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 			HideForwards: makeBoolP(true),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionPeriodRequest{
 			Q:            "q",
@@ -143,6 +146,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 			StrongSearch: makeBoolP(false),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionPeriodRequest{
 			Q:            "q",
@@ -153,6 +157,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 			MinusWords:   makeStrP("something"),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionPeriodRequest{
 			Q:            "q",
@@ -164,6 +169,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 			Group:        makeStrP("all"),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionPeriodRequest{
 			Q:              "q",
@@ -221,9 +227,10 @@ func TestClient_MentionsByChannels(t *testing.T) {
 
 		req := MentionsByChannelRequest{
 			Q:        "q",
-			PeerType: makeStrP("p"),
+			PeerType: makeStrP("chat"),
 		}
 		_, _, err := MentionsByChannels(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionsByChannelRequest{
 			Q:         "q",
@@ -231,6 +238,7 @@ func TestClient_MentionsByChannels(t *testing.T) {
 			StartDate: makeStrP("2020-01-19 03:14:07"),
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionsByChannelRequest{
 			Q:            "q",
@@ -239,6 +247,7 @@ func TestClient_MentionsByChannels(t *testing.T) {
 			HideForwards: makeBoolP(true),
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionsByChannelRequest{
 			Q:            "q",
@@ -248,6 +257,7 @@ func TestClient_MentionsByChannels(t *testing.T) {
 			StrongSearch: makeBoolP(false),
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionsByChannelRequest{
 			Q:            "q",
@@ -258,6 +268,7 @@ func TestClient_MentionsByChannels(t *testing.T) {
 			MinusWords:   makeStrP("something"),
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionsByChannelRequest{
 			Q:            "q",
@@ -268,6 +279,7 @@ func TestClient_MentionsByChannels(t *testing.T) {
 			MinusWords:   makeStrP("something"),
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionsByChannelRequest{
 			Q:              "q",
