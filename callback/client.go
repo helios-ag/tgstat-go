@@ -155,11 +155,11 @@ func (subscribeWordRequest SubscribeWordRequest) Validate() error {
 
 // SubscribeWord request
 // https://api.tgstat.ru/docs/ru/callback/subscribe-word.html
-func SubscribeWord(ctx context.Context, request SubscribeWordRequest) (*schema.SubscribeResponse, *http.Response, error) {
+func SubscribeWord(ctx context.Context, request SubscribeWordRequest) (*schema.Subscribe, *http.Response, error) {
 	return getClient().SubscribeWord(ctx, request)
 }
 
-func (c Client) SubscribeWord(ctx context.Context, request SubscribeWordRequest) (*schema.SubscribeResponse, *http.Response, error) {
+func (c Client) SubscribeWord(ctx context.Context, request SubscribeWordRequest) (*schema.Subscribe, *http.Response, error) {
 	path := endpoints.SubscribeWord
 
 	if err := request.Validate(); err != nil {
@@ -196,7 +196,7 @@ func (c Client) SubscribeWord(ctx context.Context, request SubscribeWordRequest)
 		return nil, nil, err
 	}
 
-	var response schema.SubscribeResponse
+	var response schema.Subscribe
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -224,7 +224,7 @@ func SubscriptionsList(ctx context.Context, subscriptionsListRequest Subscriptio
 	return getClient().SubscriptionsList(ctx, subscriptionsListRequest)
 }
 func (c Client) SubscriptionsList(ctx context.Context, subscriptionsListRequest SubscriptionsListRequest) (*schema.SubscriptionList, *http.Response, error) {
-	path := endpoints.SubscriptionList
+	path := endpoints.SubscriptionsList
 	body := make(map[string]string)
 	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
@@ -262,12 +262,12 @@ func (unsubscribeRequest UnsubscribeRequest) Validate() error {
 
 // Unsubscribe request
 // https://api.tgstat.ru/docs/ru/callback/unsubscribe.html
-func Unsubscribe(ctx context.Context, request UnsubscribeRequest) (*schema.SubscribeResponse, *http.Response, error) {
+func Unsubscribe(ctx context.Context, request UnsubscribeRequest) (*schema.SuccessResponse, *http.Response, error) {
 	return getClient().Unsubscribe(ctx, request)
 }
 
-func (c Client) Unsubscribe(ctx context.Context, request UnsubscribeRequest) (*schema.SubscribeResponse, *http.Response, error) {
-	path := endpoints.SubscribeWord
+func (c Client) Unsubscribe(ctx context.Context, request UnsubscribeRequest) (*schema.SuccessResponse, *http.Response, error) {
+	path := endpoints.Unsubscribe
 
 	if err := request.Validate(); err != nil {
 		return nil, nil, err
@@ -281,7 +281,7 @@ func (c Client) Unsubscribe(ctx context.Context, request UnsubscribeRequest) (*s
 		return nil, nil, err
 	}
 
-	var response schema.SubscribeResponse
+	var response schema.SuccessResponse
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {

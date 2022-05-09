@@ -176,6 +176,84 @@ func TestClient_SubscribeWord(t *testing.T) {
 	})
 }
 
+func TestClient_SubscriptionList(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test host not reachable", func(t *testing.T) {
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient("http://localhost123.tld")
+
+		req := SubscriptionsListRequest{}
+		_, _, err := SubscriptionsList(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("dial tcp"))
+	})
+
+	t.Run("Test SubscriptionsList response Mapping", func(t *testing.T) {
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
+
+		testServer.Mux.HandleFunc(endpoints.SubscriptionsList, func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(schema.SubscriptionList{
+				Status: "ok",
+				Response: schema.SubscriptionListResponse{
+					TotalCount:    0,
+					Subscriptions: nil,
+				},
+			})
+		})
+
+		req := SubscriptionsListRequest{}
+		response, _, err := SubscriptionsList(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
+			"Status": ContainSubstring("ok"),
+		})))
+	})
+}
+
+func TestClient_Unsubscribe(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test host not reachable", func(t *testing.T) {
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient("http://localhost123.tld")
+
+		req := UnsubscribeRequest{
+			SubscriptionId: "123",
+		}
+		_, _, err := Unsubscribe(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("dial tcp"))
+	})
+
+	t.Run("Test Unsubscribe response Mapping", func(t *testing.T) {
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
+
+		testServer.Mux.HandleFunc(endpoints.Unsubscribe, func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(schema.SuccessResponse{
+				Status: "ok",
+			})
+		})
+
+		req := UnsubscribeRequest{
+			SubscriptionId: "123",
+		}
+		response, _, err := Unsubscribe(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
+			"Status": ContainSubstring("ok"),
+		})))
+	})
+}
+
 func String(v string) *string {
 	return &v
 }
