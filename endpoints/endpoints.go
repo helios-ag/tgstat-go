@@ -31,8 +31,8 @@ const (
 	SetCallbackURL string = "/callback/set-callback-url"
 	GetCallbackURL string = "/callback/get-callback-info"
 
-	SubscribeChannel string = "/callback/subscribe-channel"
-	SubscribeWord    string = "/callback/subscribe-word"
-	SubscriptionList string = "/callback/subscriptions-list"
-	Unsubscribe      string = "/callback/unsubscribe"
+	SubscribeChannel  string = "/callback/subscribe-channel"
+	SubscribeWord     string = "/callback/subscribe-word"
+	SubscriptionsList string = "/callback/subscriptions-list"
+	Unsubscribe       string = "/callback/unsubscribe"
 )

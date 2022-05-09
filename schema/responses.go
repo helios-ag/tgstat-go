@@ -6,6 +6,10 @@ type ErrorResponse struct {
 	VerifyCode string `json:"verify_code"`
 }
 
+type SuccessResponse struct {
+	Status string `json:"status"`
+}
+
 type Country = struct {
 	Code string `json:"code"`
 	Name string `json:"name"`
@@ -16,7 +20,7 @@ type CountryResponse struct {
 	Response []Country `json:"response"`
 }
 
-type Category = struct {
+type Category struct {
 	Code string `json:"code"`
 	Name string `json:"name"`
 }
