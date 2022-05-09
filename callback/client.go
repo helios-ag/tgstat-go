@@ -293,7 +293,7 @@ func (c Client) Unsubscribe(ctx context.Context, request UnsubscribeRequest) (*s
 }
 
 func boolValue(v *bool) string {
-	if *v == true {
+	if *v {
 		return "0"
 	}
 	return "1"
