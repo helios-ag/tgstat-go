@@ -227,7 +227,7 @@ func TestClient_MentionsByChannels(t *testing.T) {
 
 		req := MentionsByChannelRequest{
 			Q:        "q",
-			PeerType: makeStrP("p"),
+			PeerType: makeStrP("chat"),
 		}
 		_, _, err := MentionsByChannels(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
