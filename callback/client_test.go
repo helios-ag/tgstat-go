@@ -3,6 +3,7 @@ package callback
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/endpoints"
 	"github.com/helios-ag/tgstat-go/schema"
@@ -18,6 +19,10 @@ func prepareClient(URL string) {
 	tgstat.WithEndpoint(URL)
 }
 
+var NewRestRequestStub = func(c *tgstat.Client, ctx context.Context, token, method, urlPath string, data map[string]string) (*http.Request, error) {
+	return nil, fmt.Errorf("error happened")
+}
+
 func TestClient_SetCallback(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test host not reachable", func(t *testing.T) {
@@ -26,6 +31,21 @@ func TestClient_SetCallback(t *testing.T) {
 		_, _, err := SetCallback(context.Background(), "t.me/123")
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("unable to parse URL"))
+	})
+
+	t.Run("Test rest request failed", func(t *testing.T) {
+		prepareClient("http://local123")
+		oldNewRequest := tgstat.NewRestRequest
+		tgstat.NewRestRequest = NewRestRequestStub
+		_, _, err := SetCallback(context.Background(), "https://t.me/123")
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("error happened"))
+		tgstat.NewRestRequest = oldNewRequest
+	})
+
+	t.Run("Test validate callback url", func(t *testing.T) {
+		err := validateCallbackUrl("")
+		Expect(err.Error()).To(Equal("CallbackUrl must be set"))
 	})
 
 	t.Run("Test SetCallback response Mapping", func(t *testing.T) {
@@ -61,6 +81,15 @@ func TestClient_GetCallbackInfo(t *testing.T) {
 		_, _, err := GetCallbackInfo(context.Background())
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("no such host"))
+	})
+
+	t.Run("Test rest request failed", func(t *testing.T) {
+		oldNewRequest := tgstat.NewRestRequest
+		tgstat.NewRestRequest = NewRestRequestStub
+		_, _, err := GetCallbackInfo(context.Background())
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("error happened"))
+		tgstat.NewRestRequest = oldNewRequest
 	})
 
 	t.Run("Test GetCallbackInfo response Mapping", func(t *testing.T) {
@@ -103,6 +132,22 @@ func TestClient_SubscribeChannel(t *testing.T) {
 		_, _, err := SubscribeChannel(context.Background(), req)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("dial tcp"))
+	})
+
+	t.Run("Test rest request failed", func(t *testing.T) {
+		oldNewRequest := tgstat.NewRestRequest
+		tgstat.NewRestRequest = NewRestRequestStub
+
+		req := SubscribeChannelRequest{
+			SubscriptionId: String("blabla"),
+			ChannelId:      "t.me/username",
+			EventTypes:     "new_post",
+		}
+
+		_, _, err := SubscribeChannel(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("error happened"))
+		tgstat.NewRestRequest = oldNewRequest
 	})
 
 	t.Run("Test SubscribeChannel response Mapping", func(t *testing.T) {
@@ -148,6 +193,21 @@ func TestClient_SubscribeWord(t *testing.T) {
 		Expect(err.Error()).To(ContainSubstring("dial tcp"))
 	})
 
+	t.Run("Test rest request failed", func(t *testing.T) {
+		oldNewRequest := tgstat.NewRestRequest
+		tgstat.NewRestRequest = NewRestRequestStub
+
+		req := SubscribeWordRequest{
+			Q:          "Test",
+			EventTypes: "new_post",
+		}
+		_, _, err := SubscribeWord(context.Background(), req)
+
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("error happened"))
+		tgstat.NewRestRequest = oldNewRequest
+	})
+
 	t.Run("Test SubscribeWord response Mapping", func(t *testing.T) {
 		testServer := server.NewServer()
 		defer testServer.Teardown()
@@ -189,6 +249,18 @@ func TestClient_SubscriptionList(t *testing.T) {
 		Expect(err.Error()).To(ContainSubstring("dial tcp"))
 	})
 
+	t.Run("Test rest request failed", func(t *testing.T) {
+		oldNewRequest := tgstat.NewRestRequest
+		tgstat.NewRestRequest = NewRestRequestStub
+
+		req := SubscriptionsListRequest{}
+		_, _, err := SubscriptionsList(context.Background(), req)
+
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("error happened"))
+		tgstat.NewRestRequest = oldNewRequest
+	})
+
 	t.Run("Test SubscriptionsList response Mapping", func(t *testing.T) {
 		testServer := server.NewServer()
 		defer testServer.Teardown()
@@ -228,6 +300,20 @@ func TestClient_Unsubscribe(t *testing.T) {
 		_, _, err := Unsubscribe(context.Background(), req)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("dial tcp"))
+	})
+
+	t.Run("Test rest request failed", func(t *testing.T) {
+		oldNewRequest := tgstat.NewRestRequest
+		tgstat.NewRestRequest = NewRestRequestStub
+
+		req := UnsubscribeRequest{
+			SubscriptionId: "123",
+		}
+		_, _, err := Unsubscribe(context.Background(), req)
+
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("error happened"))
+		tgstat.NewRestRequest = oldNewRequest
 	})
 
 	t.Run("Test Unsubscribe response Mapping", func(t *testing.T) {

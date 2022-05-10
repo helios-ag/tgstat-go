@@ -51,10 +51,10 @@ func WithEndpoint(endpoint string) {
 }
 
 func (c *Client) NewRestRequest(ctx context.Context, token, method, urlPath string, data map[string]string) (*http.Request, error) {
-	return newRestRequest(c, ctx, token, method, urlPath, data)
+	return NewRestRequest(c, ctx, token, method, urlPath, data)
 }
 
-var newRestRequest = func(c *Client, ctx context.Context, token, method, urlPath string, data map[string]string) (*http.Request, error) {
+var NewRestRequest = func(c *Client, ctx context.Context, token, method, urlPath string, data map[string]string) (*http.Request, error) {
 	uri := APIURL + urlPath
 
 	if c == nil {

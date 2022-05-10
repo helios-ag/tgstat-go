@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	tgstat "github.com/helios-ag/tgstat-go"
-	"github.com/helios-ag/tgstat-go/channels"
+	"github.com/helios-ag/tgstat-go/callback"
 	"os"
 )
 
@@ -28,19 +28,21 @@ func main() {
 
 	tgstat.Token = token
 
-	channelInfo, _, err := channels.Get(context.Background(), "https://t.me/nim_ru")
+	req := callback.SubscribeChannelRequest{
+		SubscriptionId: nil,
+		ChannelId:      "",
+		EventTypes:     "",
+	}
+
+	sub, _, err := callback.SubscribeChannel(context.Background(), req)
 
 	if err != nil {
 		fmt.Printf("error getting data: %v\n", err)
 		os.Exit(1)
 	}
 
-	fmt.Print("Channel Info")
-	fmt.Printf("Title: %s\n", channelInfo.Response.Title)
-	fmt.Printf("Id: %d\n", channelInfo.Response.Id)
-	fmt.Printf("Username: %s\n", channelInfo.Response.Username)
-	fmt.Printf("Title: %s\n", channelInfo.Response.Title)
-	fmt.Printf("About: %s\n", channelInfo.Response.About)
+	fmt.Print("Subscription ID")
+	fmt.Printf("Title: %s\n", sub.SubscriptionId)
 
 	os.Exit(0)
 }
