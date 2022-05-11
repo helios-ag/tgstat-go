@@ -42,7 +42,7 @@ func main() {
 	}
 
 	fmt.Print("Subscription ID")
-	fmt.Printf("Title: %s\n", sub.SubscriptionId)
+	fmt.Printf("Title: %d\n", sub.SubscriptionId)
 
 	os.Exit(0)
 }
