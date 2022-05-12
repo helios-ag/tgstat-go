@@ -6,6 +6,9 @@ type ChannelWithRestriction struct {
 	Username          string            `json:"username"`
 	Title             string            `json:"title"`
 	About             string            `json:"about"`
+	Category          string            `json:"category"`
+	Country           string            `json:"country"`
+	Language          string            `json:"Language"`
 	Image100          string            `json:"image100"`
 	Image640          string            `json:"image640"`
 	ParticipantsCount int               `json:"participants_count"`
@@ -18,12 +21,12 @@ type TGStatRestriction struct {
 }
 
 type ChannelResponse struct {
-	Status   string                 `json:"status,string"`
+	Status   string                 `json:"status"`
 	Response ChannelWithRestriction `json:"response"`
 }
 
 type ChannelSearchResponse struct {
-	Status   string        `json:"status,string"`
+	Status   string        `json:"status"`
 	Response ChannelSearch `json:"response"`
 }
 
@@ -44,7 +47,7 @@ type ChannelSearch struct {
 }
 
 type ChannelStatResponse struct {
-	Status   string      `json:"status,string"`
+	Status   string      `json:"status"`
 	Response ChannelStat `json:"response"`
 }
 
