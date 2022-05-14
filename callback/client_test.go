@@ -294,10 +294,7 @@ func TestClient_Unsubscribe(t *testing.T) {
 		defer testServer.Teardown()
 		prepareClient("http://localhost123.tld")
 
-		req := UnsubscribeRequest{
-			SubscriptionId: "123",
-		}
-		_, _, err := Unsubscribe(context.Background(), req)
+		_, _, err := Unsubscribe(context.Background(), "123")
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("dial tcp"))
 	})
@@ -306,10 +303,7 @@ func TestClient_Unsubscribe(t *testing.T) {
 		oldNewRequest := tgstat.NewRestRequest
 		tgstat.NewRestRequest = NewRestRequestStub
 
-		req := UnsubscribeRequest{
-			SubscriptionId: "123",
-		}
-		_, _, err := Unsubscribe(context.Background(), req)
+		_, _, err := Unsubscribe(context.Background(), "123")
 
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("error happened"))
@@ -329,10 +323,7 @@ func TestClient_Unsubscribe(t *testing.T) {
 			})
 		})
 
-		req := UnsubscribeRequest{
-			SubscriptionId: "123",
-		}
-		response, _, err := Unsubscribe(context.Background(), req)
+		response, _, err := Unsubscribe(context.Background(), "123")
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": ContainSubstring("ok"),
