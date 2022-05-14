@@ -10,6 +10,40 @@ TGStat GO API Wrapper
 
 [TGStat](https://tgstat.ru) is service that collects information about different channels and chats    
 
+- [Installation](#installation)
+- [Getting started](#getting-started)
+    * [Step 1](#step-1)
+    * [Step 2 ](#step-2)
+    * [Step 3](#step-3)
+    * [Step 4](#step-4)
+- [Available methods](#available-methods)
+    * [Channels](#channels)
+        + [Get Channel Info  ](#get-channel-info)
+        + [Search among channels](#search-among-channels)
+        + [Get channel stat](#get-channel-stat)
+        + [Get channel posts](#get-channel-posts)
+        + [Get channel mentions](#get-channel-mentions)
+        + [Get channel forwards](#get-channel-forwards)
+        + [Get channel subscribers](#get-channel-subscribers)
+        + [Get channel views](#get-channel-views)
+        + [Get channel average posts reach](#get-channel-average-posts-reach)
+        + [Add channel ](#add-channel)
+        + [Get channel ERR rate](#get-channel-err-rate)
+    * [Posts](#posts)
+        + [Get post](#get-post)
+        + [Post statistics](#post-statistics)
+        + [Post search](#post-search)
+    * [Words](#words)
+        + [Mentions by period](#mentions-by-period)
+        + [Mentions by channel](#mentions-by-channel)
+    * [Database](#database)
+        + [Categories](#categories)
+        + [Countries](#countries)
+        + [Languages](#languages)
+    * [Usage](#usage)
+        + [Statistics](#statistics)
+    * [API Callback](#api-callback)
+
 ## Installation
 
 Make sure your project is using Go Modules (it will have a `go.mod` file in its
@@ -225,9 +259,46 @@ Docs at: https://api.tgstat.ru/docs/ru/database/languages.html
 ### Usage
 
 #### Statistics
+
 Docs available at https://api.tgstat.ru/docs/ru/usage/stat.html
 
 `func Stat(ctx context.Context)`
 
 
-### API Callback (WIP)
+### API Callback
+
+#### Set Callback URl
+
+Docs available at https://api.tgstat.ru/docs/ru/callback/set-callback-url.html
+
+`func SetCallback(ctx context.Context, callbackUrl string`
+
+#### Get Callback Info
+
+Docs available at https://api.tgstat.ru/docs/ru/callback/get-callback-info.html
+
+`func GetCallbackInfo(ctx context.Context)`
+
+#### Subscribe to channel
+
+Docs available at https://api.tgstat.ru/docs/ru/callback/subscribe-channel.html
+
+`func SubscribeChannel(ctx context.Context, request SubscribeChannelRequest)`
+
+#### Subscribe to word
+
+Docs available at https://api.tgstat.ru/docs/ru/callback/subscribe-word.html
+
+`func SubscribeWord(ctx context.Context, request SubscribeWordRequest)`
+
+#### Subscriptions list 
+
+Docs available at https://api.tgstat.ru/docs/ru/callback/subscriptions-list.html
+
+`func SubscriptionsList(ctx context.Context, subscriptionsListRequest SubscriptionsListRequest)`
+
+#### Unsubscribe channel 
+
+Docs available at https://api.tgstat.ru/docs/ru/callback/unsubscribe.html
+
+`func Unsubscribe(ctx context.Context, subscriptionId string)`
