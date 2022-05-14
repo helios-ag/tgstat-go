@@ -45,6 +45,7 @@ func TestClient_UsageStat(t *testing.T) {
 					SpentRequests string `json:"spentRequests"`
 					ExpiredAt     int64  `json:"expiredAt"`
 					SpentWords    string `json:"spentWords,omitempty"`
+					SpentObjects  string `json:"spentObjects,omitempty"`
 				}{{
 					ServiceKey:    "api_stat_l",
 					Title:         "Доступ к Stat API (тариф L)",

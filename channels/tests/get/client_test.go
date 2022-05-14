@@ -51,7 +51,7 @@ func TestClient_ChannelGet(t *testing.T) {
 					Image100:          "//static.tgstat.ru/public/images/channels/_100/ca/caf1a3dfb505ffed0d024130f58c5cfa.jpg",
 					Image640:          "//static.tgstat.ru/public/images/channels/_0/ca/caf1a3dfb505ffed0d024130f58c5cfa.jpg",
 					ParticipantsCount: 100,
-					TGStatRestriction: schema.TGStatRestriction{
+					TGStatRestriction: schema.TGStatRestrictions{
 						RedLabel:   true,
 						BlackLabel: true,
 					},
