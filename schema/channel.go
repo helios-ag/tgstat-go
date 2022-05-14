@@ -52,14 +52,14 @@ type ChannelStatResponse struct {
 }
 
 type ChannelStat struct {
-	Id                int    `json:"id"`
-	Title             string `json:"title"`
-	Username          string `json:"username"`
-	ParticipantsCount int    `json:"participants_count"`
-	AvgPostReach      int    `json:"avg_post_reach"`
-	ErrPercent        int    `json:"err_percent"`
-	DailyReach        int    `json:"daily_reach"`
-	CiIndex           int    `json:"ci_index"`
+	Id                int     `json:"id"`
+	Title             string  `json:"title"`
+	Username          string  `json:"username"`
+	ParticipantsCount int     `json:"participants_count"`
+	AvgPostReach      int     `json:"avg_post_reach"`
+	ErrPercent        float64 `json:"err_percent"`
+	DailyReach        int     `json:"daily_reach"`
+	CiIndex           float64 `json:"ci_index"`
 }
 
 type ChannelPostsWithChannelResponseItem struct {
