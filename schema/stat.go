@@ -12,4 +12,3 @@ type StatResponse struct {
 		SpentObjects  string `json:"spentObjects,omitempty"`
 	} `json:"response"`
 }
-
