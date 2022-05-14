@@ -250,27 +250,17 @@ func (c Client) SubscriptionsList(ctx context.Context, subscriptionsListRequest 
 	return &response, result, err
 }
 
-type UnsubscribeRequest struct {
-	SubscriptionId string
-}
-
-func (unsubscribeRequest UnsubscribeRequest) Validate() error {
-	return validation.ValidateStruct(&unsubscribeRequest,
-		validation.Field(&unsubscribeRequest.SubscriptionId, validation.Required),
-	)
-}
-
 // Unsubscribe request
 // https://api.tgstat.ru/docs/ru/callback/unsubscribe.html
-func Unsubscribe(ctx context.Context, request UnsubscribeRequest) (*schema.SuccessResponse, *http.Response, error) {
-	return getClient().Unsubscribe(ctx, request)
+func Unsubscribe(ctx context.Context, subscriptionId string) (*schema.SuccessResponse, *http.Response, error) {
+	return getClient().Unsubscribe(ctx, subscriptionId)
 }
 
-func (c Client) Unsubscribe(ctx context.Context, request UnsubscribeRequest) (*schema.SuccessResponse, *http.Response, error) {
+func (c Client) Unsubscribe(ctx context.Context, subscriptionId string) (*schema.SuccessResponse, *http.Response, error) {
 	path := endpoints.Unsubscribe
 
-	if err := request.Validate(); err != nil {
-		return nil, nil, err
+	if subscriptionId == "" {
+		return nil, nil, fmt.Errorf("subscriptionId must be set")
 	}
 
 	body := make(map[string]string)

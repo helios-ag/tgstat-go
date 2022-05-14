@@ -1,7 +1,7 @@
 package schema
 
 type SetCallbackSuccessResponse struct {
-	Status string `json:"status,string"`
+	Status string `json:"status"`
 }
 
 type SetCallbackVerificationResponse struct {
@@ -11,7 +11,7 @@ type SetCallbackVerificationResponse struct {
 }
 
 type GetCallbackResponse struct {
-	Status   string           `json:"status,string"`
+	Status   string           `json:"status"`
 	Response CallbackResponse `json:"response"`
 }
 
