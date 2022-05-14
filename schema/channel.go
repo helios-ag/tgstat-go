@@ -1,21 +1,21 @@
 package schema
 
 type ChannelWithRestriction struct {
-	Id                int               `json:"id"`
-	Link              string            `json:"link"`
-	Username          string            `json:"username"`
-	Title             string            `json:"title"`
-	About             string            `json:"about"`
-	Category          string            `json:"category"`
-	Country           string            `json:"country"`
-	Language          string            `json:"Language"`
-	Image100          string            `json:"image100"`
-	Image640          string            `json:"image640"`
-	ParticipantsCount int               `json:"participants_count"`
-	TGStatRestriction TGStatRestriction `json:"tgstat_restrictions"`
+	Id                int         `json:"id"`
+	Link              string      `json:"link"`
+	Username          string      `json:"username"`
+	Title             string      `json:"title"`
+	About             string      `json:"about"`
+	Category          string      `json:"category"`
+	Country           string      `json:"country"`
+	Language          string      `json:"Language"`
+	Image100          string      `json:"image100"`
+	Image640          string      `json:"image640"`
+	ParticipantsCount int         `json:"participants_count"`
+	TGStatRestriction interface{} `json:"tgstat_restrictions"`
 }
 
-type TGStatRestriction struct {
+type TGStatRestrictions struct {
 	RedLabel   bool `json:"red_label"`
 	BlackLabel bool `json:"black_label"`
 }

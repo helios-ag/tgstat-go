@@ -45,6 +45,22 @@ func (c Client) Get(ctx context.Context, channelId string) (*schema.ChannelRespo
 	}
 	_ = json.NewDecoder(result.Body).Decode(&response)
 
+	switch x := response.Response.TGStatRestriction.(type) {
+	case []interface{}:
+		response.Response.TGStatRestriction = nil
+	case map[string]interface{}:
+		var restrictions schema.TGStatRestrictions
+		jsonString, _ := json.Marshal(x)
+		errors := json.Unmarshal(jsonString, &restrictions)
+		if errors == nil {
+			response.Response.TGStatRestriction = restrictions
+		}
+		return nil, result, fmt.Errorf("something wrong with Restrictions response")
+
+	default:
+		return nil, result, fmt.Errorf("something wrong with Restrictions response")
+	}
+
 	return &response, result, err
 }
 
