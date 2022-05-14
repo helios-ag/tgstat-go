@@ -9,5 +9,7 @@ type StatResponse struct {
 		SpentRequests string `json:"spentRequests"`
 		ExpiredAt     int64  `json:"expiredAt"`
 		SpentWords    string `json:"spentWords,omitempty"`
+		SpentObjects  string `json:"spentObjects,omitempty"`
 	} `json:"response"`
 }
+
