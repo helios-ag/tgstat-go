@@ -202,17 +202,18 @@ type ViewItem struct {
 }
 
 type ChannelViewsResponse struct {
-	Items []ViewItem `json:"items"`
+	Period     string  `json:"period"`
+	ViewsCount float64 `json:"views_count"`
 }
 
 type ChannelViews struct {
-	Status   string               `json:"status"`
-	Response ChannelViewsResponse `json:"response"`
+	Status   string                 `json:"status"`
+	Response []ChannelViewsResponse `json:"response"`
 }
 
 type ChannelAvgReachResponse struct {
-	Period        string `json:"period"`
-	AvgPostsReach int    `json:"avg_posts_reach"`
+	Period        string  `json:"period"`
+	AvgPostsReach float64 `json:"avg_posts_reach"`
 }
 
 type ChannelAvgReach struct {
@@ -221,8 +222,8 @@ type ChannelAvgReach struct {
 }
 
 type ChannelErrResponse struct {
-	Period string `json:"period"`
-	Err    int    `json:"err"`
+	Period string  `json:"period"`
+	Err    float64 `json:"err"`
 }
 
 type ChannelErr struct {
