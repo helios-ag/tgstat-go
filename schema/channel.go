@@ -104,15 +104,15 @@ type ChannelPostsWithChannel struct {
 }
 
 type ChannelPostsResponseItem struct {
-	ID            int64       `json:"id"`
-	Date          int         `json:"date"`
-	Views         int         `json:"views"`
-	Link          string      `json:"link"`
-	ChannelID     int         `json:"channel_id"`
-	ForwardedFrom interface{} `json:"forwarded_from"`
-	IsDeleted     int         `json:"is_deleted"`
-	Text          string      `json:"text"`
-	Media         Media       `json:"media"`
+	ID            int64  `json:"id"`
+	Date          int    `json:"date"`
+	Views         int    `json:"views"`
+	Link          string `json:"link"`
+	ChannelID     int    `json:"channel_id"`
+	ForwardedFrom string `json:"forwarded_from"`
+	IsDeleted     int    `json:"is_deleted"`
+	Text          string `json:"text"`
+	Media         Media  `json:"media"`
 }
 
 type ChannelPostsResponse struct {
@@ -126,13 +126,6 @@ type ChannelPosts struct {
 	Status   string               `json:"status"`
 	Response ChannelPostsResponse `json:"response"`
 }
-
-//type ChannelMentions struct {
-//	UserID    int    `json:"userId"`
-//	ID        int    `json:"id"`
-//	Title     string `json:"title"`
-//	Completed bool   `json:"completed"`
-//}
 
 type MentionItem struct {
 	MentionID   int    `json:"mentionId"`

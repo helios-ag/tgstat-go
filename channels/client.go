@@ -170,8 +170,8 @@ type PostsRequest struct {
 	Offset       *uint64
 	StartTime    *string
 	EndTime      *string
-	HideForwards *int
-	HideDeleted  *int
+	HideForwards *bool
+	HideDeleted  *bool
 }
 
 func (postsRequest PostsRequest) Validate() error {
@@ -179,10 +179,6 @@ func (postsRequest PostsRequest) Validate() error {
 		validation.Field(&postsRequest.ChannelId, validation.Required),
 		validation.Field(&postsRequest.StartTime, validation.Date("1643113399")),
 		validation.Field(&postsRequest.EndTime, validation.Date("1643113399")),
-		validation.Field(&postsRequest.Offset, validation.Min(0), validation.Min(1000)),
-		validation.Field(&postsRequest.Limit, validation.Min(0), validation.Min(50)),
-		validation.Field(&postsRequest.HideForwards, validation.In(0, 1)),
-		validation.Field(&postsRequest.HideDeleted, validation.In(0, 1)),
 	)
 }
 
@@ -219,11 +215,11 @@ func (c Client) Posts(ctx context.Context, request PostsRequest) (*schema.Channe
 	}
 
 	if nil != request.HideForwards {
-		body["hideForwards"] = strconv.Itoa(*request.HideForwards)
+		body["hideForwards"] = strconv.FormatBool(*request.HideForwards)
 	}
 
 	if nil != request.HideDeleted {
-		body["hideDeleted"] = strconv.Itoa(*request.HideDeleted)
+		body["hideDeleted"] = strconv.FormatBool(*request.HideDeleted)
 	}
 
 	body["extended"] = "0"
@@ -253,7 +249,7 @@ func PostsExtended(ctx context.Context, request PostsRequest) (*schema.ChannelPo
 // PostsExtended request extended
 // see https://api.tgstat.ru/docs/ru/channels/posts.html
 func (c Client) PostsExtended(ctx context.Context, request PostsRequest) (*schema.ChannelPostsWithChannelResponse, *http.Response, error) {
-	path := endpoints.ChannelsStat
+	path := endpoints.ChannelsPosts
 
 	if err := request.Validate(); err != nil {
 		return nil, nil, err
@@ -278,11 +274,11 @@ func (c Client) PostsExtended(ctx context.Context, request PostsRequest) (*schem
 	}
 
 	if nil != request.HideForwards {
-		body["hideForwards"] = strconv.Itoa(*request.HideForwards)
+		body["hideForwards"] = strconv.FormatBool(*request.HideForwards)
 	}
 
 	if nil != request.HideDeleted {
-		body["hideDeleted"] = strconv.Itoa(*request.HideDeleted)
+		body["hideDeleted"] = strconv.FormatBool(*request.HideDeleted)
 	}
 
 	body["extended"] = "1"
@@ -824,4 +820,8 @@ func (c Client) Err(ctx context.Context, request ChannelViewsRequest) (*schema.C
 
 func getClient() Client {
 	return Client{tgstat.GetAPI(), tgstat.Token}
+}
+
+func Uint(i uint) *uint {
+	return &i
 }
