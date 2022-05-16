@@ -98,6 +98,22 @@ func main() {
 		fmt.Printf("PostLink: %s\n", info.PostLink)
 	}
 
+	mentions, _, err := channels.Mentions(context.Background(), req)
+
+	if err != nil {
+		fmt.Printf("error getting data: %v\n", err)
+		os.Exit(1)
+	}
+
+	for _, info := range mentions.Response.Items {
+		fmt.Printf("ChannelId: %d\n", info.ChannelID)
+		fmt.Printf("PostID: %d\n", info.PostID)
+		fmt.Printf("MentionID: %d\n", info.MentionID)
+		fmt.Printf("MentionType: %s\n", info.MentionType)
+		fmt.Printf("PostDate: %d\n", info.PostDate)
+		fmt.Printf("PostLink: %s\n", info.PostLink)
+	}
+
 	os.Exit(0)
 }
 

@@ -300,33 +300,15 @@ func (c Client) PostsExtended(ctx context.Context, request PostsRequest) (*schem
 	return &response, result, err
 }
 
-type ChannelMentionsRequest struct {
-	ChannelId string
-	Limit     *uint64
-	Offset    *uint64
-	StartDate *string
-	EndDate   *string
-}
-
-func (channelMentionsRequest ChannelMentionsRequest) Validate() error {
-	return validation.ValidateStruct(&channelMentionsRequest,
-		validation.Field(&channelMentionsRequest.ChannelId, validation.Required),
-		validation.Field(&channelMentionsRequest.Limit, validation.Min(0), validation.Max(50)),
-		validation.Field(&channelMentionsRequest.Offset, validation.Min(0), validation.Max(1000)),
-		validation.Field(&channelMentionsRequest.StartDate, validation.Date("1643113399")),
-		validation.Field(&channelMentionsRequest.EndDate, validation.Date("1643113399")),
-	)
-}
-
 // Mentions request
 // see https://api.tgstat.ru/docs/ru/channels/mentions.html
-func Mentions(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentions, *http.Response, error) {
+func Mentions(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelMentions, *http.Response, error) {
 	return getClient().Mentions(ctx, request)
 }
 
 // Mentions request
 // see https://api.tgstat.ru/docs/ru/channels/mentions.html
-func (c Client) Mentions(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentions, *http.Response, error) {
+func (c Client) Mentions(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelMentions, *http.Response, error) {
 	path := endpoints.ChannelsMentions
 
 	if err := request.Validate(); err != nil {
@@ -373,13 +355,13 @@ func (c Client) Mentions(ctx context.Context, request ChannelMentionsRequest) (*
 
 // MentionsExtended request
 // see https://api.tgstat.ru/docs/ru/channels/mentions.html
-func MentionsExtended(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentionsExtended, *http.Response, error) {
+func MentionsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelMentionsExtended, *http.Response, error) {
 	return getClient().MentionsExtended(ctx, request)
 }
 
 // MentionsExtended Mentions request
 // see https://api.tgstat.ru/docs/ru/channels/mentions.html
-func (c Client) MentionsExtended(ctx context.Context, request ChannelMentionsRequest) (*schema.ChannelMentionsExtended, *http.Response, error) {
+func (c Client) MentionsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelMentionsExtended, *http.Response, error) {
 	path := endpoints.ChannelsMentions
 
 	if err := request.Validate(); err != nil {
@@ -818,8 +800,4 @@ func (c Client) Err(ctx context.Context, request ChannelViewsRequest) (*schema.C
 
 func getClient() Client {
 	return Client{tgstat.GetAPI(), tgstat.Token}
-}
-
-func Uint(i uint) *uint {
-	return &i
 }
