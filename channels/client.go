@@ -435,8 +435,6 @@ type ChannelForwardRequest struct {
 func (channelForwardRequest ChannelForwardRequest) Validate() error {
 	return validation.ValidateStruct(&channelForwardRequest,
 		validation.Field(&channelForwardRequest.ChannelId, validation.Required),
-		validation.Field(&channelForwardRequest.Limit, validation.Min(0), validation.Max(50)),
-		validation.Field(&channelForwardRequest.Offset, validation.Min(0), validation.Max(1000)),
 	)
 }
 

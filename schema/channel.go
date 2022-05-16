@@ -163,14 +163,14 @@ type ForwardItem struct {
 	ChannelID int    `json:"channelId"`
 }
 
-type ChannelForwardsExtended struct {
-	Status   string                          `json:"status"`
-	Response ChannelForwardsResponseExtended `json:"response"`
-}
-
 type ChannelForwardsResponseExtended struct {
 	Items    []ForwardItem `json:"items"`
 	Channels []Channel     `json:"channels"`
+}
+
+type ChannelForwardsExtended struct {
+	Status   string                          `json:"status"`
+	Response ChannelForwardsResponseExtended `json:"response"`
 }
 
 type ChannelForwardsResponse struct {
@@ -184,7 +184,7 @@ type ChannelForwards struct {
 
 type ChannelSubscribersResponse struct {
 	Period            string `json:"period"`
-	ParticipantsCount uint `json:"participants_count,string"`
+	ParticipantsCount uint   `json:"participants_count,string"`
 }
 
 type ChannelSubscribers struct {
