@@ -132,7 +132,7 @@ func main() {
 		fmt.Printf("Text: %s\n", item.Text)
 		fmt.Printf("Media_type: %s\n", item.Media.MediaType)
 		fmt.Printf("mime_type: %s\n", item.Media.MimeType)
-		fmt.Printf("size: %s\n", item.Media.Size)
+		fmt.Printf("size: %d\n", item.Media.Size)
 	}
 }
 

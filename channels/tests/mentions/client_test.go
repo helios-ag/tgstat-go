@@ -25,7 +25,7 @@ func TestClient_Mentions(t *testing.T) {
 		testServer := server.NewServer()
 		defer testServer.Teardown()
 		prepareClient(testServer.URL)
-		request := channels.ChannelMentionsRequest{
+		request := channels.ChannelForwardRequest{
 			ChannelId: "",
 			Limit:     nil,
 			Offset:    nil,
@@ -61,7 +61,7 @@ func TestClient_Mentions(t *testing.T) {
 				Response: response,
 			})
 		})
-		request := channels.ChannelMentionsRequest{
+		request := channels.ChannelForwardRequest{
 			ChannelId: "/tme/123",
 			Limit:     nil,
 			Offset:    nil,
@@ -116,7 +116,7 @@ func TestClient_Mentions(t *testing.T) {
 			})
 		})
 
-		request := channels.ChannelMentionsRequest{
+		request := channels.ChannelForwardRequest{
 			ChannelId: "t.me/varlam",
 			Limit:     nil,
 			Offset:    nil,

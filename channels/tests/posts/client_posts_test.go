@@ -36,7 +36,7 @@ func TestClient_ChannelPosts(t *testing.T) {
 				Views:         148382,
 				Link:          "t.me/breakingmash",
 				ChannelID:     0,
-				ForwardedFrom: nil,
+				ForwardedFrom: "",
 				IsDeleted:     0,
 				Text:          "",
 				Media: schema.Media{
@@ -90,7 +90,7 @@ func TestClient_ChannelPosts(t *testing.T) {
 				Views:         148382,
 				Link:          "t.me/breakingmash",
 				ChannelID:     0,
-				ForwardedFrom: nil,
+				ForwardedFrom: "",
 				IsDeleted:     0,
 				Text:          "",
 				Media: schema.Media{

@@ -55,8 +55,6 @@ func (c Client) Get(ctx context.Context, channelId string) (*schema.ChannelRespo
 		if errors == nil {
 			response.Response.TGStatRestriction = restrictions
 		}
-		return nil, result, fmt.Errorf("something wrong with Restrictions response")
-
 	default:
 		return nil, result, fmt.Errorf("something wrong with Restrictions response")
 	}
