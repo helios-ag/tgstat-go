@@ -182,18 +182,14 @@ type ChannelForwards struct {
 	Response ChannelForwardsResponse `json:"response"`
 }
 
-type SubscribersItem struct {
-	Period            string `json:"period"`
-	ParticipantsCount int    `json:"participants_count"`
-}
-
 type ChannelSubscribersResponse struct {
-	Items []SubscribersItem `json:"items"`
+	Period            string `json:"period"`
+	ParticipantsCount uint `json:"participants_count,string"`
 }
 
 type ChannelSubscribers struct {
-	Status   string                     `json:"status"`
-	Response ChannelSubscribersResponse `json:"response"`
+	Status   string                       `json:"status"`
+	Response []ChannelSubscribersResponse `json:"response"`
 }
 
 type ViewItem struct {
