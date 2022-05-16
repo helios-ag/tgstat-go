@@ -3,31 +3,38 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/database"
 	"os"
 )
 
-func getToken() (key string, err error) {
-	key = os.Getenv("TOKEN")
-	if key == "" {
-		return "", fmt.Errorf("token not found")
-	}
-
-	return key, nil
+var qs = []*survey.Question{
+	{
+		Name:     "Token",
+		Prompt:   &survey.Input{Message: "Enter your token"},
+		Validate: survey.Required,
+	},
+	{
+		Name:   "Language",
+		Prompt: &survey.Input{Message: "Enter Language"},
+	},
 }
 
 func main() {
-	token, err := getToken()
+	answers := struct {
+		Token    string
+		Language string
+	}{}
 
+	err := survey.Ask(qs, &answers)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
-		os.Exit(1)
+		fmt.Println(err.Error())
+		return
 	}
-	fmt.Printf("Token is %s\n", token)
 
-	tgstat.Token = token
-	languages, _, err := database.LanguagesGet(context.Background(), "ru")
+	tgstat.Token = answers.Token
+	languages, _, err := database.LanguagesGet(context.Background(), answers.Language)
 
 	if err != nil {
 		fmt.Printf("error getting data: %v\n", err)
