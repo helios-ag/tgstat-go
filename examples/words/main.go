@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
 	tgstat "github.com/helios-ag/tgstat-go"
-	"github.com/helios-ag/tgstat-go/channels"
+	"github.com/helios-ag/tgstat-go/words"
 	"os"
 	"strconv"
 	"time"
@@ -18,43 +18,55 @@ var qs = []*survey.Question{
 		Validate: survey.Required,
 	},
 	{
-		Name:   "ChannelId",
-		Prompt: &survey.Input{Message: "Enter channel id"},
+		Name:   "Q",
+		Prompt: &survey.Input{Message: "Q"},
+	},
+	{
+		Name:   "PeerType",
+		Prompt: &survey.Select{Message: "Choose grouping", Options: []string{"channel", "chat", "all"}},
+	},
+	{
+		Name:   "StartDate",
+		Prompt: &survey.Input{Message: "Start Time", Default: ""},
+	},
+	{
+		Name:   "EndDate",
+		Prompt: &survey.Input{Message: "End Time", Default: ""},
+	},
+	{
+		Name:   "HideForwards",
+		Prompt: &survey.Confirm{Message: "Hide Forwards", Default: false},
+	},
+	{
+		Name:   "StrongSearch",
+		Prompt: &survey.Confirm{Message: "Strong Search", Default: false},
 	},
 	{
 		Name:   "Group",
-		Prompt: &survey.Input{Message: "Enter group"},
+		Prompt: &survey.Select{Message: "Choose grouping", Options: []string{"day", "week", "month"}},
 	},
 	{
-		Name:      "StartTime",
-		Prompt:    &survey.Input{Message: "Start Time", Default: ""},
-		Transform: survey.Title,
+		Name:   "ExtendedSyntax",
+		Prompt: &survey.Confirm{Message: "Enable extended syntax", Default: false},
 	},
 	{
-		Name:      "EndTime",
-		Prompt:    &survey.Input{Message: "End Time", Default: ""},
-		Transform: survey.Title,
+		Name:   "MinusWords",
+		Prompt: &survey.Input{Message: "Minus Words"},
 	},
 }
 
-//
-//Q              string
-//PeerType       *string
-//StartDate      *string
-//EndDate        *string
-//HideForwards   *bool
-//StrongSearch   *bool
-//MinusWords     *string
-//Group          *string
-//ExtendedSyntax *bool
-
 func main() {
 	answers := struct {
-		Token     string
-		ChannelId string
-		Group     string
-		StartTime string
-		EndTime   string
+		Token          string
+		Q              string
+		PeerType       string
+		StartDate      string
+		EndDate        string
+		HideForwards   bool
+		StrongSearch   bool
+		MinusWords     string
+		Group          string
+		ExtendedSyntax bool
 	}{}
 
 	// perform the questions
@@ -65,11 +77,11 @@ func main() {
 	}
 
 	var startTime, endTime string
-	if answers.StartTime != "" {
+	if answers.StartDate != "" {
 		startTime = strconv.FormatInt(time.Now().Unix()-86400, 10)
 	}
 
-	if answers.EndTime != "" {
+	if answers.EndDate != "" {
 		endTime = strconv.FormatInt(time.Now().Unix(), 10)
 	}
 
@@ -77,53 +89,70 @@ func main() {
 	if answers.Group != "" {
 		group = String(answers.Group)
 	}
-	req := channels.ChannelViewsRequest{
-		ChannelId: answers.ChannelId,
-		StartDate: String(startTime),
-		EndDate:   String(endTime),
-		Group:     group,
+	req := words.MentionPeriodRequest{
+		Q:              answers.Q,
+		PeerType:       String(answers.PeerType),
+		StartDate:      String(startTime),
+		EndDate:        String(endTime),
+		HideForwards:   Bool(answers.HideForwards),
+		StrongSearch:   Bool(answers.StrongSearch),
+		MinusWords:     String(answers.MinusWords),
+		Group:          group,
+		ExtendedSyntax: Bool(answers.ExtendedSyntax),
 	}
 
 	tgstat.Token = answers.Token
 
-	info, _, err := channels.Err(context.Background(), req)
-
-	if err != nil {
-		fmt.Printf("error getting data: %v\n", err)
-		os.Exit(1)
-	}
-	fmt.Print("Err values")
-	for _, info := range info.Response {
-		fmt.Printf("Err value: %f\n", info.Err)
-		fmt.Printf("Period: %s\n", info.Period)
-	}
-
-	views, _, err := channels.Views(context.Background(), req)
+	info, _, err := words.MentionsByPeriod(context.Background(), req)
 
 	if err != nil {
 		fmt.Printf("error getting data: %v\n", err)
 		os.Exit(1)
 	}
 
-	fmt.Print("Views")
-	for _, info := range views.Response {
-		fmt.Print("Err values")
-		fmt.Printf("Err value: %f\n", info.ViewsCount)
-		fmt.Printf("Period: %s\n", info.Period)
+	for _, item := range info.Response.Items {
+		fmt.Printf("ViewsCount %d\n", item.ViewsCount)
+		fmt.Printf("Period %s\n", item.Period)
+		fmt.Printf("MentionsCount %d\n", item.MentionsCount)
 	}
 
-	avginfo, _, err := channels.AvgPostsReach(context.Background(), req)
+	chanReq := words.MentionsByChannelRequest{
+		Q:              answers.Q,
+		PeerType:       String(answers.PeerType),
+		StartDate:      String(startTime),
+		EndDate:        String(endTime),
+		HideForwards:   Bool(answers.HideForwards),
+		StrongSearch:   Bool(answers.StrongSearch),
+		MinusWords:     String(answers.MinusWords),
+		ExtendedSyntax: Bool(answers.ExtendedSyntax),
+	}
+
+	tgstat.Token = answers.Token
+
+	mentions, _, err := words.MentionsByChannels(context.Background(), chanReq)
 
 	if err != nil {
 		fmt.Printf("error getting data: %v\n", err)
 		os.Exit(1)
 	}
 
-	fmt.Print("Avg Post Reach")
-	for _, info := range avginfo.Response {
-		fmt.Print("Err values")
-		fmt.Printf("Err value: %f\n", info.AvgPostsReach)
-		fmt.Printf("Period: %s\n", info.Period)
+	for _, mentions := range mentions.Response.Items {
+		fmt.Printf("ViewsCount %d\n", mentions.ViewsCount)
+		fmt.Printf("ChannelID %d\n", mentions.ChannelID)
+		fmt.Printf("MentionsCount %d\n", mentions.MentionsCount)
+		fmt.Printf("LastMentionDate %d\n", mentions.LastMentionDate)
+	}
+
+	for _, channelInfo := range mentions.Response.Channels {
+		fmt.Print("Channel Info")
+		fmt.Printf("Title: %s\n", channelInfo.Title)
+		fmt.Printf("Id: %d\n", channelInfo.ID)
+		fmt.Printf("Username: %s\n", channelInfo.Username)
+		fmt.Printf("Title: %s\n", channelInfo.Title)
+		fmt.Printf("About: %s\n", channelInfo.About)
+		fmt.Printf("Image100: %s\n", channelInfo.Image100)
+		fmt.Printf("Image640: %s\n", channelInfo.Image640)
+		fmt.Printf("ParticipantsCount: %d\n", channelInfo.ParticipantsCount)
 	}
 
 }
@@ -133,4 +162,8 @@ func String(v string) *string {
 		return nil
 	}
 	return &v
+}
+
+func Bool(b bool) *bool {
+	return &b
 }

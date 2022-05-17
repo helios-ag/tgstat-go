@@ -30,19 +30,19 @@ type MentionPeriodRequest struct {
 func (mentionPeriodRequest MentionPeriodRequest) Validate() error {
 	return validation.ValidateStruct(&mentionPeriodRequest,
 		validation.Field(&mentionPeriodRequest.Q, validation.Required),
-		validation.Field(&mentionPeriodRequest.Group, validation.In("channel", "chat", "all")),
+		validation.Field(&mentionPeriodRequest.Group, validation.In("day", "week", "month")),
 	)
 }
 
 // MentionsByPeriod request
 // See https://api.tgstat.ru/docs/ru/words/mentions-by-period.html
-func MentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
+func MentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentions, *http.Response, error) {
 	return getClient().MentionsByPeriod(ctx, request)
 }
 
 // MentionsByPeriod request
 // See https://api.tgstat.ru/docs/ru/words/mentions-by-period.html
-func (c Client) MentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
+func (c Client) MentionsByPeriod(ctx context.Context, request MentionPeriodRequest) (*schema.WordsMentions, *http.Response, error) {
 	path := endpoints.WordsMentionsByPeriod
 
 	if err := request.Validate(); err != nil {
@@ -98,7 +98,7 @@ func (c Client) MentionsByPeriod(ctx context.Context, request MentionPeriodReque
 		return nil, nil, err
 	}
 
-	var response schema.WordsMentionsResponse
+	var response schema.WordsMentions
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
@@ -128,13 +128,13 @@ func (mentionsByChannelRequest MentionsByChannelRequest) Validate() error {
 
 // MentionsByChannels request
 // See https://api.tgstat.ru/docs/ru/words/mentions-by-channels.html
-func MentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
+func MentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsByChannel, *http.Response, error) {
 	return getClient().MentionsByChannels(ctx, request)
 }
 
 // MentionsByChannels request
 // See https://api.tgstat.ru/docs/ru/words/mentions-by-channels.html
-func (c Client) MentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsResponse, *http.Response, error) {
+func (c Client) MentionsByChannels(ctx context.Context, request MentionsByChannelRequest) (*schema.WordsMentionsByChannel, *http.Response, error) {
 	path := endpoints.WordsMentionsByChannels
 
 	if err := request.Validate(); err != nil {
@@ -187,7 +187,7 @@ func (c Client) MentionsByChannels(ctx context.Context, request MentionsByChanne
 		return nil, nil, err
 	}
 
-	var response schema.WordsMentionsResponse
+	var response schema.WordsMentionsByChannel
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err

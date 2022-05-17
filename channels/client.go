@@ -195,32 +195,7 @@ func (c Client) Posts(ctx context.Context, request PostsRequest) (*schema.Channe
 		return nil, nil, err
 	}
 
-	body := make(map[string]string)
-	body["channelId"] = request.ChannelId
-	if nil != request.Limit {
-		body["limit"] = strconv.FormatUint(*request.Limit, 10)
-	}
-	if nil != request.Offset {
-		body["offset"] = strconv.FormatUint(*request.Offset, 10)
-	}
-
-	if nil != request.StartTime {
-		body["startTime"] = *request.StartTime
-	}
-
-	if nil != request.EndTime {
-		body["endTime"] = *request.EndTime
-	}
-
-	if nil != request.HideForwards {
-		body["hideForwards"] = strconv.FormatBool(*request.HideForwards)
-	}
-
-	if nil != request.HideDeleted {
-		body["hideDeleted"] = strconv.FormatBool(*request.HideDeleted)
-	}
-
-	body["extended"] = "0"
+	body := posts(request, false)
 
 	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
@@ -253,9 +228,29 @@ func (c Client) PostsExtended(ctx context.Context, request PostsRequest) (*schem
 		return nil, nil, err
 	}
 
+	body := posts(request, true)
+
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var response schema.ChannelPostsWithChannelResponse
+
+	result, err := c.api.Do(req, &response)
+	if err != nil {
+		return nil, result, err
+	}
+	_ = json.NewDecoder(result.Body).Decode(&response)
+
+	return &response, result, err
+}
+
+func posts(request PostsRequest, extended bool) map[string]string {
+
 	body := make(map[string]string)
 	body["channelId"] = request.ChannelId
-
 	if nil != request.Limit {
 		body["limit"] = strconv.FormatUint(*request.Limit, 10)
 	}
@@ -279,23 +274,9 @@ func (c Client) PostsExtended(ctx context.Context, request PostsRequest) (*schem
 		body["hideDeleted"] = strconv.FormatBool(*request.HideDeleted)
 	}
 
-	body["extended"] = "1"
+	body["extended"] = strconv.FormatBool(extended)
 
-	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
-
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var response schema.ChannelPostsWithChannelResponse
-
-	result, err := c.api.Do(req, &response)
-	if err != nil {
-		return nil, result, err
-	}
-	_ = json.NewDecoder(result.Body).Decode(&response)
-
-	return &response, result, err
+	return body
 }
 
 // Mentions request
@@ -313,26 +294,7 @@ func (c Client) Mentions(ctx context.Context, request ChannelForwardRequest) (*s
 		return nil, nil, err
 	}
 
-	body := make(map[string]string)
-	body["channelId"] = request.ChannelId
-
-	if nil != request.Limit {
-		body["limit"] = strconv.FormatUint(*request.Limit, 10)
-	}
-
-	if nil != request.Offset {
-		body["offset"] = strconv.FormatUint(*request.Offset, 10)
-	}
-
-	if nil != request.StartDate {
-		body["startDate"] = *request.StartDate
-	}
-
-	if nil != request.EndDate {
-		body["endDate"] = *request.EndDate
-	}
-
-	body["extended"] = "0"
+	body := mentions(request, false)
 
 	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
 
@@ -366,6 +328,26 @@ func (c Client) MentionsExtended(ctx context.Context, request ChannelForwardRequ
 		return nil, nil, err
 	}
 
+	body := mentions(request, true)
+
+	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var response schema.ChannelMentionsExtended
+
+	result, err := c.api.Do(req, &response)
+	if err != nil {
+		return nil, result, err
+	}
+	_ = json.NewDecoder(result.Body).Decode(&response)
+
+	return &response, result, err
+}
+
+func mentions(request ChannelForwardRequest, extended bool) map[string]string {
 	body := make(map[string]string)
 	body["channelId"] = request.ChannelId
 
@@ -385,23 +367,9 @@ func (c Client) MentionsExtended(ctx context.Context, request ChannelForwardRequ
 		body["endDate"] = *request.EndDate
 	}
 
-	body["extended"] = "1"
+	body["extended"] = strconv.FormatBool(extended)
 
-	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
-
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var response schema.ChannelMentionsExtended
-
-	result, err := c.api.Do(req, &response)
-	if err != nil {
-		return nil, result, err
-	}
-	_ = json.NewDecoder(result.Body).Decode(&response)
-
-	return &response, result, err
+	return body
 }
 
 type ChannelForwardRequest struct {

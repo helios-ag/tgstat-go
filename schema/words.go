@@ -1,13 +1,11 @@
 package schema
 
-type WordsMentionsItem struct {
-	Period        string `json:"period"`
-	MentionsCount int    `json:"mentions_count"`
-	ViewsCount    int    `json:"views_count"`
-}
-
 type WordsMentionsResponse struct {
-	Items []WordsMentionsItem `json:"items"`
+	Items []struct {
+		Period        string `json:"period"`
+		MentionsCount int    `json:"mentions_count"`
+		ViewsCount    int    `json:"views_count"`
+	} `json:"items"`
 }
 
 type WordsMentions struct {
