@@ -231,11 +231,9 @@ type ChannelAddPending struct {
 	Status string `json:"status"`
 }
 
-type ChannelAddSuccessResponse struct {
-	ChannelId int64 `json:"channelId"`
-}
-
 type ChannelAddSuccess struct {
-	Status   string                    `json:"status"`
-	Response ChannelAddSuccessResponse `json:"response"`
+	Status   string `json:"status"`
+	Response struct {
+		ChannelId int `json:"channelId"`
+	} `json:"response,omitempty"`
 }

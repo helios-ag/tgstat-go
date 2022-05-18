@@ -45,8 +45,8 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.WordsMentionsByPeriod, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			items := make([]schema.WordsMentionsItem, 0)
-			items = append(items, schema.WordsMentionsItem{
+			items := make([]schema.WordsMentionsResponseItem, 0)
+			items = append(items, schema.WordsMentionsResponseItem{
 				Period:        "2018-11-04",
 				MentionsCount: 1000,
 				ViewsCount:    3985,
@@ -78,8 +78,8 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.WordsMentionsByPeriod, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			items := make([]schema.WordsMentionsItem, 0)
-			items = append(items, schema.WordsMentionsItem{
+			items := make([]schema.WordsMentionsResponseItem, 0)
+			items = append(items, schema.WordsMentionsResponseItem{
 				Period:        "2018-11-04",
 				MentionsCount: 1000,
 				ViewsCount:    3985,
@@ -166,7 +166,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 			HideForwards: makeBoolP(true),
 			StrongSearch: makeBoolP(true),
 			MinusWords:   makeStrP("something"),
-			Group:        makeStrP("all"),
+			Group:        makeStrP("day"),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
@@ -178,7 +178,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 			HideForwards:   makeBoolP(true),
 			StrongSearch:   makeBoolP(true),
 			MinusWords:     makeStrP("something"),
-			Group:          makeStrP("all"),
+			Group:          makeStrP("week"),
 			ExtendedSyntax: makeBoolP(true),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)

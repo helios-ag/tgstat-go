@@ -74,8 +74,10 @@ func TestClient_ChannelAdd(t *testing.T) {
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(schema.ChannelAddSuccess{
 				Status: "ok",
-				Response: schema.ChannelAddSuccessResponse{
-					ChannelId: 1,
+				Response: struct {
+					ChannelId int `json:"channelId"`
+				}{
+					ChannelId: 1234,
 				},
 			})
 		})

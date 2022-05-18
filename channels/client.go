@@ -618,13 +618,13 @@ func (channelAddRequest ChannelAddRequest) Validate() error {
 
 // Add request
 // see https://api.tgstat.ru/docs/ru/channels/add.html
-func Add(ctx context.Context, request ChannelAddRequest) (*schema.ChannelViews, *http.Response, error) {
+func Add(ctx context.Context, request ChannelAddRequest) (*schema.ChannelAddSuccess, *http.Response, error) {
 	return getClient().Add(ctx, request)
 }
 
 // Add request
 // see https://api.tgstat.ru/docs/ru/channels/add.html
-func (c Client) Add(ctx context.Context, request ChannelAddRequest) (*schema.ChannelViews, *http.Response, error) {
+func (c Client) Add(ctx context.Context, request ChannelAddRequest) (*schema.ChannelAddSuccess, *http.Response, error) {
 	path := endpoints.ChannelsAdd
 
 	if err := request.Validate(); err != nil {
@@ -652,7 +652,7 @@ func (c Client) Add(ctx context.Context, request ChannelAddRequest) (*schema.Cha
 		return nil, nil, err
 	}
 
-	var response schema.ChannelViews
+	var response schema.ChannelAddSuccess
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
