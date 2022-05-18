@@ -10,7 +10,7 @@ type SuccessResponse struct {
 	Status string `json:"status"`
 }
 
-type Country = struct {
+type Country struct {
 	Code string `json:"code"`
 	Name string `json:"name"`
 }
