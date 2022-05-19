@@ -122,7 +122,7 @@ func TestClient_PostsSearch(t *testing.T) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(tgstat.PostSearchResult{
-				Status:   "",
+				Status:   "ok",
 				Response: tgstat.PostSearchResultResponse{},
 			})
 		})
@@ -160,7 +160,7 @@ func TestClient_PostsSearchExtended(t *testing.T) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(tgstat.PostStatResult{
-				Status:   "",
+				Status:   "ok",
 				Response: tgstat.PostStatResponse{},
 			})
 		})
