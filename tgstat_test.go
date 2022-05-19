@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	"io"
@@ -22,7 +21,7 @@ func TestNewClient(t *testing.T) {
 		defer newServer.Teardown()
 
 		newServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(schema.ErrorResponse{
+			json.NewEncoder(w).Encode(ErrorResult{
 				Status: "error",
 				Error:  "empty_token",
 			})
@@ -42,7 +41,7 @@ func TestClientDo(t *testing.T) {
 		defer newServer.Teardown()
 
 		newServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(schema.ErrorResponse{
+			json.NewEncoder(w).Encode(ErrorResult{
 				Status: "error",
 				Error:  "empty_token",
 			})
@@ -70,7 +69,7 @@ func TestClientDo(t *testing.T) {
 		defer newServer.Teardown()
 
 		newServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(schema.ErrorResponse{
+			json.NewEncoder(w).Encode(ErrorResult{
 				Status: "error",
 				Error:  "empty_token",
 			})

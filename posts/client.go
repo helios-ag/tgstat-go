@@ -7,7 +7,6 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	"net/http"
 	"strconv"
 )
@@ -19,13 +18,13 @@ type Client struct {
 
 // Get request
 // see https://api.tgstat.ru/docs/ru/posts/get.html
-func Get(ctx context.Context, postId string) (*schema.PostResponse, *http.Response, error) {
+func Get(ctx context.Context, postId string) (*tgstat.PostResult, *http.Response, error) {
 	return getClient().Get(ctx, postId)
 }
 
 // Get request
 // see https://api.tgstat.ru/docs/ru/posts/get.html
-func (c Client) Get(ctx context.Context, postId string) (*schema.PostResponse, *http.Response, error) {
+func (c Client) Get(ctx context.Context, postId string) (*tgstat.PostResult, *http.Response, error) {
 	path := endpoints.PostsGet
 
 	if postId == "" {
@@ -40,7 +39,7 @@ func (c Client) Get(ctx context.Context, postId string) (*schema.PostResponse, *
 		return nil, nil, err
 	}
 
-	var response schema.PostResponse
+	var response tgstat.PostResult
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
@@ -64,13 +63,13 @@ func (postStatRequest PostStatRequest) Validate() error {
 
 // PostStat request
 // see https://api.tgstat.ru/docs/ru/posts/get.html
-func PostStat(ctx context.Context, request PostStatRequest) (*schema.PostStatResponse, *http.Response, error) {
+func PostStat(ctx context.Context, request PostStatRequest) (*tgstat.PostStatResult, *http.Response, error) {
 	return getClient().PostStat(ctx, request)
 }
 
 // PostStat request
 // see https://api.tgstat.ru/docs/ru/posts/stat.html
-func (c Client) PostStat(ctx context.Context, request PostStatRequest) (*schema.PostStatResponse, *http.Response, error) {
+func (c Client) PostStat(ctx context.Context, request PostStatRequest) (*tgstat.PostStatResult, *http.Response, error) {
 	path := endpoints.PostsStat
 
 	if err := request.Validate(); err != nil {
@@ -89,7 +88,7 @@ func (c Client) PostStat(ctx context.Context, request PostStatRequest) (*schema.
 		return nil, nil, err
 	}
 
-	var response schema.PostStatResponse
+	var response tgstat.PostStatResult
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
@@ -123,13 +122,13 @@ func (postSearchRequest PostSearchRequest) Validate() error {
 
 // PostSearch request
 // see https://api.tgstat.ru/docs/ru/posts/search.html
-func PostSearch(ctx context.Context, request PostSearchRequest) (*schema.PostSearchResponse, *http.Response, error) {
+func PostSearch(ctx context.Context, request PostSearchRequest) (*tgstat.PostSearchResult, *http.Response, error) {
 	return getClient().PostSearch(ctx, request)
 }
 
 // PostSearch request
 // see https://api.tgstat.ru/docs/ru/posts/search.html
-func (c Client) PostSearch(ctx context.Context, request PostSearchRequest) (*schema.PostSearchResponse, *http.Response, error) {
+func (c Client) PostSearch(ctx context.Context, request PostSearchRequest) (*tgstat.PostSearchResult, *http.Response, error) {
 	path := endpoints.PostsSearch
 
 	if err := request.Validate(); err != nil {
@@ -144,7 +143,7 @@ func (c Client) PostSearch(ctx context.Context, request PostSearchRequest) (*sch
 		return nil, nil, err
 	}
 
-	var response schema.PostSearchResponse
+	var response tgstat.PostSearchResult
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
@@ -156,13 +155,13 @@ func (c Client) PostSearch(ctx context.Context, request PostSearchRequest) (*sch
 
 // PostSearchExtended request
 // see https://api.tgstat.ru/docs/ru/posts/search.html
-func PostSearchExtended(ctx context.Context, request PostSearchRequest) (*schema.PostSearchExtendedResponse, *http.Response, error) {
+func PostSearchExtended(ctx context.Context, request PostSearchRequest) (*tgstat.PostSearchExtendedResult, *http.Response, error) {
 	return getClient().PostSearchExtended(ctx, request)
 }
 
 // PostSearchExtended request
 // see https://api.tgstat.ru/docs/ru/posts/search.html
-func (c Client) PostSearchExtended(ctx context.Context, request PostSearchRequest) (*schema.PostSearchExtendedResponse, *http.Response, error) {
+func (c Client) PostSearchExtended(ctx context.Context, request PostSearchRequest) (*tgstat.PostSearchExtendedResult, *http.Response, error) {
 	path := endpoints.PostsSearch
 
 	if err := request.Validate(); err != nil {
@@ -179,7 +178,7 @@ func (c Client) PostSearchExtended(ctx context.Context, request PostSearchReques
 		return nil, nil, err
 	}
 
-	var response schema.PostSearchExtendedResponse
+	var response tgstat.PostSearchExtendedResult
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err

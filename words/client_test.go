@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	"net/http"
@@ -45,17 +44,17 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.WordsMentionsByPeriod, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			items := make([]schema.WordsMentionsItem, 0)
-			items = append(items, schema.WordsMentionsItem{
+			items := make([]tgstat.WordsMentionsResponseItem, 0)
+			items = append(items, tgstat.WordsMentionsResponseItem{
 				Period:        "2018-11-04",
 				MentionsCount: 1000,
 				ViewsCount:    3985,
 			})
 
-			response := schema.WordsMentionsResponse{
+			response := tgstat.WordsMentionsResponse{
 				Items: items,
 			}
-			json.NewEncoder(w).Encode(schema.WordsMentions{
+			json.NewEncoder(w).Encode(tgstat.WordsMentions{
 				Status:   "ok",
 				Response: response,
 			})
@@ -78,17 +77,17 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.WordsMentionsByPeriod, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			items := make([]schema.WordsMentionsItem, 0)
-			items = append(items, schema.WordsMentionsItem{
+			items := make([]tgstat.WordsMentionsResponseItem, 0)
+			items = append(items, tgstat.WordsMentionsResponseItem{
 				Period:        "2018-11-04",
 				MentionsCount: 1000,
 				ViewsCount:    3985,
 			})
 
-			response := schema.WordsMentionsResponse{
+			response := tgstat.WordsMentionsResponse{
 				Items: items,
 			}
-			json.NewEncoder(w).Encode(schema.WordsMentions{
+			json.NewEncoder(w).Encode(tgstat.WordsMentions{
 				Status:   "ok",
 				Response: response,
 			})
@@ -109,7 +108,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.WordsMentionsByPeriod, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.WordsMentions{
+			json.NewEncoder(w).Encode(tgstat.WordsMentions{
 				Status: "ok",
 			})
 		})
@@ -166,7 +165,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 			HideForwards: makeBoolP(true),
 			StrongSearch: makeBoolP(true),
 			MinusWords:   makeStrP("something"),
-			Group:        makeStrP("all"),
+			Group:        makeStrP("day"),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
@@ -178,7 +177,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 			HideForwards:   makeBoolP(true),
 			StrongSearch:   makeBoolP(true),
 			MinusWords:     makeStrP("something"),
-			Group:          makeStrP("all"),
+			Group:          makeStrP("week"),
 			ExtendedSyntax: makeBoolP(true),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
@@ -199,7 +198,7 @@ func TestClient_MentionsByChannels(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.WordsMentionsByChannels, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.WordsMentions{
+			json.NewEncoder(w).Encode(tgstat.WordsMentions{
 				Status: "ok",
 			})
 		})
@@ -220,7 +219,7 @@ func TestClient_MentionsByChannels(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.WordsMentionsByChannels, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.WordsMentions{
+			json.NewEncoder(w).Encode(tgstat.WordsMentions{
 				Status: "ok",
 			})
 		})

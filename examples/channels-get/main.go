@@ -3,32 +3,40 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/channels"
 	"os"
 )
 
-func getToken() (key string, err error) {
-	key = os.Getenv("TOKEN")
-	if key == "" {
-		return "", fmt.Errorf("token not found")
-	}
-
-	return key, nil
+var qs = []*survey.Question{
+	{
+		Name:     "Token",
+		Prompt:   &survey.Input{Message: "Enter your token"},
+		Validate: survey.Required,
+	},
+	{
+		Name:     "ChannelId",
+		Prompt:   &survey.Input{Message: "Enter Channel ID"},
+		Validate: survey.Required,
+	},
 }
 
 func main() {
-	token, err := getToken()
+	answers := struct {
+		Token     string
+		ChannelId string
+	}{}
 
+	err := survey.Ask(qs, &answers)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
-		os.Exit(1)
+		fmt.Println(err.Error())
+		return
 	}
-	fmt.Printf("Token is %s\n", token)
 
-	tgstat.Token = token
+	tgstat.Token = answers.Token
 
-	channelInfo, _, err := channels.Get(context.Background(), "https://t.me/nim_ru")
+	channelInfo, _, err := channels.Get(context.Background(), answers.ChannelId)
 
 	if err != nil {
 		fmt.Printf("error getting data: %v\n", err)
@@ -47,8 +55,11 @@ func main() {
 	fmt.Printf("Image100: %s\n", channelInfo.Response.Image100)
 	fmt.Printf("Image640: %s\n", channelInfo.Response.Image640)
 	fmt.Printf("ParticipantsCount: %d\n", channelInfo.Response.ParticipantsCount)
-	fmt.Printf("RedLabel: %s\n", bool2string(channelInfo.Response.TGStatRestriction.RedLabel))
-	fmt.Printf("BlackLabel: %s\n", bool2string(channelInfo.Response.TGStatRestriction.BlackLabel))
+	if channelInfo.Response.TGStatRestriction != nil {
+		data := channelInfo.Response.TGStatRestriction.(tgstat.TGStatRestrictions)
+		fmt.Printf("RedLabel: %s\n", bool2string(data.RedLabel))
+		fmt.Printf("BlackLabel: %s\n", bool2string(data.BlackLabel))
+	}
 
 	os.Exit(0)
 }

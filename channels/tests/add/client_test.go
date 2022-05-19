@@ -6,7 +6,6 @@ import (
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/channels"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
@@ -45,7 +44,7 @@ func TestClient_ChannelAdd(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.ChannelsForwards, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.ChannelAddPending{
+			json.NewEncoder(w).Encode(tgstat.ChannelAddPending{
 				Status: "pending",
 			})
 		})
@@ -72,10 +71,12 @@ func TestClient_ChannelAdd(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.ChannelsAdd, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.ChannelAddSuccess{
+			json.NewEncoder(w).Encode(tgstat.ChannelAddSuccess{
 				Status: "ok",
-				Response: schema.ChannelAddSuccessResponse{
-					ChannelId: 1,
+				Response: struct {
+					ChannelId int `json:"channelId"`
+				}{
+					ChannelId: 1234,
 				},
 			})
 		})

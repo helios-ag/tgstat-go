@@ -120,9 +120,7 @@ func main() {
 
 Run example `go build example.go`
 
-
-Examples available under [examples directory](https://github.com/helios-ag/tgstat-go/master/examples )
-
+All examples available under [examples directory](https://github.com/helios-ag/tgstat-go/master/examples )
 
 ## Available methods
 
@@ -139,6 +137,8 @@ Docs at: https://api.tgstat.ru/docs/ru/channels/get.html
 Docs at: https://api.tgstat.ru/docs/ru/channels/search.html
 
 `func Search(ctx context.Context, request SearchRequest)`
+
+Example [`/examples/channels-search/main.go`](examples/channels-search/main.go)
 
 #### Get channel stat
 
@@ -218,7 +218,6 @@ and extended search
 
 `func PostSearchExtended(ctx context.Context, request PostSearchRequest)`
 
-
 ### Words
 
 #### Mentions by period
@@ -259,6 +258,8 @@ Docs at: https://api.tgstat.ru/docs/ru/database/languages.html
 ### Usage
 
 #### Statistics
+
+Example [`/examples/usage/main.go`](examples/usage/main.go)
 
 Docs available at https://api.tgstat.ru/docs/ru/usage/stat.html
 

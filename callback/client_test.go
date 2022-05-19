@@ -6,7 +6,6 @@ import (
 	"fmt"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
@@ -56,7 +55,7 @@ func TestClient_SetCallback(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.SetCallbackURL, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.SetCallbackVerificationResponse{
+			json.NewEncoder(w).Encode(tgstat.SetCallbackVerificationResult{
 				Status:     "error",
 				Error:      "wrong verify code",
 				VerifyCode: "TGSTAT_VERIFY_CODE_123456",
@@ -100,9 +99,9 @@ func TestClient_GetCallbackInfo(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.GetCallbackURL, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.GetCallbackResponse{
+			json.NewEncoder(w).Encode(tgstat.GetCallbackResponse{
 				Status: "ok",
-				Response: schema.CallbackResponse{
+				Response: tgstat.CallbackResponse{
 					Url:                "https://test.ru/callback.php",
 					PendingUpdateCount: 2,
 					LastErrorDate:      1571562358,
@@ -158,7 +157,7 @@ func TestClient_SubscribeChannel(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.SubscribeChannel, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.SubscribeResponse{
+			json.NewEncoder(w).Encode(tgstat.SubscribeResponse{
 				SubscriptionId: 123,
 			})
 		})
@@ -216,9 +215,9 @@ func TestClient_SubscribeWord(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.SubscribeWord, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.Subscribe{
+			json.NewEncoder(w).Encode(tgstat.Subscribe{
 				Status: "ok",
-				Response: schema.SubscribeResponse{
+				Response: tgstat.SubscribeResponse{
 					SubscriptionId: 123,
 				},
 			})
@@ -269,9 +268,9 @@ func TestClient_SubscriptionList(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.SubscriptionsList, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.SubscriptionList{
+			json.NewEncoder(w).Encode(tgstat.SubscriptionList{
 				Status: "ok",
-				Response: schema.SubscriptionListResponse{
+				Response: tgstat.SubscriptionListResponse{
 					TotalCount:    0,
 					Subscriptions: nil,
 				},
@@ -318,7 +317,7 @@ func TestClient_Unsubscribe(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.Unsubscribe, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.SuccessResponse{
+			json.NewEncoder(w).Encode(tgstat.SuccessResult{
 				Status: "ok",
 			})
 		})

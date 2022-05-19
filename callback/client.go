@@ -7,7 +7,6 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	"net/http"
 	"net/url"
 )
@@ -19,10 +18,10 @@ type Client struct {
 
 // SetCallback request
 // https://api.tgstat.ru/docs/ru/callback/set-callback-url.html
-func SetCallback(ctx context.Context, callbackUrl string) (*schema.SetCallbackVerificationResponse, *http.Response, error) {
+func SetCallback(ctx context.Context, callbackUrl string) (*tgstat.SetCallbackVerificationResult, *http.Response, error) {
 	return getClient().SetCallback(ctx, callbackUrl)
 }
-func (c Client) SetCallback(ctx context.Context, callbackUrl string) (*schema.SetCallbackVerificationResponse, *http.Response, error) {
+func (c Client) SetCallback(ctx context.Context, callbackUrl string) (*tgstat.SetCallbackVerificationResult, *http.Response, error) {
 	path := endpoints.SetCallbackURL
 
 	if err := validateCallbackUrl(callbackUrl); err != nil {
@@ -38,7 +37,7 @@ func (c Client) SetCallback(ctx context.Context, callbackUrl string) (*schema.Se
 		return nil, nil, err
 	}
 
-	var response schema.SetCallbackVerificationResponse
+	var response tgstat.SetCallbackVerificationResult
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -63,10 +62,10 @@ func validateCallbackUrl(callbackUrl string) error {
 
 // GetCallbackInfo request
 // https://api.tgstat.ru/docs/ru/callback/get-callback-url.html
-func GetCallbackInfo(ctx context.Context) (*schema.GetCallbackResponse, *http.Response, error) {
+func GetCallbackInfo(ctx context.Context) (*tgstat.GetCallbackResponse, *http.Response, error) {
 	return getClient().GetCallbackInfo(ctx)
 }
-func (c Client) GetCallbackInfo(ctx context.Context) (*schema.GetCallbackResponse, *http.Response, error) {
+func (c Client) GetCallbackInfo(ctx context.Context) (*tgstat.GetCallbackResponse, *http.Response, error) {
 	path := endpoints.GetCallbackURL
 	body := make(map[string]string)
 	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
@@ -75,7 +74,7 @@ func (c Client) GetCallbackInfo(ctx context.Context) (*schema.GetCallbackRespons
 		return nil, nil, err
 	}
 
-	var response schema.GetCallbackResponse
+	var response tgstat.GetCallbackResponse
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
@@ -100,10 +99,10 @@ func (subscribeChannelRequest SubscribeChannelRequest) Validate() error {
 
 // SubscribeChannel request
 // https://api.tgstat.ru/docs/ru/callback/subscribe-channel.html
-func SubscribeChannel(ctx context.Context, request SubscribeChannelRequest) (*schema.SubscribeResponse, *http.Response, error) {
+func SubscribeChannel(ctx context.Context, request SubscribeChannelRequest) (*tgstat.SubscribeResponse, *http.Response, error) {
 	return getClient().SubscribeChannel(ctx, request)
 }
-func (c Client) SubscribeChannel(ctx context.Context, request SubscribeChannelRequest) (*schema.SubscribeResponse, *http.Response, error) {
+func (c Client) SubscribeChannel(ctx context.Context, request SubscribeChannelRequest) (*tgstat.SubscribeResponse, *http.Response, error) {
 	path := endpoints.SubscribeChannel
 
 	if err := request.Validate(); err != nil {
@@ -124,7 +123,7 @@ func (c Client) SubscribeChannel(ctx context.Context, request SubscribeChannelRe
 		return nil, nil, err
 	}
 
-	var response schema.SubscribeResponse
+	var response tgstat.SubscribeResponse
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -155,11 +154,11 @@ func (subscribeWordRequest SubscribeWordRequest) Validate() error {
 
 // SubscribeWord request
 // https://api.tgstat.ru/docs/ru/callback/subscribe-word.html
-func SubscribeWord(ctx context.Context, request SubscribeWordRequest) (*schema.Subscribe, *http.Response, error) {
+func SubscribeWord(ctx context.Context, request SubscribeWordRequest) (*tgstat.Subscribe, *http.Response, error) {
 	return getClient().SubscribeWord(ctx, request)
 }
 
-func (c Client) SubscribeWord(ctx context.Context, request SubscribeWordRequest) (*schema.Subscribe, *http.Response, error) {
+func (c Client) SubscribeWord(ctx context.Context, request SubscribeWordRequest) (*tgstat.Subscribe, *http.Response, error) {
 	path := endpoints.SubscribeWord
 
 	if err := request.Validate(); err != nil {
@@ -196,7 +195,7 @@ func (c Client) SubscribeWord(ctx context.Context, request SubscribeWordRequest)
 		return nil, nil, err
 	}
 
-	var response schema.Subscribe
+	var response tgstat.Subscribe
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -220,10 +219,10 @@ func (subscriptionsListRequest SubscriptionsListRequest) Validate() error {
 
 // SubscriptionsList request
 // https://api.tgstat.ru/docs/ru/callback/get-callback-url.html
-func SubscriptionsList(ctx context.Context, subscriptionsListRequest SubscriptionsListRequest) (*schema.SubscriptionList, *http.Response, error) {
+func SubscriptionsList(ctx context.Context, subscriptionsListRequest SubscriptionsListRequest) (*tgstat.SubscriptionList, *http.Response, error) {
 	return getClient().SubscriptionsList(ctx, subscriptionsListRequest)
 }
-func (c Client) SubscriptionsList(ctx context.Context, subscriptionsListRequest SubscriptionsListRequest) (*schema.SubscriptionList, *http.Response, error) {
+func (c Client) SubscriptionsList(ctx context.Context, subscriptionsListRequest SubscriptionsListRequest) (*tgstat.SubscriptionList, *http.Response, error) {
 	path := endpoints.SubscriptionsList
 	body := make(map[string]string)
 	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
@@ -240,7 +239,7 @@ func (c Client) SubscriptionsList(ctx context.Context, subscriptionsListRequest 
 		body["subscription_type"] = *subscriptionsListRequest.SubscriptionType
 	}
 
-	var response schema.SubscriptionList
+	var response tgstat.SubscriptionList
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
@@ -252,11 +251,11 @@ func (c Client) SubscriptionsList(ctx context.Context, subscriptionsListRequest 
 
 // Unsubscribe request
 // https://api.tgstat.ru/docs/ru/callback/unsubscribe.html
-func Unsubscribe(ctx context.Context, subscriptionId string) (*schema.SuccessResponse, *http.Response, error) {
+func Unsubscribe(ctx context.Context, subscriptionId string) (*tgstat.SuccessResult, *http.Response, error) {
 	return getClient().Unsubscribe(ctx, subscriptionId)
 }
 
-func (c Client) Unsubscribe(ctx context.Context, subscriptionId string) (*schema.SuccessResponse, *http.Response, error) {
+func (c Client) Unsubscribe(ctx context.Context, subscriptionId string) (*tgstat.SuccessResult, *http.Response, error) {
 	path := endpoints.Unsubscribe
 
 	if subscriptionId == "" {
@@ -271,7 +270,7 @@ func (c Client) Unsubscribe(ctx context.Context, subscriptionId string) (*schema
 		return nil, nil, err
 	}
 
-	var response schema.SuccessResponse
+	var response tgstat.SuccessResult
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {

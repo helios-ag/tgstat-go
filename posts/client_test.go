@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
@@ -35,37 +34,18 @@ func TestClient_PostsGet(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.PostsGet, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.PostResponse{
+			json.NewEncoder(w).Encode(tgstat.PostResult{
 				Status: "ok",
-				Response: struct {
-					ID            int         `json:"id"`
-					Date          int         `json:"date"`
-					Views         int         `json:"views"`
-					Link          string      `json:"link"`
-					ChannelID     int         `json:"channel_id"`
-					ForwardedFrom interface{} `json:"forwarded_from"`
-					IsDeleted     int         `json:"is_deleted"`
-					Text          string      `json:"text"`
-					Media         struct {
-						MediaType string `json:"media_type"`
-						Caption   string `json:"caption"`
-					} `json:"media"`
-				}{
+				Response: tgstat.PostResponse{
 					ID:            0,
 					Date:          0,
 					Views:         0,
-					Link:          "t.me/",
+					Link:          "",
 					ChannelID:     0,
 					ForwardedFrom: nil,
 					IsDeleted:     0,
 					Text:          "",
-					Media: struct {
-						MediaType string `json:"media_type"`
-						Caption   string `json:"caption"`
-					}{
-						MediaType: "mediaPhoto",
-						Caption:   "",
-					},
+					Media:         tgstat.Media{},
 				},
 			})
 		})
@@ -102,36 +82,9 @@ func TestClient_PostsStat(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.PostsStat, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.PostStatResponse{
-				Status: "ok",
-				Response: struct {
-					ViewsCount    int `json:"viewsCount"`
-					ForwardsCount int `json:"forwardsCount"`
-					MentionsCount int `json:"mentionsCount"`
-					Forwards      []struct {
-						PostID    string `json:"postId"`
-						PostLink  string `json:"postLink"`
-						PostDate  string `json:"postDate"`
-						ChannelID int    `json:"channelId"`
-					} `json:"forwards"`
-					Mentions []struct {
-						PostID    string `json:"postId,omitempty"`
-						PostLink  string `json:"postLink,omitempty"`
-						PostDate  string `json:"postDate,omitempty"`
-						ChannelID int    `json:"channelId,omitempty"`
-					} `json:"mentions"`
-					Views []struct {
-						Date        string `json:"date"`
-						ViewsGrowth int    `json:"viewsGrowth"`
-					} `json:"views"`
-				}{
-					ViewsCount:    123,
-					ForwardsCount: 5,
-					MentionsCount: 3,
-					Forwards:      nil,
-					Mentions:      nil,
-					Views:         nil,
-				},
+			json.NewEncoder(w).Encode(tgstat.PostStatResult{
+				Status:   "ok",
+				Response: tgstat.PostStatResponse{},
 			})
 		})
 
@@ -168,32 +121,9 @@ func TestClient_PostsSearch(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.PostsSearch, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.PostSearchResponse{
-				Status: "ok",
-				Response: struct {
-					Count      int `json:"count"`
-					TotalCount int `json:"total_count"`
-					Items      []struct {
-						ID            int64       `json:"id"`
-						Date          int         `json:"date"`
-						Views         int         `json:"views"`
-						Link          string      `json:"link"`
-						ChannelID     int         `json:"channel_id"`
-						ForwardedFrom interface{} `json:"forwarded_from"`
-						IsDeleted     int         `json:"is_deleted"`
-						Text          string      `json:"text"`
-						Snippet       string      `json:"snippet"`
-						Media         struct {
-							MediaType string `json:"media_type"`
-							MimeType  string `json:"mime_type"`
-							Size      int    `json:"size"`
-						} `json:"media"`
-					} `json:"items"`
-				}{
-					Count:      112,
-					TotalCount: 23,
-					Items:      nil,
-				},
+			json.NewEncoder(w).Encode(tgstat.PostSearchResult{
+				Status:   "ok",
+				Response: tgstat.PostSearchResultResponse{},
 			})
 		})
 
@@ -229,33 +159,9 @@ func TestClient_PostsSearchExtended(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.PostsSearch, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.PostStatResponse{
-				Status: "ok",
-				Response: struct {
-					ViewsCount    int `json:"viewsCount"`
-					ForwardsCount int `json:"forwardsCount"`
-					MentionsCount int `json:"mentionsCount"`
-					Forwards      []struct {
-						PostID    string `json:"postId"`
-						PostLink  string `json:"postLink"`
-						PostDate  string `json:"postDate"`
-						ChannelID int    `json:"channelId"`
-					} `json:"forwards"`
-					Mentions []struct {
-						PostID    string `json:"postId,omitempty"`
-						PostLink  string `json:"postLink,omitempty"`
-						PostDate  string `json:"postDate,omitempty"`
-						ChannelID int    `json:"channelId,omitempty"`
-					} `json:"mentions"`
-					Views []struct {
-						Date        string `json:"date"`
-						ViewsGrowth int    `json:"viewsGrowth"`
-					} `json:"views"`
-				}{
-					ViewsCount:    0,
-					ForwardsCount: 0,
-					MentionsCount: 0,
-				},
+			json.NewEncoder(w).Encode(tgstat.PostStatResult{
+				Status:   "ok",
+				Response: tgstat.PostStatResponse{},
 			})
 		})
 

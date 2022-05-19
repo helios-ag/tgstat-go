@@ -6,7 +6,6 @@ import (
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/channels"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
@@ -41,18 +40,15 @@ func TestClient_Views(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.ChannelsViews, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			items := make([]schema.ViewItem, 0)
-			items = append(items, schema.ViewItem{
+			items := make([]tgstat.ChannelViewsResponse, 0)
+			items = append(items, tgstat.ChannelViewsResponse{
 				Period:     "2018-11-04",
 				ViewsCount: 3985,
 			})
 
-			response := schema.ChannelViewsResponse{
-				Items: items,
-			}
-			json.NewEncoder(w).Encode(schema.ChannelViews{
+			json.NewEncoder(w).Encode(tgstat.ChannelViews{
 				Status:   "ok",
-				Response: response,
+				Response: items,
 			})
 		})
 		request := channels.ChannelViewsRequest{

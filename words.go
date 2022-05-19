@@ -1,13 +1,13 @@
-package schema
+package tgstat_go
 
-type WordsMentionsItem struct {
+type WordsMentionsResponseItem struct {
 	Period        string `json:"period"`
 	MentionsCount int    `json:"mentions_count"`
 	ViewsCount    int    `json:"views_count"`
 }
 
 type WordsMentionsResponse struct {
-	Items []WordsMentionsItem `json:"items"`
+	Items []WordsMentionsResponseItem `json:"items"`
 }
 
 type WordsMentions struct {

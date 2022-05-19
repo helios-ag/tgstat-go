@@ -3,30 +3,37 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/AlecAivazis/survey/v2"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/callback"
 	"os"
 )
 
-func getToken() (key string, err error) {
-	key = os.Getenv("TOKEN")
-	if key == "" {
-		return "", fmt.Errorf("token not found")
-	}
-
-	return key, nil
+var qs = []*survey.Question{
+	{
+		Name:     "Token",
+		Prompt:   &survey.Input{Message: "Enter your token"},
+		Validate: survey.Required,
+	},
+	{
+		Name:   "ChannelId",
+		Prompt: &survey.Input{Message: "Enter Channel ID"},
+	},
 }
 
 func main() {
-	token, err := getToken()
+	answers := struct {
+		Token     string
+		ChannelId string
+	}{}
 
+	err := survey.Ask(qs, &answers)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
-		os.Exit(1)
+		fmt.Println(err.Error())
+		return
 	}
-	fmt.Printf("Token is %s\n", token)
 
-	tgstat.Token = token
+	tgstat.Token = answers.Token
 
 	req := callback.SubscribeChannelRequest{
 		SubscriptionId: nil,

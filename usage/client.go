@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	"net/http"
 )
 
@@ -16,13 +15,13 @@ type Client struct {
 
 // Stat request
 // see https://api.tgstat.ru/docs/ru/usage/stat.html
-func Stat(ctx context.Context) (*schema.StatResponse, *http.Response, error) {
+func Stat(ctx context.Context) (*tgstat.StatResult, *http.Response, error) {
 	return getClient().Stat(ctx)
 }
 
 // Stat request
 // see https://api.tgstat.ru/docs/ru/usage/stat.html
-func (c Client) Stat(ctx context.Context) (*schema.StatResponse, *http.Response, error) {
+func (c Client) Stat(ctx context.Context) (*tgstat.StatResult, *http.Response, error) {
 	path := endpoints.UsageStat
 
 	body := make(map[string]string)
@@ -32,7 +31,7 @@ func (c Client) Stat(ctx context.Context) (*schema.StatResponse, *http.Response,
 		return nil, nil, err
 	}
 
-	var response schema.StatResponse
+	var response tgstat.StatResult
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err

@@ -6,7 +6,6 @@ import (
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/channels"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
@@ -43,7 +42,7 @@ func TestClient_ChannelForwards(t *testing.T) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 
-			item := schema.ForwardItem{
+			item := tgstat.ForwardItem{
 				ForwardID: 123,
 				PostID:    0,
 				PostLink:  "t.me/123123",
@@ -51,12 +50,12 @@ func TestClient_ChannelForwards(t *testing.T) {
 				ChannelID: 0,
 			}
 
-			items := make([]schema.ForwardItem, 0)
+			items := make([]tgstat.ForwardItem, 0)
 			items = append(items, item)
 
-			json.NewEncoder(w).Encode(schema.ChannelForwards{
+			json.NewEncoder(w).Encode(tgstat.ChannelForwards{
 				Status: "ok",
-				Response: schema.ChannelForwardsResponse{
+				Response: tgstat.ChannelForwardsResponse{
 					Items: items,
 				},
 			})

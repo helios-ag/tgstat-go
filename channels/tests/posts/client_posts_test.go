@@ -6,7 +6,6 @@ import (
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/channels"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
@@ -29,23 +28,23 @@ func TestClient_ChannelPosts(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.ChannelsPosts, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			items := make([]schema.ChannelPostsResponseItem, 0)
-			items = append(items, schema.ChannelPostsResponseItem{
+			items := make([]tgstat.ChannelPostsResponseItem, 0)
+			items = append(items, tgstat.ChannelPostsResponseItem{
 				ID:            7377,
 				Date:          1540123429,
 				Views:         148382,
 				Link:          "t.me/breakingmash",
 				ChannelID:     0,
-				ForwardedFrom: nil,
+				ForwardedFrom: "",
 				IsDeleted:     0,
 				Text:          "",
-				Media: schema.Media{
+				Media: tgstat.ChannelMedia{
 					MediaType: "",
 					MimeType:  "",
 					Size:      0,
 				},
 			})
-			channel := schema.Channel{
+			channel := tgstat.Channel{
 				ID:                7377,
 				Link:              "t.me/breakingmash",
 				Username:          "@breakingmash",
@@ -56,9 +55,9 @@ func TestClient_ChannelPosts(t *testing.T) {
 				ParticipantsCount: 0,
 			}
 
-			json.NewEncoder(w).Encode(schema.ChannelPosts{
+			json.NewEncoder(w).Encode(tgstat.ChannelPosts{
 				Status: "ok",
-				Response: schema.ChannelPostsResponse{
+				Response: tgstat.ChannelPostsResponse{
 					Channel:    channel,
 					Count:      50,
 					TotalCount: 150,
@@ -83,23 +82,23 @@ func TestClient_ChannelPosts(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.ChannelsPosts, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			items := make([]schema.ChannelPostsResponseItem, 0)
-			items = append(items, schema.ChannelPostsResponseItem{
+			items := make([]tgstat.ChannelPostsResponseItem, 0)
+			items = append(items, tgstat.ChannelPostsResponseItem{
 				ID:            7377,
 				Date:          1540123429,
 				Views:         148382,
 				Link:          "t.me/breakingmash",
 				ChannelID:     0,
-				ForwardedFrom: nil,
+				ForwardedFrom: "",
 				IsDeleted:     0,
 				Text:          "",
-				Media: schema.Media{
+				Media: tgstat.ChannelMedia{
 					MediaType: "",
 					MimeType:  "",
 					Size:      0,
 				},
 			})
-			channel := schema.Channel{
+			channel := tgstat.Channel{
 				ID:                7377,
 				Link:              "t.me/breakingmash",
 				Username:          "@breakingmash",
@@ -110,9 +109,9 @@ func TestClient_ChannelPosts(t *testing.T) {
 				ParticipantsCount: 0,
 			}
 
-			json.NewEncoder(w).Encode(schema.ChannelPosts{
+			json.NewEncoder(w).Encode(tgstat.ChannelPosts{
 				Status: "ok",
-				Response: schema.ChannelPostsResponse{
+				Response: tgstat.ChannelPostsResponse{
 					Channel:    channel,
 					Count:      50,
 					TotalCount: 150,
