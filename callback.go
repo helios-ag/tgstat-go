@@ -1,4 +1,4 @@
-package schema
+package tgstat_go
 
 type SetCallbackSuccessResult struct {
 	Status string `json:"status"`
