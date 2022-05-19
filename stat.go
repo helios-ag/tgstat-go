@@ -1,4 +1,4 @@
-package schema
+package tgstat_go
 
 type StatResponse struct {
 	ServiceKey    string `json:"serviceKey"`
