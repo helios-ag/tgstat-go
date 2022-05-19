@@ -1,4 +1,4 @@
-package schema
+package tgstat_go
 
 type WordsMentionsResponseItem struct {
 	Period        string `json:"period"`
