@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
@@ -37,18 +36,18 @@ func TestClient_CountriesGet(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.DatabaseCountries, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			russia := schema.Country{
+			russia := tgstat.Country{
 				Code: "Ru",
 				Name: "Russia",
 			}
 
-			us := schema.Country{
+			us := tgstat.Country{
 				Code: "US",
 				Name: "United States",
 			}
-			json.NewEncoder(w).Encode(schema.CountryResponse{
+			json.NewEncoder(w).Encode(tgstat.CountryResult{
 				Status: "ok",
-				Response: []schema.Country{
+				Response: []tgstat.Country{
 					russia,
 					us,
 				},
@@ -59,7 +58,7 @@ func TestClient_CountriesGet(t *testing.T) {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": ContainSubstring("ok"),
-			"Response": ContainElement(schema.Country{
+			"Response": ContainElement(tgstat.Country{
 				Code: "Ru",
 				Name: "Russia",
 			}),
@@ -87,18 +86,18 @@ func TestClient_CategoriesGet(t *testing.T) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 
-			tech := schema.Category{
+			tech := tgstat.Category{
 				Code: "tech",
 				Name: "Технологии",
 			}
 
-			news := schema.Category{
+			news := tgstat.Category{
 				Code: "news",
 				Name: "Новости",
 			}
-			json.NewEncoder(w).Encode(schema.CategoryResponse{
+			json.NewEncoder(w).Encode(tgstat.CategoryResult{
 				Status: "ok",
-				Response: []schema.Category{
+				Response: []tgstat.Category{
 					tech,
 					news,
 				},
@@ -109,7 +108,7 @@ func TestClient_CategoriesGet(t *testing.T) {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": ContainSubstring("ok"),
-			"Response": ContainElement(schema.Category{
+			"Response": ContainElement(tgstat.Category{
 				Code: "tech",
 				Name: "Технологии",
 			}),
@@ -137,19 +136,19 @@ func TestClient_LanguagesGet(t *testing.T) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 
-			russia := schema.Language{
+			russia := tgstat.Language{
 				Code: "Ru",
 				Name: "Russia",
 			}
 
-			english := schema.Language{
+			english := tgstat.Language{
 				Code: "US",
 				Name: "United States",
 			}
 
-			json.NewEncoder(w).Encode(schema.LanguageResponse{
+			json.NewEncoder(w).Encode(tgstat.LanguageResult{
 				Status: "ok",
-				Response: []schema.Language{
+				Response: []tgstat.Language{
 					russia,
 					english,
 				},
@@ -160,7 +159,7 @@ func TestClient_LanguagesGet(t *testing.T) {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": ContainSubstring("ok"),
-			"Response": ContainElement(schema.Language{
+			"Response": ContainElement(tgstat.Language{
 				Code: "Ru",
 				Name: "Russia",
 			}),

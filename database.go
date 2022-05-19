@@ -1,21 +1,11 @@
-package schema
-
-type ErrorResponse struct {
-	Status     string `json:"status"`
-	Error      string `json:"error"`
-	VerifyCode string `json:"verify_code"`
-}
-
-type SuccessResponse struct {
-	Status string `json:"status"`
-}
+package tgstat_go
 
 type Country struct {
 	Code string `json:"code"`
 	Name string `json:"name"`
 }
 
-type CountryResponse struct {
+type CountryResult struct {
 	Status   string    `json:"status"`
 	Response []Country `json:"response"`
 }
@@ -25,7 +15,7 @@ type Category struct {
 	Name string `json:"name"`
 }
 
-type CategoryResponse struct {
+type CategoryResult struct {
 	Status   string     `json:"status"`
 	Response []Category `json:"response"`
 }
@@ -35,7 +25,7 @@ type Language struct {
 	Name string `json:"name"`
 }
 
-type LanguageResponse struct {
+type LanguageResult struct {
 	Status   string     `json:"status"`
 	Response []Language `json:"response"`
 }

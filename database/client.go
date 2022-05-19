@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	"net/http"
 )
 
@@ -16,13 +15,13 @@ type Client struct {
 
 // CountriesGet request
 // See https://api.tgstat.ru/docs/ru/database/countries.html
-func CountriesGet(ctx context.Context, lang string) (*schema.CountryResponse, *http.Response, error) {
+func CountriesGet(ctx context.Context, lang string) (*tgstat.CountryResult, *http.Response, error) {
 	return getClient().CountriesGet(ctx, lang)
 }
 
 // CountriesGet request
 // See https://api.tgstat.ru/docs/ru/database/countries.html
-func (c Client) CountriesGet(ctx context.Context, lang string) (*schema.CountryResponse, *http.Response, error) {
+func (c Client) CountriesGet(ctx context.Context, lang string) (*tgstat.CountryResult, *http.Response, error) {
 	path := endpoints.DatabaseCountries
 
 	body := make(map[string]string)
@@ -33,7 +32,7 @@ func (c Client) CountriesGet(ctx context.Context, lang string) (*schema.CountryR
 		return nil, nil, err
 	}
 
-	var response schema.CountryResponse
+	var response tgstat.CountryResult
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
@@ -45,13 +44,13 @@ func (c Client) CountriesGet(ctx context.Context, lang string) (*schema.CountryR
 
 // CategoriesGet request
 // See https://api.tgstat.ru/docs/ru/database/categories.html
-func CategoriesGet(ctx context.Context, lang string) (*schema.CategoryResponse, *http.Response, error) {
+func CategoriesGet(ctx context.Context, lang string) (*tgstat.CategoryResult, *http.Response, error) {
 	return getClient().CategoriesGet(ctx, lang)
 }
 
 // CategoriesGet request
 // See https://api.tgstat.ru/docs/ru/database/categories.html
-func (c Client) CategoriesGet(ctx context.Context, lang string) (*schema.CategoryResponse, *http.Response, error) {
+func (c Client) CategoriesGet(ctx context.Context, lang string) (*tgstat.CategoryResult, *http.Response, error) {
 	path := endpoints.DatabaseCategories
 
 	body := make(map[string]string)
@@ -63,7 +62,7 @@ func (c Client) CategoriesGet(ctx context.Context, lang string) (*schema.Categor
 		return nil, nil, err
 	}
 
-	var response schema.CategoryResponse
+	var response tgstat.CategoryResult
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
@@ -75,13 +74,13 @@ func (c Client) CategoriesGet(ctx context.Context, lang string) (*schema.Categor
 
 // LanguagesGet request
 // See https://api.tgstat.ru/docs/ru/database/languages.html
-func LanguagesGet(ctx context.Context, lang string) (*schema.LanguageResponse, *http.Response, error) {
+func LanguagesGet(ctx context.Context, lang string) (*tgstat.LanguageResult, *http.Response, error) {
 	return getClient().LanguagesGet(ctx, lang)
 }
 
 // LanguagesGet request
 // See https://api.tgstat.ru/docs/ru/database/languages.html
-func (c Client) LanguagesGet(ctx context.Context, lang string) (*schema.LanguageResponse, *http.Response, error) {
+func (c Client) LanguagesGet(ctx context.Context, lang string) (*tgstat.LanguageResult, *http.Response, error) {
 	path := endpoints.DatabaseLanguages
 
 	body := make(map[string]string)
@@ -92,7 +91,7 @@ func (c Client) LanguagesGet(ctx context.Context, lang string) (*schema.Language
 		return nil, nil, err
 	}
 
-	var response schema.LanguageResponse
+	var response tgstat.LanguageResult
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
