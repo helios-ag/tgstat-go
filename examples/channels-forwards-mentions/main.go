@@ -20,6 +20,7 @@ var qs = []*survey.Question{
 	{
 		Name:   "ChannelId",
 		Prompt: &survey.Input{Message: "Enter Channel ID"},
+		Validate: survey.Required,
 	},
 	{
 		Name:   "Limit",

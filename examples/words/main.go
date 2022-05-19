@@ -20,6 +20,7 @@ var qs = []*survey.Question{
 	{
 		Name:   "Q",
 		Prompt: &survey.Input{Message: "Q"},
+		Validate: survey.Required,
 	},
 	{
 		Name:   "PeerType",
@@ -34,11 +35,11 @@ var qs = []*survey.Question{
 		Prompt: &survey.Input{Message: "End Time", Default: ""},
 	},
 	{
-		Name:   "HideForwards",
+		Name:   "Hide forwards",
 		Prompt: &survey.Confirm{Message: "Hide Forwards", Default: false},
 	},
 	{
-		Name:   "StrongSearch",
+		Name:   "Strong search",
 		Prompt: &survey.Confirm{Message: "Strong Search", Default: false},
 	},
 	{
@@ -46,11 +47,11 @@ var qs = []*survey.Question{
 		Prompt: &survey.Select{Message: "Choose grouping", Options: []string{"day", "week", "month"}},
 	},
 	{
-		Name:   "ExtendedSyntax",
+		Name:   "Extended syntax",
 		Prompt: &survey.Confirm{Message: "Enable extended syntax", Default: false},
 	},
 	{
-		Name:   "MinusWords",
+		Name:   "Minus words",
 		Prompt: &survey.Input{Message: "Minus Words"},
 	},
 }
