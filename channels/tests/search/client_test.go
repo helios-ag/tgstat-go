@@ -6,7 +6,6 @@ import (
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/channels"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
@@ -46,8 +45,8 @@ func TestClient_ChannelSearch(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.ChannelsSearch, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			items := make([]schema.ChannelSearchItem, 0)
-			items = append(items, schema.ChannelSearchItem{
+			items := make([]tgstat.ChannelSearchItem, 0)
+			items = append(items, tgstat.ChannelSearchItem{
 				Id:                0,
 				Link:              "t.me/varlamov",
 				Username:          "varlamov",
@@ -58,9 +57,9 @@ func TestClient_ChannelSearch(t *testing.T) {
 				ParticipantsCount: 5,
 			})
 
-			json.NewEncoder(w).Encode(schema.ChannelSearchResponse{
+			json.NewEncoder(w).Encode(tgstat.ChannelSearchResult{
 				Status: "ok",
-				Response: schema.ChannelSearch{
+				Response: tgstat.ChannelSearch{
 					Count: 0,
 					Items: items,
 				},

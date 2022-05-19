@@ -6,7 +6,6 @@ import (
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/channels"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
@@ -42,14 +41,14 @@ func TestClient_ChannelAVGPostsReach(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.ChannelAVGPostsReach, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			response := schema.ChannelAvgReachResponse{
+			response := tgstat.ChannelAvgReachResponse{
 				Period:        "2021-11-26",
 				AvgPostsReach: 6017,
 			}
-			responses := make([]schema.ChannelAvgReachResponse, 0)
+			responses := make([]tgstat.ChannelAvgReachResponse, 0)
 			responses = append(responses, response)
 
-			json.NewEncoder(w).Encode(schema.ChannelAvgReach{
+			json.NewEncoder(w).Encode(tgstat.ChannelAvgReach{
 				Status:   "ok",
 				Response: responses,
 			})

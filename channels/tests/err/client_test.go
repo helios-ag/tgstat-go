@@ -6,7 +6,6 @@ import (
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/channels"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
@@ -42,15 +41,15 @@ func TestClient_ChannelErr(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.ChannelErr, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			response := schema.ChannelErrResponse{
+			response := tgstat.ChannelErrResponse{
 				Period: "2021-11-26",
 				Err:    41,
 			}
 
-			responses := make([]schema.ChannelErrResponse, 0)
+			responses := make([]tgstat.ChannelErrResponse, 0)
 			responses = append(responses, response)
 
-			json.NewEncoder(w).Encode(schema.ChannelErr{
+			json.NewEncoder(w).Encode(tgstat.ChannelErr{
 				Status:   "ok",
 				Response: responses,
 			})

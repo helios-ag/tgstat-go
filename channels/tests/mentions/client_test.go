@@ -6,7 +6,6 @@ import (
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/channels"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
@@ -43,8 +42,8 @@ func TestClient_Mentions(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.ChannelsMentions, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			items := make([]schema.MentionItem, 0)
-			items = append(items, schema.MentionItem{
+			items := make([]tgstat.MentionItem, 0)
+			items = append(items, tgstat.MentionItem{
 				MentionID:   48258272,
 				MentionType: "channel",
 				PostID:      4375814870,
@@ -53,10 +52,10 @@ func TestClient_Mentions(t *testing.T) {
 				ChannelID:   197080,
 			})
 
-			response := schema.ChannelMentionsResponse{
+			response := tgstat.ChannelMentionsResponse{
 				Items: items,
 			}
-			json.NewEncoder(w).Encode(schema.ChannelMentions{
+			json.NewEncoder(w).Encode(tgstat.ChannelMentionsResult{
 				Status:   "ok",
 				Response: response,
 			})
@@ -84,8 +83,8 @@ func TestClient_Mentions(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.ChannelsMentions, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			items := make([]schema.MentionItem, 0)
-			items = append(items, schema.MentionItem{
+			items := make([]tgstat.MentionItem, 0)
+			items = append(items, tgstat.MentionItem{
 				MentionID:   48258272,
 				MentionType: "channel",
 				PostID:      4375814870,
@@ -94,8 +93,8 @@ func TestClient_Mentions(t *testing.T) {
 				ChannelID:   197080,
 			})
 
-			chans := make([]schema.Channel, 0)
-			chans = append(chans, schema.Channel{
+			chans := make([]tgstat.Channel, 0)
+			chans = append(chans, tgstat.Channel{
 				ID:                7377,
 				Link:              "t.me/breakingmash",
 				Username:          "@breakingmash",
@@ -106,11 +105,11 @@ func TestClient_Mentions(t *testing.T) {
 				ParticipantsCount: 0,
 			})
 
-			response := schema.ChannelMentionsResponseExtended{
+			response := tgstat.ChannelMentionsResponseExtended{
 				Items:    items,
 				Channels: chans,
 			}
-			json.NewEncoder(w).Encode(schema.ChannelMentionsExtended{
+			json.NewEncoder(w).Encode(tgstat.ChannelMentionsExtended{
 				Status:   "ok",
 				Response: response,
 			})

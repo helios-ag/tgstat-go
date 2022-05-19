@@ -1,4 +1,4 @@
-package schema
+package tgstat_go
 
 type ChannelResponse struct {
 	Id                int         `json:"id"`

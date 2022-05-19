@@ -6,7 +6,6 @@ import (
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/channels"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
@@ -40,9 +39,9 @@ func TestClient_ChannelGet(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.ChannelResponse{
+			json.NewEncoder(w).Encode(tgstat.ChannelResponseResult{
 				Status: "ok",
-				Response: schema.ChannelWithRestriction{
+				Response: tgstat.ChannelResponse{
 					Id:                321,
 					Link:              "t.me/varlamov",
 					Username:          "@varlamov",
@@ -51,7 +50,7 @@ func TestClient_ChannelGet(t *testing.T) {
 					Image100:          "//static.tgstat.ru/public/images/channels/_100/ca/caf1a3dfb505ffed0d024130f58c5cfa.jpg",
 					Image640:          "//static.tgstat.ru/public/images/channels/_0/ca/caf1a3dfb505ffed0d024130f58c5cfa.jpg",
 					ParticipantsCount: 100,
-					TGStatRestriction: schema.TGStatRestrictions{
+					TGStatRestriction: tgstat.TGStatRestrictions{
 						RedLabel:   true,
 						BlackLabel: true,
 					},

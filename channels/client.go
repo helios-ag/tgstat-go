@@ -7,7 +7,6 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	"net/http"
 	"strconv"
 )
@@ -19,11 +18,11 @@ type Client struct {
 
 // Get request
 // see https://api.tgstat.ru/docs/ru/channels/get.html
-func Get(ctx context.Context, channelId string) (*schema.ChannelResponse, *http.Response, error) {
+func Get(ctx context.Context, channelId string) (*tgstat.ChannelResponseResult, *http.Response, error) {
 	return getClient().Get(ctx, channelId)
 }
 
-func (c Client) Get(ctx context.Context, channelId string) (*schema.ChannelResponse, *http.Response, error) {
+func (c Client) Get(ctx context.Context, channelId string) (*tgstat.ChannelResponseResult, *http.Response, error) {
 	path := endpoints.ChannelsGet
 
 	if err := validateGetChannelId(channelId); err != nil {
@@ -38,7 +37,7 @@ func (c Client) Get(ctx context.Context, channelId string) (*schema.ChannelRespo
 		return nil, nil, err
 	}
 
-	var response schema.ChannelResponse
+	var response tgstat.ChannelResponseResult
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
@@ -49,7 +48,7 @@ func (c Client) Get(ctx context.Context, channelId string) (*schema.ChannelRespo
 	case []interface{}:
 		response.Response.TGStatRestriction = nil
 	case map[string]interface{}:
-		var restrictions schema.TGStatRestrictions
+		var restrictions tgstat.TGStatRestrictions
 		jsonString, _ := json.Marshal(x)
 		errors := json.Unmarshal(jsonString, &restrictions)
 		if errors == nil {
@@ -88,10 +87,10 @@ func (searchRequest SearchRequest) Validate() error {
 
 // Search request
 // see https://api.tgstat.ru/docs/ru/channels/search.html
-func Search(ctx context.Context, request SearchRequest) (*schema.ChannelSearchResponse, *http.Response, error) {
+func Search(ctx context.Context, request SearchRequest) (*tgstat.ChannelSearchResult, *http.Response, error) {
 	return getClient().Search(ctx, request)
 }
-func (c Client) Search(ctx context.Context, request SearchRequest) (*schema.ChannelSearchResponse, *http.Response, error) {
+func (c Client) Search(ctx context.Context, request SearchRequest) (*tgstat.ChannelSearchResult, *http.Response, error) {
 	path := endpoints.ChannelsSearch
 
 	if err := request.Validate(); err != nil {
@@ -119,7 +118,7 @@ func (c Client) Search(ctx context.Context, request SearchRequest) (*schema.Chan
 		return nil, nil, err
 	}
 
-	var response schema.ChannelSearchResponse
+	var response tgstat.ChannelSearchResult
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
@@ -131,13 +130,13 @@ func (c Client) Search(ctx context.Context, request SearchRequest) (*schema.Chan
 
 // Stat request
 // See https://api.tgstat.ru/docs/ru/channels/stat.html
-func Stat(ctx context.Context, channelId string) (*schema.ChannelStatResponse, *http.Response, error) {
+func Stat(ctx context.Context, channelId string) (*tgstat.ChannelStatResult, *http.Response, error) {
 	return getClient().Stat(ctx, channelId)
 }
 
 // Stat request
 // See https://api.tgstat.ru/docs/ru/channels/stat.html
-func (c Client) Stat(ctx context.Context, channelId string) (*schema.ChannelStatResponse, *http.Response, error) {
+func (c Client) Stat(ctx context.Context, channelId string) (*tgstat.ChannelStatResult, *http.Response, error) {
 	path := endpoints.ChannelsStat
 
 	if err := validateGetChannelId(channelId); err != nil {
@@ -152,7 +151,7 @@ func (c Client) Stat(ctx context.Context, channelId string) (*schema.ChannelStat
 		return nil, nil, err
 	}
 
-	var response schema.ChannelStatResponse
+	var response tgstat.ChannelStatResult
 	result, err := c.api.Do(req, &response)
 	if err != nil {
 		return nil, result, err
@@ -182,13 +181,13 @@ func (postsRequest PostsRequest) Validate() error {
 
 // Posts request
 // see https://api.tgstat.ru/docs/ru/channels/posts.html
-func Posts(ctx context.Context, request PostsRequest) (*schema.ChannelPosts, *http.Response, error) {
+func Posts(ctx context.Context, request PostsRequest) (*tgstat.ChannelPosts, *http.Response, error) {
 	return getClient().Posts(ctx, request)
 }
 
 // Posts request
 // see https://api.tgstat.ru/docs/ru/channels/posts.html
-func (c Client) Posts(ctx context.Context, request PostsRequest) (*schema.ChannelPosts, *http.Response, error) {
+func (c Client) Posts(ctx context.Context, request PostsRequest) (*tgstat.ChannelPosts, *http.Response, error) {
 	path := endpoints.ChannelsPosts
 
 	if err := request.Validate(); err != nil {
@@ -202,7 +201,7 @@ func (c Client) Posts(ctx context.Context, request PostsRequest) (*schema.Channe
 	if err != nil {
 		return nil, nil, err
 	}
-	var response schema.ChannelPosts
+	var response tgstat.ChannelPosts
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -215,13 +214,13 @@ func (c Client) Posts(ctx context.Context, request PostsRequest) (*schema.Channe
 
 // PostsExtended request extended
 // see https://api.tgstat.ru/docs/ru/channels/posts.html
-func PostsExtended(ctx context.Context, request PostsRequest) (*schema.ChannelPostsWithChannelResponse, *http.Response, error) {
+func PostsExtended(ctx context.Context, request PostsRequest) (*tgstat.ChannelPostsWithChannelResponse, *http.Response, error) {
 	return getClient().PostsExtended(ctx, request)
 }
 
 // PostsExtended request extended
 // see https://api.tgstat.ru/docs/ru/channels/posts.html
-func (c Client) PostsExtended(ctx context.Context, request PostsRequest) (*schema.ChannelPostsWithChannelResponse, *http.Response, error) {
+func (c Client) PostsExtended(ctx context.Context, request PostsRequest) (*tgstat.ChannelPostsWithChannelResponse, *http.Response, error) {
 	path := endpoints.ChannelsPosts
 
 	if err := request.Validate(); err != nil {
@@ -236,7 +235,7 @@ func (c Client) PostsExtended(ctx context.Context, request PostsRequest) (*schem
 		return nil, nil, err
 	}
 
-	var response schema.ChannelPostsWithChannelResponse
+	var response tgstat.ChannelPostsWithChannelResponse
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -281,13 +280,13 @@ func posts(request PostsRequest, extended bool) map[string]string {
 
 // Mentions request
 // see https://api.tgstat.ru/docs/ru/channels/mentions.html
-func Mentions(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelMentions, *http.Response, error) {
+func Mentions(ctx context.Context, request ChannelForwardRequest) (*tgstat.ChannelMentionsResult, *http.Response, error) {
 	return getClient().Mentions(ctx, request)
 }
 
 // Mentions request
 // see https://api.tgstat.ru/docs/ru/channels/mentions.html
-func (c Client) Mentions(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelMentions, *http.Response, error) {
+func (c Client) Mentions(ctx context.Context, request ChannelForwardRequest) (*tgstat.ChannelMentionsResult, *http.Response, error) {
 	path := endpoints.ChannelsMentions
 
 	if err := request.Validate(); err != nil {
@@ -302,7 +301,7 @@ func (c Client) Mentions(ctx context.Context, request ChannelForwardRequest) (*s
 		return nil, nil, err
 	}
 
-	var response schema.ChannelMentions
+	var response tgstat.ChannelMentionsResult
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -315,13 +314,13 @@ func (c Client) Mentions(ctx context.Context, request ChannelForwardRequest) (*s
 
 // MentionsExtended request
 // see https://api.tgstat.ru/docs/ru/channels/mentions.html
-func MentionsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelMentionsExtended, *http.Response, error) {
+func MentionsExtended(ctx context.Context, request ChannelForwardRequest) (*tgstat.ChannelMentionsExtended, *http.Response, error) {
 	return getClient().MentionsExtended(ctx, request)
 }
 
 // MentionsExtended Mentions request
 // see https://api.tgstat.ru/docs/ru/channels/mentions.html
-func (c Client) MentionsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelMentionsExtended, *http.Response, error) {
+func (c Client) MentionsExtended(ctx context.Context, request ChannelForwardRequest) (*tgstat.ChannelMentionsExtended, *http.Response, error) {
 	path := endpoints.ChannelsMentions
 
 	if err := request.Validate(); err != nil {
@@ -336,7 +335,7 @@ func (c Client) MentionsExtended(ctx context.Context, request ChannelForwardRequ
 		return nil, nil, err
 	}
 
-	var response schema.ChannelMentionsExtended
+	var response tgstat.ChannelMentionsExtended
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -388,13 +387,13 @@ func (channelForwardRequest ChannelForwardRequest) Validate() error {
 
 // Forwards request
 // see https://api.tgstat.ru/docs/ru/channels/forwards.html
-func Forwards(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwards, *http.Response, error) {
+func Forwards(ctx context.Context, request ChannelForwardRequest) (*tgstat.ChannelForwards, *http.Response, error) {
 	return getClient().Forwards(ctx, request)
 }
 
 // Forwards request
 // see https://api.tgstat.ru/docs/ru/channels/forwards.html
-func (c Client) Forwards(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwards, *http.Response, error) {
+func (c Client) Forwards(ctx context.Context, request ChannelForwardRequest) (*tgstat.ChannelForwards, *http.Response, error) {
 	path := endpoints.ChannelsForwards
 
 	if err := request.Validate(); err != nil {
@@ -409,7 +408,7 @@ func (c Client) Forwards(ctx context.Context, request ChannelForwardRequest) (*s
 		return nil, nil, err
 	}
 
-	var response schema.ChannelForwards
+	var response tgstat.ChannelForwards
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -422,13 +421,13 @@ func (c Client) Forwards(ctx context.Context, request ChannelForwardRequest) (*s
 
 // ForwardsExtended Forwards request extended
 // see https://api.tgstat.ru/docs/ru/channels/forwards.html
-func ForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwardsExtended, *http.Response, error) {
+func ForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*tgstat.ChannelForwardsExtended, *http.Response, error) {
 	return getClient().ForwardsExtended(ctx, request)
 }
 
 // ForwardsExtended request extended
 // see https://api.tgstat.ru/docs/ru/channels/forwards.html
-func (c Client) ForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*schema.ChannelForwardsExtended, *http.Response, error) {
+func (c Client) ForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*tgstat.ChannelForwardsExtended, *http.Response, error) {
 	path := endpoints.ChannelsForwards
 
 	if err := request.Validate(); err != nil {
@@ -443,7 +442,7 @@ func (c Client) ForwardsExtended(ctx context.Context, request ChannelForwardRequ
 		return nil, nil, err
 	}
 
-	var response schema.ChannelForwardsExtended
+	var response tgstat.ChannelForwardsExtended
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -499,13 +498,13 @@ func (channelSubscribersRequest ChannelSubscribersRequest) Validate() error {
 
 // Subscribers request
 // see https://api.tgstat.ru/docs/ru/channels/subscribers.html
-func Subscribers(ctx context.Context, request ChannelSubscribersRequest) (*schema.ChannelSubscribers, *http.Response, error) {
+func Subscribers(ctx context.Context, request ChannelSubscribersRequest) (*tgstat.ChannelSubscribers, *http.Response, error) {
 	return getClient().Subscribers(ctx, request)
 }
 
 // Subscribers request
 // see https://api.tgstat.ru/docs/ru/channels/subscribers.html
-func (c Client) Subscribers(ctx context.Context, request ChannelSubscribersRequest) (*schema.ChannelSubscribers, *http.Response, error) {
+func (c Client) Subscribers(ctx context.Context, request ChannelSubscribersRequest) (*tgstat.ChannelSubscribers, *http.Response, error) {
 	path := endpoints.ChannelsSubscribers
 
 	if err := request.Validate(); err != nil {
@@ -532,7 +531,7 @@ func (c Client) Subscribers(ctx context.Context, request ChannelSubscribersReque
 		return nil, nil, err
 	}
 
-	var response schema.ChannelSubscribers
+	var response tgstat.ChannelSubscribers
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -559,13 +558,13 @@ func (channelViewsRequest ChannelViewsRequest) Validate() error {
 
 // Views request
 // see https://api.tgstat.ru/docs/ru/channels/views.html
-func Views(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelViews, *http.Response, error) {
+func Views(ctx context.Context, request ChannelViewsRequest) (*tgstat.ChannelViews, *http.Response, error) {
 	return getClient().Views(ctx, request)
 }
 
 // Views request
 // see https://api.tgstat.ru/docs/ru/channels/views.html
-func (c Client) Views(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelViews, *http.Response, error) {
+func (c Client) Views(ctx context.Context, request ChannelViewsRequest) (*tgstat.ChannelViews, *http.Response, error) {
 	path := endpoints.ChannelsViews
 
 	if err := request.Validate(); err != nil {
@@ -592,7 +591,7 @@ func (c Client) Views(ctx context.Context, request ChannelViewsRequest) (*schema
 		return nil, nil, err
 	}
 
-	var response schema.ChannelViews
+	var response tgstat.ChannelViews
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -618,13 +617,13 @@ func (channelAddRequest ChannelAddRequest) Validate() error {
 
 // Add request
 // see https://api.tgstat.ru/docs/ru/channels/add.html
-func Add(ctx context.Context, request ChannelAddRequest) (*schema.ChannelAddSuccess, *http.Response, error) {
+func Add(ctx context.Context, request ChannelAddRequest) (*tgstat.ChannelAddSuccess, *http.Response, error) {
 	return getClient().Add(ctx, request)
 }
 
 // Add request
 // see https://api.tgstat.ru/docs/ru/channels/add.html
-func (c Client) Add(ctx context.Context, request ChannelAddRequest) (*schema.ChannelAddSuccess, *http.Response, error) {
+func (c Client) Add(ctx context.Context, request ChannelAddRequest) (*tgstat.ChannelAddSuccess, *http.Response, error) {
 	path := endpoints.ChannelsAdd
 
 	if err := request.Validate(); err != nil {
@@ -652,7 +651,7 @@ func (c Client) Add(ctx context.Context, request ChannelAddRequest) (*schema.Cha
 		return nil, nil, err
 	}
 
-	var response schema.ChannelAddSuccess
+	var response tgstat.ChannelAddSuccess
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -665,13 +664,13 @@ func (c Client) Add(ctx context.Context, request ChannelAddRequest) (*schema.Cha
 
 // AvgPostsReach request
 // See https://api.tgstat.ru/docs/ru/channels/avg-posts-reach.html
-func AvgPostsReach(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelAvgReach, *http.Response, error) {
+func AvgPostsReach(ctx context.Context, request ChannelViewsRequest) (*tgstat.ChannelAvgReach, *http.Response, error) {
 	return getClient().AvgPostsReach(ctx, request)
 }
 
 // AvgPostsReach request
 // See https://api.tgstat.ru/docs/ru/channels/avg-posts-reach.html
-func (c Client) AvgPostsReach(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelAvgReach, *http.Response, error) {
+func (c Client) AvgPostsReach(ctx context.Context, request ChannelViewsRequest) (*tgstat.ChannelAvgReach, *http.Response, error) {
 	path := endpoints.ChannelAVGPostsReach
 
 	if err := request.Validate(); err != nil {
@@ -698,7 +697,7 @@ func (c Client) AvgPostsReach(ctx context.Context, request ChannelViewsRequest) 
 		return nil, nil, err
 	}
 
-	var response schema.ChannelAvgReach
+	var response tgstat.ChannelAvgReach
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -711,13 +710,13 @@ func (c Client) AvgPostsReach(ctx context.Context, request ChannelViewsRequest) 
 
 // Err request
 // See https://api.tgstat.ru/docs/ru/channels/err.html
-func Err(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelErr, *http.Response, error) {
+func Err(ctx context.Context, request ChannelViewsRequest) (*tgstat.ChannelErr, *http.Response, error) {
 	return getClient().Err(ctx, request)
 }
 
 // Err request
 // See https://api.tgstat.ru/docs/ru/channels/err.html
-func (c Client) Err(ctx context.Context, request ChannelViewsRequest) (*schema.ChannelErr, *http.Response, error) {
+func (c Client) Err(ctx context.Context, request ChannelViewsRequest) (*tgstat.ChannelErr, *http.Response, error) {
 	path := endpoints.ChannelErr
 
 	if err := request.Validate(); err != nil {
@@ -744,7 +743,7 @@ func (c Client) Err(ctx context.Context, request ChannelViewsRequest) (*schema.C
 		return nil, nil, err
 	}
 
-	var response schema.ChannelErr
+	var response tgstat.ChannelErr
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
