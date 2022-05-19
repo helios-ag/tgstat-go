@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/helios-ag/tgstat-go/schema"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -142,7 +141,7 @@ func errorFromResponse(resp *http.Response, body []byte) error {
 		return nil
 	}
 
-	var respBody schema.ErrorResponse
+	var respBody ErrorResult
 	if err := json.Unmarshal(body, &respBody); err != nil {
 		return nil
 	}
