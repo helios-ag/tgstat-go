@@ -16,8 +16,8 @@ var qs = []*survey.Question{
 		Validate: survey.Required,
 	},
 	{
-		Name:   "Language",
-		Prompt: &survey.Input{Message: "Enter Language"},
+		Name:     "Language",
+		Prompt:   &survey.Input{Message: "Enter Language"},
 		Validate: survey.Required,
 	},
 }

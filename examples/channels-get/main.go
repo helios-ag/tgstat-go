@@ -6,19 +6,18 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/channels"
-	"github.com/helios-ag/tgstat-go/schema"
 	"os"
 )
 
 var qs = []*survey.Question{
 	{
-		Name:      "Token",
-		Prompt:    &survey.Input{Message: "Enter your token"},
-		Validate:  survey.Required,
+		Name:     "Token",
+		Prompt:   &survey.Input{Message: "Enter your token"},
+		Validate: survey.Required,
 	},
 	{
-		Name:      "ChannelId",
-		Prompt:    &survey.Input{Message: "Enter Channel ID"},
+		Name:     "ChannelId",
+		Prompt:   &survey.Input{Message: "Enter Channel ID"},
 		Validate: survey.Required,
 	},
 }
@@ -57,7 +56,7 @@ func main() {
 	fmt.Printf("Image640: %s\n", channelInfo.Response.Image640)
 	fmt.Printf("ParticipantsCount: %d\n", channelInfo.Response.ParticipantsCount)
 	if channelInfo.Response.TGStatRestriction != nil {
-		data := channelInfo.Response.TGStatRestriction.(schema.TGStatRestrictions)
+		data := channelInfo.Response.TGStatRestriction.(tgstat.TGStatRestrictions)
 		fmt.Printf("RedLabel: %s\n", bool2string(data.RedLabel))
 		fmt.Printf("BlackLabel: %s\n", bool2string(data.BlackLabel))
 	}

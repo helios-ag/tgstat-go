@@ -5,16 +5,15 @@ import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
 	tgstat "github.com/helios-ag/tgstat-go"
-	"github.com/helios-ag/tgstat-go/usage"
 	"os"
 	"time"
 )
 
 var qs = []*survey.Question{
 	{
-		Name:      "Token",
-		Prompt:    &survey.Input{Message: "Enter your token"},
-		Validate:  survey.Required,
+		Name:     "Token",
+		Prompt:   &survey.Input{Message: "Enter your token"},
+		Validate: survey.Required,
 	},
 }
 
@@ -30,7 +29,7 @@ func main() {
 	}
 
 	tgstat.Token = answers.Token
-	req, _, err := usage.Stat(context.Background())
+	req, _, err := stat.Stat(context.Background())
 
 	if err != nil {
 		fmt.Printf("error getting data: %v\n", err)

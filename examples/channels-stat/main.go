@@ -11,13 +11,13 @@ import (
 
 var qs = []*survey.Question{
 	{
-		Name:      "Token",
-		Prompt:    &survey.Input{Message: "Enter your token"},
-		Validate:  survey.Required,
+		Name:     "Token",
+		Prompt:   &survey.Input{Message: "Enter your token"},
+		Validate: survey.Required,
 	},
 	{
-		Name:      "ChannelId",
-		Prompt:    &survey.Input{Message: "Enter Channel ID"},
+		Name:     "ChannelId",
+		Prompt:   &survey.Input{Message: "Enter Channel ID"},
 		Validate: survey.Required,
 	},
 }

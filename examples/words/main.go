@@ -18,8 +18,8 @@ var qs = []*survey.Question{
 		Validate: survey.Required,
 	},
 	{
-		Name:   "Q",
-		Prompt: &survey.Input{Message: "Q"},
+		Name:     "Q",
+		Prompt:   &survey.Input{Message: "Q"},
 		Validate: survey.Required,
 	},
 	{

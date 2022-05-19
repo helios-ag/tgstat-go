@@ -12,34 +12,34 @@ import (
 
 var qs = []*survey.Question{
 	{
-		Name:      "Token",
-		Prompt:    &survey.Input{Message: "Enter your token"},
-		Validate:  survey.Required,
-	},
-	{
-		Name:      "Term",
-		Prompt:    &survey.Input{Message: "Enter search term"},
+		Name:     "Token",
+		Prompt:   &survey.Input{Message: "Enter your token"},
 		Validate: survey.Required,
 	},
 	{
-		Name:      "Country",
-		Prompt:    &survey.Input{Message: "Enter country (default Russia)", Default: "ru"},
+		Name:     "Term",
+		Prompt:   &survey.Input{Message: "Enter search term"},
+		Validate: survey.Required,
+	},
+	{
+		Name:   "Country",
+		Prompt: &survey.Input{Message: "Enter country (default Russia)", Default: "ru"},
 	},
 	{
 		Name:   "SearchInDescription",
 		Prompt: &survey.Confirm{Message: "Search in description?"},
 	},
 	{
-		Name:      "Language",
-		Prompt:    &survey.Input{Message: "Enter language here", Default: ""},
+		Name:   "Language",
+		Prompt: &survey.Input{Message: "Enter language here", Default: ""},
 	},
 	{
-		Name:      "Category",
-		Prompt:    &survey.Input{Message: "Enter category here", Default: ""},
+		Name:   "Category",
+		Prompt: &survey.Input{Message: "Enter category here", Default: ""},
 	},
 	{
-		Name:      "Limit",
-		Prompt:    &survey.Input{Message: "Enter limit here", Default: "10"},
+		Name:   "Limit",
+		Prompt: &survey.Input{Message: "Enter limit here", Default: "10"},
 	},
 }
 
