@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/endpoints"
-	"github.com/helios-ag/tgstat-go/schema"
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
@@ -36,24 +35,9 @@ func TestClient_UsageStat(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.UsageStat, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(schema.StatResponse{
-				Status: "ok",
-				Response: []struct {
-					ServiceKey    string `json:"serviceKey"`
-					Title         string `json:"title"`
-					SpentChannels string `json:"spentChannels,omitempty"`
-					SpentRequests string `json:"spentRequests"`
-					ExpiredAt     int64  `json:"expiredAt"`
-					SpentWords    string `json:"spentWords,omitempty"`
-					SpentObjects  string `json:"spentObjects,omitempty"`
-				}{{
-					ServiceKey:    "api_stat_l",
-					Title:         "Доступ к Stat API (тариф L)",
-					SpentChannels: "1989/2500",
-					SpentRequests: "89152/400000",
-					ExpiredAt:     1542732689,
-					SpentWords:    "111/11",
-				}},
+			json.NewEncoder(w).Encode(tgstat.StatResult{
+				Status:   "ok",
+				Response: nil,
 			})
 		})
 

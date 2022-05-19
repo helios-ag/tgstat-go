@@ -1,6 +1,6 @@
 package schema
 
-type ChannelWithRestriction struct {
+type ChannelResponse struct {
 	Id                int         `json:"id"`
 	Link              string      `json:"link"`
 	Username          string      `json:"username"`
@@ -20,12 +20,12 @@ type TGStatRestrictions struct {
 	BlackLabel bool `json:"black_label"`
 }
 
-type ChannelResponse struct {
-	Status   string                 `json:"status"`
-	Response ChannelWithRestriction `json:"response"`
+type ChannelResponseResult struct {
+	Status   string          `json:"status"`
+	Response ChannelResponse `json:"response"`
 }
 
-type ChannelSearchResponse struct {
+type ChannelSearchResult struct {
 	Status   string        `json:"status"`
 	Response ChannelSearch `json:"response"`
 }
@@ -46,12 +46,12 @@ type ChannelSearch struct {
 	Items []ChannelSearchItem `json:"items"`
 }
 
-type ChannelStatResponse struct {
-	Status   string      `json:"status"`
-	Response ChannelStat `json:"response"`
+type ChannelStatResult struct {
+	Status   string              `json:"status"`
+	Response ChannelStatResponse `json:"response"`
 }
 
-type ChannelStat struct {
+type ChannelStatResponse struct {
 	Id                int     `json:"id"`
 	Title             string  `json:"title"`
 	Username          string  `json:"username"`
@@ -63,18 +63,18 @@ type ChannelStat struct {
 }
 
 type ChannelPostsWithChannelResponseItem struct {
-	ID            int64       `json:"id"`
-	Date          int         `json:"date"`
-	Views         int         `json:"views"`
-	Link          string      `json:"link"`
-	ChannelID     int         `json:"channel_id"`
-	ForwardedFrom interface{} `json:"forwarded_from"`
-	IsDeleted     int         `json:"is_deleted"`
-	Text          string      `json:"text"`
-	Media         Media       `json:"media"`
+	ID            int64        `json:"id"`
+	Date          int          `json:"date"`
+	Views         int          `json:"views"`
+	Link          string       `json:"link"`
+	ChannelID     int          `json:"channel_id"`
+	ForwardedFrom interface{}  `json:"forwarded_from"`
+	IsDeleted     int          `json:"is_deleted"`
+	Text          string       `json:"text"`
+	Media         ChannelMedia `json:"media"`
 }
 
-type Media struct {
+type ChannelMedia struct {
 	MediaType string `json:"media_type"`
 	MimeType  string `json:"mime_type"`
 	Size      int    `json:"size"`
@@ -145,7 +145,7 @@ type ChannelMentionsResponseExtended struct {
 	Channels []Channel     `json:"channels"`
 }
 
-type ChannelMentions struct {
+type ChannelMentionsResult struct {
 	Status   string                  `json:"status"`
 	Response ChannelMentionsResponse `json:"response"`
 }

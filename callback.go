@@ -1,10 +1,10 @@
 package schema
 
-type SetCallbackSuccessResponse struct {
+type SetCallbackSuccessResult struct {
 	Status string `json:"status"`
 }
 
-type SetCallbackVerificationResponse struct {
+type SetCallbackVerificationResult struct {
 	Status     string `json:"status"`
 	Error      string `json:"error"`
 	VerifyCode string `json:"verify_code"`

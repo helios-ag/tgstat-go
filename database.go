@@ -30,7 +30,7 @@ type CategoryResponse struct {
 	Response []Category `json:"response"`
 }
 
-type Language = struct {
+type Language struct {
 	Code string `json:"code"`
 	Name string `json:"name"`
 }
