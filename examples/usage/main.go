@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
 	tgstat "github.com/helios-ag/tgstat-go"
+	"github.com/helios-ag/tgstat-go/usage"
 	"os"
 	"time"
 )
@@ -29,7 +30,7 @@ func main() {
 	}
 
 	tgstat.Token = answers.Token
-	req, _, err := stat.Stat(context.Background())
+	req, _, err := usage.Stat(context.Background())
 
 	if err != nil {
 		fmt.Printf("error getting data: %v\n", err)
