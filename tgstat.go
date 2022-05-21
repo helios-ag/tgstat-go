@@ -205,3 +205,10 @@ func GetAPI(options ...ClientOption) API {
 
 	return newAPI(TGStatClient.Url, options...)
 }
+
+func String(v string) *string {
+	if v == "" {
+		return nil
+	}
+	return &v
+}
