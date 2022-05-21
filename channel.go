@@ -98,7 +98,7 @@ type ChannelPostsWithChannelResponse struct {
 	Items      []ChannelPostsWithChannelResponseItem `json:"items"`
 }
 
-type ChannelPostsWithChannel struct {
+type ChannelPostsWithChannelResult struct {
 	Status   string                          `json:"status"`
 	Response ChannelPostsWithChannelResponse `json:"response"`
 }
@@ -122,7 +122,7 @@ type ChannelPostsResponse struct {
 	Items      []ChannelPostsResponseItem `json:"items"`
 }
 
-type ChannelPosts struct {
+type ChannelPostsResult struct {
 	Status   string               `json:"status"`
 	Response ChannelPostsResponse `json:"response"`
 }

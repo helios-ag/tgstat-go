@@ -181,13 +181,13 @@ func (postsRequest PostsRequest) Validate() error {
 
 // Posts request
 // see https://api.tgstat.ru/docs/ru/channels/posts.html
-func Posts(ctx context.Context, request PostsRequest) (*tgstat.ChannelPosts, *http.Response, error) {
+func Posts(ctx context.Context, request PostsRequest) (*tgstat.ChannelPostsResult, *http.Response, error) {
 	return getClient().Posts(ctx, request)
 }
 
 // Posts request
 // see https://api.tgstat.ru/docs/ru/channels/posts.html
-func (c Client) Posts(ctx context.Context, request PostsRequest) (*tgstat.ChannelPosts, *http.Response, error) {
+func (c Client) Posts(ctx context.Context, request PostsRequest) (*tgstat.ChannelPostsResult, *http.Response, error) {
 	path := endpoints.ChannelsPosts
 
 	if err := request.Validate(); err != nil {
@@ -201,7 +201,7 @@ func (c Client) Posts(ctx context.Context, request PostsRequest) (*tgstat.Channe
 	if err != nil {
 		return nil, nil, err
 	}
-	var response tgstat.ChannelPosts
+	var response tgstat.ChannelPostsResult
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
@@ -214,13 +214,13 @@ func (c Client) Posts(ctx context.Context, request PostsRequest) (*tgstat.Channe
 
 // PostsExtended request extended
 // see https://api.tgstat.ru/docs/ru/channels/posts.html
-func PostsExtended(ctx context.Context, request PostsRequest) (*tgstat.ChannelPostsWithChannelResponse, *http.Response, error) {
+func PostsExtended(ctx context.Context, request PostsRequest) (*tgstat.ChannelPostsWithChannelResult, *http.Response, error) {
 	return getClient().PostsExtended(ctx, request)
 }
 
 // PostsExtended request extended
 // see https://api.tgstat.ru/docs/ru/channels/posts.html
-func (c Client) PostsExtended(ctx context.Context, request PostsRequest) (*tgstat.ChannelPostsWithChannelResponse, *http.Response, error) {
+func (c Client) PostsExtended(ctx context.Context, request PostsRequest) (*tgstat.ChannelPostsWithChannelResult, *http.Response, error) {
 	path := endpoints.ChannelsPosts
 
 	if err := request.Validate(); err != nil {
@@ -235,7 +235,7 @@ func (c Client) PostsExtended(ctx context.Context, request PostsRequest) (*tgsta
 		return nil, nil, err
 	}
 
-	var response tgstat.ChannelPostsWithChannelResponse
+	var response tgstat.ChannelPostsWithChannelResult
 
 	result, err := c.api.Do(req, &response)
 	if err != nil {
