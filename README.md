@@ -120,7 +120,7 @@ func main() {
 
 Run example `go build example.go`
 
-All examples available under [examples directory](https://github.com/helios-ag/tgstat-go/master/examples )
+All examples available at [examples repository](https://github.com/helios-ag/tgstat-go-examples)
 
 ## Available methods
 
