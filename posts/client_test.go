@@ -193,6 +193,22 @@ func TestClient_PostsSearch(t *testing.T) {
 		Expect(err.Error()).To(ContainSubstring("dial tcp"))
 	})
 
+	t.Run("Test rest triggers error", func(t *testing.T) {
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
+		oldNewRequest := tgstat.NewRestRequest
+		tgstat.NewRestRequest = NewRestRequestStub
+		req := PostSearchRequest{
+			Q: "Query",
+		}
+
+		_, _, err := PostSearch(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("error happened"))
+		tgstat.NewRestRequest = oldNewRequest
+	})
+
 	t.Run("Test search validation", func(t *testing.T) {
 		testServer := server.NewServer()
 		defer testServer.Teardown()
@@ -204,6 +220,23 @@ func TestClient_PostsSearch(t *testing.T) {
 		_, _, err := PostSearch(context.Background(), req)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("cannot be blank"))
+
+		req = PostSearchRequest{
+			Q:     "val",
+			Limit: tgstat.Int(100),
+		}
+		_, _, err = PostSearch(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("Limit: must be no greater than"))
+
+		req = PostSearchRequest{
+			Q:      "val",
+			Offset: tgstat.Int(100),
+		}
+		_, _, err = PostSearch(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("Offset: must be no greater than"))
+
 	})
 
 	t.Run("Test PostsSearch response Mapping", func(t *testing.T) {
@@ -266,5 +299,26 @@ func TestClient_PostsSearchExtended(t *testing.T) {
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": ContainSubstring("ok"),
 		})))
+	})
+}
+
+func Test_makeRequestBody(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test body request", func(t *testing.T) {
+		req := PostSearchRequest{
+			Q:              "Test",
+			Limit:          tgstat.Int(30),
+			Offset:         tgstat.Int(20),
+			PeerType:       tgstat.String("1"),
+			StartDate:      tgstat.String("1"),
+			EndDate:        tgstat.String("1"),
+			HideForwards:   tgstat.Bool(true),
+			HideDeleted:    tgstat.Bool(true),
+			StrongSearch:   tgstat.Bool(true),
+			MinusWords:     tgstat.String("words"),
+			ExtendedSyntax: tgstat.Bool(false),
+		}
+		body := makeRequestBody(req)
+		Expect(body).Should(ContainElements("30", "20", "1", "1", "1", "1", "1", "1", "words", "0"))
 	})
 }
