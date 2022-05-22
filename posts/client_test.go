@@ -41,13 +41,13 @@ func TestClient_PostsGet(t *testing.T) {
 		Expect(err.Error()).To(ContainSubstring("postId can not be empty"))
 	})
 
-	t.Run("Test newrest request triggers error", func(t *testing.T) {
+	t.Run("Test rest request triggers error", func(t *testing.T) {
 		testServer := server.NewServer()
 		defer testServer.Teardown()
 		prepareClient(testServer.URL)
 		oldNewRequest := tgstat.NewRestRequest
 		tgstat.NewRestRequest = NewRestRequestStub
-		_, _, err := Get(context.Background(), "")
+		_, _, err := Get(context.Background(), "t.me/123")
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("postId can not be empty"))
 		tgstat.NewRestRequest = oldNewRequest
@@ -277,6 +277,20 @@ func TestClient_PostsSearchExtended(t *testing.T) {
 		Expect(err.Error()).To(ContainSubstring("dial tcp"))
 	})
 
+	t.Run("Test rest triggers error", func(t *testing.T) {
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
+		oldNewRequest := tgstat.NewRestRequest
+		tgstat.NewRestRequest = NewRestRequestStub
+		req := PostSearchRequest{
+			Q: "Search",
+		}
+		_, _, err := PostSearchExtended(context.Background(), req)
+		Expect(err.Error()).To(ContainSubstring("error happened"))
+		tgstat.NewRestRequest = oldNewRequest
+	})
+
 	t.Run("Test PostsGet response Mapping", func(t *testing.T) {
 		testServer := server.NewServer()
 		defer testServer.Teardown()
@@ -320,5 +334,23 @@ func Test_makeRequestBody(t *testing.T) {
 		}
 		body := makeRequestBody(req)
 		Expect(body).Should(ContainElements("30", "20", "1", "1", "1", "1", "1", "1", "words", "0"))
+	})
+
+	t.Run("Test body request with inverted data", func(t *testing.T) {
+		req := PostSearchRequest{
+			Q:              "Test",
+			Limit:          tgstat.Int(30),
+			Offset:         tgstat.Int(20),
+			PeerType:       tgstat.String("1"),
+			StartDate:      tgstat.String("1"),
+			EndDate:        tgstat.String("1"),
+			HideForwards:   tgstat.Bool(false),
+			HideDeleted:    tgstat.Bool(false),
+			StrongSearch:   tgstat.Bool(false),
+			MinusWords:     tgstat.String("words, words"),
+			ExtendedSyntax: tgstat.Bool(true),
+		}
+		body := makeRequestBody(req)
+		Expect(body).Should(ContainElements("30", "20", "1", "1", "1", "0", "0", "0", "words, words", "1"))
 	})
 }
