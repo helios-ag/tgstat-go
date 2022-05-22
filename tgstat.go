@@ -212,3 +212,7 @@ func String(v string) *string {
 	}
 	return &v
 }
+
+func Bool(b bool) *bool {
+	return &b
+}
