@@ -49,7 +49,7 @@ func TestClient_PostsGet(t *testing.T) {
 		tgstat.NewRestRequest = NewRestRequestStub
 		_, _, err := Get(context.Background(), "t.me/123")
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("postId can not be empty"))
+		Expect(err.Error()).To(ContainSubstring("error happened"))
 		tgstat.NewRestRequest = oldNewRequest
 	})
 
