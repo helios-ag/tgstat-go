@@ -5,6 +5,7 @@ TGStat GO API Wrapper
 [![Go](https://github.com/helios-ag/tgstat-go/actions/workflows/go.yaml/badge.svg)](https://github.com/helios-ag/tgstat-go/actions/workflows/go.yaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/helios-ag/tgstat-go)](https://goreportcard.com/report/github.com/helios-ag/tgstat-go)
 [![Godocs](https://img.shields.io/badge/golang-documentation-blue.svg)](https://godoc.org/github.com/helios-ag/tgstat-go)
+[![codecov](https://codecov.io/gh/helios-ag/tgstat-go/branch/master/graph/badge.svg?token=Pk8sdzTGfu)](https://codecov.io/gh/helios-ag/tgstat-go)
 
 [TGStat API](https://api.tgstat.ru/docs/ru/start/intro.html) written in Go
 
