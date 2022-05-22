@@ -216,3 +216,7 @@ func String(v string) *string {
 func Bool(b bool) *bool {
 	return &b
 }
+
+func Int(v int) *int {
+	return &v
+}

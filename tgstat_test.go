@@ -202,3 +202,11 @@ func TestBool(t *testing.T) {
 		Expect(&val).To(HaveValue(Equal(false)))
 	})
 }
+
+func TestInt(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test int converter point", func(t *testing.T) {
+		val := Int(100)
+		Expect(&val).To(HaveValue(Equal(100)))
+	})
+}
