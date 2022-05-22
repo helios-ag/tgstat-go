@@ -186,3 +186,27 @@ func TestNewRequest(t *testing.T) {
 		Expect(err.Error()).To(ContainSubstring("unable to parse URL"))
 	})
 }
+
+func TestString(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test string point", func(t *testing.T) {
+		val := String("value")
+		Expect(&val).To(HaveValue(Equal("value")))
+	})
+}
+
+func TestBool(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test bool converter point", func(t *testing.T) {
+		val := Bool(false)
+		Expect(&val).To(HaveValue(Equal(false)))
+	})
+}
+
+func TestInt(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test int converter point", func(t *testing.T) {
+		val := Int(100)
+		Expect(&val).To(HaveValue(Equal(100)))
+	})
+}

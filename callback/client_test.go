@@ -47,6 +47,24 @@ func TestClient_SetCallback(t *testing.T) {
 		Expect(err.Error()).To(Equal("CallbackUrl must be set"))
 	})
 
+	t.Run("Test validate callback", func(t *testing.T) {
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
+		testServer.Mux.HandleFunc(endpoints.SetCallbackURL, func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(tgstat.SetCallbackVerificationResult{
+				Status:     "error",
+				Error:      "wrong verify code",
+				VerifyCode: "TGSTAT_VERIFY_CODE_123456",
+			})
+		})
+		_, _, err := SetCallback(context.Background(), "hi/there?")
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("unable to parse URL"))
+	})
+
 	t.Run("Test SetCallback response Mapping", func(t *testing.T) {
 		testServer := server.NewServer()
 		defer testServer.Teardown()
@@ -147,6 +165,22 @@ func TestClient_SubscribeChannel(t *testing.T) {
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("error happened"))
 		tgstat.NewRestRequest = oldNewRequest
+	})
+
+	t.Run("Test validation", func(t *testing.T) {
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
+
+		req := SubscribeChannelRequest{
+			SubscriptionId: String("blabla"),
+			ChannelId:      "t.me/username",
+			EventTypes:     "new_post1",
+		}
+
+		_, _, err := SubscribeChannel(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("EventTypes: must be a valid value"))
 	})
 
 	t.Run("Test SubscribeChannel response Mapping", func(t *testing.T) {

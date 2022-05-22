@@ -3,6 +3,7 @@ package usage
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	tgstat "github.com/helios-ag/tgstat-go"
 	"github.com/helios-ag/tgstat-go/endpoints"
 	server "github.com/helios-ag/tgstat-go/testing"
@@ -15,6 +16,10 @@ import (
 func prepareClient(URL string) {
 	tgstat.Token = "token"
 	tgstat.WithEndpoint(URL)
+}
+
+var NewRestRequestStub = func(c *tgstat.Client, ctx context.Context, token, method, urlPath string, data map[string]string) (*http.Request, error) {
+	return nil, fmt.Errorf("error happened")
 }
 
 func TestClient_UsageStat(t *testing.T) {
@@ -47,5 +52,16 @@ func TestClient_UsageStat(t *testing.T) {
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": ContainSubstring("ok"),
 		})))
+	})
+
+	t.Run("Test request trigger error", func(t *testing.T) {
+		prepareClient("http://local123")
+		oldNewRequest := tgstat.NewRestRequest
+		tgstat.NewRestRequest = NewRestRequestStub
+
+		_, _, err := Stat(context.Background())
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("error happened"))
+		tgstat.NewRestRequest = oldNewRequest
 	})
 }

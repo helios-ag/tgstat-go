@@ -238,6 +238,14 @@ func makeRequestBody(request PostSearchRequest) map[string]string {
 		}
 	}()
 
+	body["strongSearch"] = func() string {
+		if nil != request.StrongSearch && *request.StrongSearch {
+			return "1"
+		} else {
+			return "0"
+		}
+	}()
+
 	return body
 }
 

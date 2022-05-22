@@ -93,7 +93,7 @@ type SubscribeChannelRequest struct {
 func (subscribeChannelRequest SubscribeChannelRequest) Validate() error {
 	return validation.ValidateStruct(&subscribeChannelRequest,
 		validation.Field(&subscribeChannelRequest.ChannelId, validation.Required),
-		validation.Field(&subscribeChannelRequest.EventTypes, validation.Required),
+		validation.Field(&subscribeChannelRequest.EventTypes, validation.Required, validation.In("new_post", "edit_post", "remove_post")),
 	)
 }
 
