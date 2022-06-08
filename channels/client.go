@@ -25,7 +25,7 @@ func Get(ctx context.Context, channelId string) (*tgstat.ChannelResponseResult, 
 func (c Client) Get(ctx context.Context, channelId string) (*tgstat.ChannelResponseResult, *http.Response, error) {
 	path := endpoints.ChannelsGet
 
-	if err := validateGetChannelId(channelId); err != nil {
+	if err := validateChannelId(channelId); err != nil {
 		return nil, nil, err
 	}
 
@@ -61,9 +61,9 @@ func (c Client) Get(ctx context.Context, channelId string) (*tgstat.ChannelRespo
 	return &response, result, err
 }
 
-func validateGetChannelId(channelId string) error {
+func validateChannelId(channelId string) error {
 	if channelId == "" {
-		return fmt.Errorf("ChannelID must be set")
+		return fmt.Errorf("ChannelId: cannot be blank")
 	}
 	return nil
 }
@@ -139,7 +139,7 @@ func Stat(ctx context.Context, channelId string) (*tgstat.ChannelStatResult, *ht
 func (c Client) Stat(ctx context.Context, channelId string) (*tgstat.ChannelStatResult, *http.Response, error) {
 	path := endpoints.ChannelsStat
 
-	if err := validateGetChannelId(channelId); err != nil {
+	if err := validateChannelId(channelId); err != nil {
 		return nil, nil, err
 	}
 
@@ -171,14 +171,6 @@ type PostsRequest struct {
 	HideDeleted  *bool
 }
 
-func (postsRequest PostsRequest) Validate() error {
-	return validation.ValidateStruct(&postsRequest,
-		validation.Field(&postsRequest.ChannelId, validation.Required),
-		validation.Field(&postsRequest.StartTime, validation.Date("1643113399")),
-		validation.Field(&postsRequest.EndTime, validation.Date("1643113399")),
-	)
-}
-
 // Posts request
 // see https://api.tgstat.ru/docs/ru/channels/posts.html
 func Posts(ctx context.Context, request PostsRequest) (*tgstat.ChannelPostsResult, *http.Response, error) {
@@ -190,7 +182,7 @@ func Posts(ctx context.Context, request PostsRequest) (*tgstat.ChannelPostsResul
 func (c Client) Posts(ctx context.Context, request PostsRequest) (*tgstat.ChannelPostsResult, *http.Response, error) {
 	path := endpoints.ChannelsPosts
 
-	if err := request.Validate(); err != nil {
+	if err := validateChannelId(request.ChannelId); err != nil {
 		return nil, nil, err
 	}
 
@@ -223,7 +215,7 @@ func PostsExtended(ctx context.Context, request PostsRequest) (*tgstat.ChannelPo
 func (c Client) PostsExtended(ctx context.Context, request PostsRequest) (*tgstat.ChannelPostsWithChannelResult, *http.Response, error) {
 	path := endpoints.ChannelsPosts
 
-	if err := request.Validate(); err != nil {
+	if err := validateChannelId(request.ChannelId); err != nil {
 		return nil, nil, err
 	}
 
