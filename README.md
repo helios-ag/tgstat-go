@@ -17,6 +17,7 @@ TGStat GO API Wrapper
     * [Step 2 ](#step-2)
     * [Step 3](#step-3)
     * [Step 4](#step-4)
+- [Examples](#examples)     
 - [Available methods](#available-methods)
     * [Channels](#channels)
         + [Get Channel Info  ](#get-channel-info)
@@ -120,6 +121,9 @@ func main() {
 ### Step 4
 
 Run example `go build example.go`
+
+
+## Examples
 
 All examples available at [examples repository](https://github.com/helios-ag/tgstat-go-examples)
 

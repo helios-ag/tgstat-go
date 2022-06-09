@@ -16,14 +16,6 @@ func prepareClient(URL string) {
 	tgstat.WithEndpoint(URL)
 }
 
-func makeStrP(s string) *string {
-	return &s
-}
-
-func makeBoolP(b bool) *bool {
-	return &b
-}
-
 func TestClient_MentionsByPeriod(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test words request validation", func(t *testing.T) {
@@ -62,7 +54,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 
 		req := MentionPeriodRequest{
 			Q:        "",
-			PeerType: makeStrP("5"),
+			PeerType: tgstat.String("5"),
 		}
 		_, _, err := MentionsByPeriod(context.Background(), req)
 		Expect(err).To(HaveOccurred())
@@ -115,70 +107,70 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 
 		req := MentionPeriodRequest{
 			Q:        "q",
-			PeerType: makeStrP("all"),
+			PeerType: tgstat.String("all"),
 		}
 		_, _, err := MentionsByPeriod(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionPeriodRequest{
 			Q:         "q",
-			PeerType:  makeStrP("all"),
-			StartDate: makeStrP("2020-01-19 03:14:07"),
+			PeerType:  tgstat.String("all"),
+			StartDate: tgstat.String("2020-01-19 03:14:07"),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionPeriodRequest{
 			Q:            "q",
-			PeerType:     makeStrP("all"),
-			EndDate:      makeStrP("2020-01-19 03:14:07"),
-			HideForwards: makeBoolP(true),
+			PeerType:     tgstat.String("all"),
+			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			HideForwards: tgstat.Bool(true),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionPeriodRequest{
 			Q:            "q",
-			PeerType:     makeStrP("all"),
-			EndDate:      makeStrP("2020-01-19 03:14:07"),
-			HideForwards: makeBoolP(true),
-			StrongSearch: makeBoolP(false),
+			PeerType:     tgstat.String("all"),
+			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			HideForwards: tgstat.Bool(true),
+			StrongSearch: tgstat.Bool(false),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionPeriodRequest{
 			Q:            "q",
-			PeerType:     makeStrP("all"),
-			EndDate:      makeStrP("2020-01-19 03:14:07"),
-			HideForwards: makeBoolP(true),
-			StrongSearch: makeBoolP(false),
-			MinusWords:   makeStrP("something"),
+			PeerType:     tgstat.String("all"),
+			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			HideForwards: tgstat.Bool(true),
+			StrongSearch: tgstat.Bool(false),
+			MinusWords:   tgstat.String("something"),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionPeriodRequest{
 			Q:            "q",
-			PeerType:     makeStrP("all"),
-			EndDate:      makeStrP("2020-01-19 03:14:07"),
-			HideForwards: makeBoolP(true),
-			StrongSearch: makeBoolP(true),
-			MinusWords:   makeStrP("something"),
-			Group:        makeStrP("day"),
+			PeerType:     tgstat.String("all"),
+			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			HideForwards: tgstat.Bool(true),
+			StrongSearch: tgstat.Bool(true),
+			MinusWords:   tgstat.String("something"),
+			Group:        tgstat.String("day"),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionPeriodRequest{
 			Q:              "q",
-			PeerType:       makeStrP("all"),
-			EndDate:        makeStrP("2020-01-19 03:14:07"),
-			HideForwards:   makeBoolP(true),
-			StrongSearch:   makeBoolP(true),
-			MinusWords:     makeStrP("something"),
-			Group:          makeStrP("week"),
-			ExtendedSyntax: makeBoolP(true),
+			PeerType:       tgstat.String("all"),
+			EndDate:        tgstat.String("2020-01-19 03:14:07"),
+			HideForwards:   tgstat.Bool(true),
+			StrongSearch:   tgstat.Bool(true),
+			MinusWords:     tgstat.String("something"),
+			Group:          tgstat.String("week"),
+			ExtendedSyntax: tgstat.Bool(true),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
 
@@ -226,68 +218,68 @@ func TestClient_MentionsByChannels(t *testing.T) {
 
 		req := MentionsByChannelRequest{
 			Q:        "q",
-			PeerType: makeStrP("chat"),
+			PeerType: tgstat.String("chat"),
 		}
 		_, _, err := MentionsByChannels(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionsByChannelRequest{
 			Q:         "q",
-			PeerType:  makeStrP("chat"),
-			StartDate: makeStrP("2020-01-19 03:14:07"),
+			PeerType:  tgstat.String("chat"),
+			StartDate: tgstat.String("2020-01-19 03:14:07"),
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionsByChannelRequest{
 			Q:            "q",
-			PeerType:     makeStrP("all"),
-			EndDate:      makeStrP("2020-01-19 03:14:07"),
-			HideForwards: makeBoolP(true),
+			PeerType:     tgstat.String("all"),
+			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			HideForwards: tgstat.Bool(true),
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionsByChannelRequest{
 			Q:            "q",
-			PeerType:     makeStrP("all"),
-			EndDate:      makeStrP("2020-01-19 03:14:07"),
-			HideForwards: makeBoolP(true),
-			StrongSearch: makeBoolP(false),
+			PeerType:     tgstat.String("all"),
+			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			HideForwards: tgstat.Bool(true),
+			StrongSearch: tgstat.Bool(false),
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionsByChannelRequest{
 			Q:            "q",
-			PeerType:     makeStrP("all"),
-			EndDate:      makeStrP("2020-01-19 03:14:07"),
-			HideForwards: makeBoolP(true),
-			StrongSearch: makeBoolP(false),
-			MinusWords:   makeStrP("something"),
+			PeerType:     tgstat.String("all"),
+			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			HideForwards: tgstat.Bool(true),
+			StrongSearch: tgstat.Bool(false),
+			MinusWords:   tgstat.String("something"),
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionsByChannelRequest{
 			Q:            "q",
-			PeerType:     makeStrP("chat"),
-			EndDate:      makeStrP("2020-01-19 03:14:07"),
-			HideForwards: makeBoolP(true),
-			StrongSearch: makeBoolP(true),
-			MinusWords:   makeStrP("something"),
+			PeerType:     tgstat.String("chat"),
+			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			HideForwards: tgstat.Bool(true),
+			StrongSearch: tgstat.Bool(true),
+			MinusWords:   tgstat.String("something"),
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 
 		req = MentionsByChannelRequest{
 			Q:              "q",
-			PeerType:       makeStrP("chat"),
-			EndDate:        makeStrP("2020-01-19 03:14:07"),
-			HideForwards:   makeBoolP(true),
-			StrongSearch:   makeBoolP(true),
-			MinusWords:     makeStrP("something"),
-			ExtendedSyntax: makeBoolP(true),
+			PeerType:       tgstat.String("chat"),
+			EndDate:        tgstat.String("2020-01-19 03:14:07"),
+			HideForwards:   tgstat.Bool(true),
+			StrongSearch:   tgstat.Bool(true),
+			MinusWords:     tgstat.String("something"),
+			ExtendedSyntax: tgstat.Bool(true),
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())

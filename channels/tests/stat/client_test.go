@@ -28,7 +28,7 @@ func TestClient_ChannelStat(t *testing.T) {
 
 		_, _, err := channels.Stat(context.Background(), channelId)
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("ChannelID must be set"))
+		Expect(err.Error()).To(ContainSubstring("ChannelId: cannot be blank"))
 	})
 
 	t.Run("Test channel Stat response mapping", func(t *testing.T) {
