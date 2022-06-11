@@ -281,7 +281,15 @@ func Mentions(ctx context.Context, request ChannelForwardRequest) (*tgstat.Chann
 func (c Client) Mentions(ctx context.Context, request ChannelForwardRequest) (*tgstat.ChannelMentionsResult, *http.Response, error) {
 	path := endpoints.ChannelsMentions
 
-	if err := request.Validate(); err != nil {
+	if err := validateChannelId(request.ChannelId); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.StartDate); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.EndDate); err != nil {
 		return nil, nil, err
 	}
 
@@ -315,7 +323,7 @@ func MentionsExtended(ctx context.Context, request ChannelForwardRequest) (*tgst
 func (c Client) MentionsExtended(ctx context.Context, request ChannelForwardRequest) (*tgstat.ChannelMentionsExtended, *http.Response, error) {
 	path := endpoints.ChannelsMentions
 
-	if err := request.Validate(); err != nil {
+	if err := validateChannelId(request.ChannelId); err != nil {
 		return nil, nil, err
 	}
 
@@ -371,12 +379,6 @@ type ChannelForwardRequest struct {
 	EndDate   *string
 }
 
-func (channelForwardRequest ChannelForwardRequest) Validate() error {
-	return validation.ValidateStruct(&channelForwardRequest,
-		validation.Field(&channelForwardRequest.ChannelId, validation.Required),
-	)
-}
-
 // Forwards request
 // see https://api.tgstat.ru/docs/ru/channels/forwards.html
 func Forwards(ctx context.Context, request ChannelForwardRequest) (*tgstat.ChannelForwards, *http.Response, error) {
@@ -388,7 +390,15 @@ func Forwards(ctx context.Context, request ChannelForwardRequest) (*tgstat.Chann
 func (c Client) Forwards(ctx context.Context, request ChannelForwardRequest) (*tgstat.ChannelForwards, *http.Response, error) {
 	path := endpoints.ChannelsForwards
 
-	if err := request.Validate(); err != nil {
+	if err := validateChannelId(request.ChannelId); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.StartDate); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.EndDate); err != nil {
 		return nil, nil, err
 	}
 
@@ -422,7 +432,15 @@ func ForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*tgst
 func (c Client) ForwardsExtended(ctx context.Context, request ChannelForwardRequest) (*tgstat.ChannelForwardsExtended, *http.Response, error) {
 	path := endpoints.ChannelsForwards
 
-	if err := request.Validate(); err != nil {
+	if err := validateChannelId(request.ChannelId); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.StartDate); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.EndDate); err != nil {
 		return nil, nil, err
 	}
 
@@ -483,7 +501,6 @@ type ChannelSubscribersRequest struct {
 
 func (channelSubscribersRequest ChannelSubscribersRequest) Validate() error {
 	return validation.ValidateStruct(&channelSubscribersRequest,
-		validation.Field(&channelSubscribersRequest.ChannelId, validation.Required),
 		validation.Field(&channelSubscribersRequest.Group, validation.In("hour", "day", "week", "month")),
 	)
 }
@@ -498,6 +515,18 @@ func Subscribers(ctx context.Context, request ChannelSubscribersRequest) (*tgsta
 // see https://api.tgstat.ru/docs/ru/channels/subscribers.html
 func (c Client) Subscribers(ctx context.Context, request ChannelSubscribersRequest) (*tgstat.ChannelSubscribers, *http.Response, error) {
 	path := endpoints.ChannelsSubscribers
+
+	if err := validateChannelId(request.ChannelId); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.StartDate); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.EndDate); err != nil {
+		return nil, nil, err
+	}
 
 	if err := request.Validate(); err != nil {
 		return nil, nil, err
@@ -543,7 +572,6 @@ type ChannelViewsRequest struct {
 
 func (channelViewsRequest ChannelViewsRequest) Validate() error {
 	return validation.ValidateStruct(&channelViewsRequest,
-		validation.Field(&channelViewsRequest.ChannelId, validation.Required),
 		validation.Field(&channelViewsRequest.Group, validation.In("day", "week", "month")),
 	)
 }
@@ -558,6 +586,18 @@ func Views(ctx context.Context, request ChannelViewsRequest) (*tgstat.ChannelVie
 // see https://api.tgstat.ru/docs/ru/channels/views.html
 func (c Client) Views(ctx context.Context, request ChannelViewsRequest) (*tgstat.ChannelViews, *http.Response, error) {
 	path := endpoints.ChannelsViews
+
+	if err := validateChannelId(request.ChannelId); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.StartDate); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.EndDate); err != nil {
+		return nil, nil, err
+	}
 
 	if err := request.Validate(); err != nil {
 		return nil, nil, err
@@ -665,6 +705,18 @@ func AvgPostsReach(ctx context.Context, request ChannelViewsRequest) (*tgstat.Ch
 func (c Client) AvgPostsReach(ctx context.Context, request ChannelViewsRequest) (*tgstat.ChannelAvgReach, *http.Response, error) {
 	path := endpoints.ChannelAVGPostsReach
 
+	if err := validateChannelId(request.ChannelId); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.StartDate); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.EndDate); err != nil {
+		return nil, nil, err
+	}
+
 	if err := request.Validate(); err != nil {
 		return nil, nil, err
 	}
@@ -710,6 +762,18 @@ func Err(ctx context.Context, request ChannelViewsRequest) (*tgstat.ChannelErr, 
 // See https://api.tgstat.ru/docs/ru/channels/err.html
 func (c Client) Err(ctx context.Context, request ChannelViewsRequest) (*tgstat.ChannelErr, *http.Response, error) {
 	path := endpoints.ChannelErr
+
+	if err := validateChannelId(request.ChannelId); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.StartDate); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.EndDate); err != nil {
+		return nil, nil, err
+	}
 
 	if err := request.Validate(); err != nil {
 		return nil, nil, err
