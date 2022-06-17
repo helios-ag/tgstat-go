@@ -278,6 +278,14 @@ func TestClient_PostsSearch(t *testing.T) {
 		}
 		_, _, err = PostSearch(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
+
+		req = PostSearchRequest{
+			Q:         "val",
+			StartDate: nil,
+			EndDate:   nil,
+		}
+		_, _, err = PostSearch(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 	})
 }
 
@@ -373,6 +381,14 @@ func TestClient_PostsSearchExtended(t *testing.T) {
 			Q:         "val",
 			StartDate: tgstat.String("123123"),
 			EndDate:   tgstat.String("123123"),
+		}
+		_, _, err = PostSearchExtended(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
+
+		req = PostSearchRequest{
+			Q:         "val",
+			StartDate: nil,
+			EndDate:   nil,
 		}
 		_, _, err = PostSearchExtended(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())

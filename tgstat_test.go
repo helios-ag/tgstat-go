@@ -263,4 +263,9 @@ func TestValidateDate(t *testing.T) {
 		err := ValidateDate(String("123123123"))
 		Expect(err).ToNot(HaveOccurred())
 	})
+
+	t.Run("Test date with nil", func(t *testing.T) {
+		err := ValidateDate(nil)
+		Expect(err).ToNot(HaveOccurred())
+	})
 }
