@@ -246,6 +246,14 @@ func TestClient_PostsSearch(t *testing.T) {
 		_, _, err = PostSearch(context.Background(), req)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("must be numeric"))
+
+		req = PostSearchRequest{
+			Q:       "val",
+			EndDate: tgstat.String("date"),
+		}
+		_, _, err = PostSearch(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("must be numeric"))
 	})
 
 	t.Run("Test PostsSearch response Mapping", func(t *testing.T) {
@@ -348,6 +356,14 @@ func TestClient_PostsSearchExtended(t *testing.T) {
 			Q:         "val",
 			StartDate: tgstat.String("blabla"),
 			EndDate:   tgstat.String("date"),
+		}
+		_, _, err = PostSearchExtended(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("must be numeric"))
+
+		req = PostSearchRequest{
+			Q:       "val",
+			EndDate: tgstat.String("date"),
 		}
 		_, _, err = PostSearchExtended(context.Background(), req)
 		Expect(err).To(HaveOccurred())
