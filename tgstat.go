@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -219,4 +220,16 @@ func Bool(b bool) *bool {
 
 func Int(v int) *int {
 	return &v
+}
+
+func ValidateDate(date *string) error {
+	if date == nil {
+		return nil
+	}
+
+	if _, err := strconv.Atoi(*date); err != nil {
+		return fmt.Errorf("date: must be numeric")
+	}
+
+	return nil
 }

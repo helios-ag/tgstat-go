@@ -135,6 +135,14 @@ func (c Client) PostSearch(ctx context.Context, request PostSearchRequest) (*tgs
 		return nil, nil, err
 	}
 
+	if err := tgstat.ValidateDate(request.StartDate); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.EndDate); err != nil {
+		return nil, nil, err
+	}
+
 	body := makeRequestBody(request)
 
 	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodGet, path, body)
@@ -165,6 +173,14 @@ func (c Client) PostSearchExtended(ctx context.Context, request PostSearchReques
 	path := endpoints.PostsSearch
 
 	if err := request.Validate(); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.StartDate); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.EndDate); err != nil {
 		return nil, nil, err
 	}
 

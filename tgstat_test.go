@@ -34,6 +34,24 @@ func TestNewClient(t *testing.T) {
 	})
 }
 
+func TestWithEndpoint(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test With endpoint", func(t *testing.T) {
+		val := "https://google.com"
+		WithEndpoint(val)
+
+		Expect(TGStatClient.Url).Should(Equal(val))
+	})
+}
+
+func TestReader(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test Reader", func(t *testing.T) {
+		reader := reader
+		Expect(reader).ShouldNot(Equal(nil))
+	})
+}
+
 func TestClientDo(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test client do with external api", func(t *testing.T) {
@@ -154,6 +172,19 @@ func TestNewRequest(t *testing.T) {
 		Expect(err.Error()).To(ContainSubstring("URL is empty"))
 	})
 
+	t.Run("Client not configured", func(t *testing.T) {
+		api := &Client{
+			Url:        "url",
+			httpClient: &http.Client{},
+		}
+		api = nil
+		ctx := context.Background()
+
+		_, err := api.NewRestRequest(ctx, Token, http.MethodGet, "htts://url", nil)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("client not configured"))
+	})
+
 	t.Run("Trigger NewRequest errors", func(t *testing.T) {
 		api := GetAPI()
 		ctx := context.Background()
@@ -165,6 +196,16 @@ func TestNewRequest(t *testing.T) {
 		_, err = api.NewRestRequest(ctx, Token, http.MethodGet, "htt\\wrongUrl", nil)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("invalid character"))
+	})
+
+	t.Run("Trigger NewRequest data values passed", func(t *testing.T) {
+		api := GetAPI()
+		ctx := context.Background()
+		body := make(map[string]string)
+		body["value"] = "some_value"
+
+		_, err := api.NewRestRequest(ctx, "Token", http.MethodGet, "https://url", body)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	t.Run("Trigger NewRestRequest errors", func(t *testing.T) {
@@ -208,5 +249,23 @@ func TestInt(t *testing.T) {
 	t.Run("Test int converter point", func(t *testing.T) {
 		val := Int(100)
 		Expect(&val).To(HaveValue(Equal(100)))
+	})
+}
+func TestValidateDate(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test date is in text format triggers error", func(t *testing.T) {
+		err := ValidateDate(String("blalbla"))
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("must be numeric"))
+	})
+
+	t.Run("Test date in numeric format (timestamp)", func(t *testing.T) {
+		err := ValidateDate(String("123123123"))
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	t.Run("Test date with nil", func(t *testing.T) {
+		err := ValidateDate(nil)
+		Expect(err).ToNot(HaveOccurred())
 	})
 }

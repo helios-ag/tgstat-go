@@ -91,6 +91,15 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 
 		_, _, err := MentionsByPeriod(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
+
+		req = MentionPeriodRequest{
+			Q:         "TgStat",
+			StartDate: nil,
+			EndDate:   nil,
+		}
+
+		_, _, err = MentionsByPeriod(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	t.Run("Test mention order validation", func(t *testing.T) {
@@ -115,7 +124,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 		req = MentionPeriodRequest{
 			Q:         "q",
 			PeerType:  tgstat.String("all"),
-			StartDate: tgstat.String("2020-01-19 03:14:07"),
+			StartDate: tgstat.String("2020011907"),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
@@ -123,7 +132,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 		req = MentionPeriodRequest{
 			Q:            "q",
 			PeerType:     tgstat.String("all"),
-			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			EndDate:      tgstat.String("2020011907"),
 			HideForwards: tgstat.Bool(true),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
@@ -132,7 +141,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 		req = MentionPeriodRequest{
 			Q:            "q",
 			PeerType:     tgstat.String("all"),
-			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			EndDate:      tgstat.String("2020011907"),
 			HideForwards: tgstat.Bool(true),
 			StrongSearch: tgstat.Bool(false),
 		}
@@ -142,7 +151,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 		req = MentionPeriodRequest{
 			Q:            "q",
 			PeerType:     tgstat.String("all"),
-			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			EndDate:      tgstat.String("2020011907"),
 			HideForwards: tgstat.Bool(true),
 			StrongSearch: tgstat.Bool(false),
 			MinusWords:   tgstat.String("something"),
@@ -153,7 +162,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 		req = MentionPeriodRequest{
 			Q:            "q",
 			PeerType:     tgstat.String("all"),
-			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			EndDate:      tgstat.String("2020011907"),
 			HideForwards: tgstat.Bool(true),
 			StrongSearch: tgstat.Bool(true),
 			MinusWords:   tgstat.String("something"),
@@ -165,7 +174,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 		req = MentionPeriodRequest{
 			Q:              "q",
 			PeerType:       tgstat.String("all"),
-			EndDate:        tgstat.String("2020-01-19 03:14:07"),
+			EndDate:        tgstat.String("2020011907"),
 			HideForwards:   tgstat.Bool(true),
 			StrongSearch:   tgstat.Bool(true),
 			MinusWords:     tgstat.String("something"),
@@ -174,6 +183,48 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
 
+		Expect(err).ToNot(HaveOccurred())
+
+		req = MentionPeriodRequest{
+			Q:              "q",
+			PeerType:       tgstat.String("all"),
+			StartDate:      tgstat.String("sdalfjs"),
+			EndDate:        tgstat.String("sdfsdf"),
+			HideForwards:   tgstat.Bool(true),
+			StrongSearch:   tgstat.Bool(true),
+			MinusWords:     tgstat.String("something"),
+			Group:          tgstat.String("week"),
+			ExtendedSyntax: tgstat.Bool(true),
+		}
+		_, _, err = MentionsByPeriod(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+
+		req = MentionPeriodRequest{
+			Q:              "q",
+			PeerType:       tgstat.String("all"),
+			StartDate:      nil,
+			EndDate:        tgstat.String("sdfsdf"),
+			HideForwards:   tgstat.Bool(true),
+			StrongSearch:   tgstat.Bool(true),
+			MinusWords:     tgstat.String("something"),
+			Group:          tgstat.String("week"),
+			ExtendedSyntax: tgstat.Bool(true),
+		}
+		_, _, err = MentionsByPeriod(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+
+		req = MentionPeriodRequest{
+			Q:              "q",
+			PeerType:       tgstat.String("all"),
+			EndDate:        nil,
+			StartDate:      nil,
+			HideForwards:   tgstat.Bool(true),
+			StrongSearch:   tgstat.Bool(true),
+			MinusWords:     tgstat.String("something"),
+			Group:          tgstat.String("week"),
+			ExtendedSyntax: tgstat.Bool(true),
+		}
+		_, _, err = MentionsByPeriod(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -226,7 +277,7 @@ func TestClient_MentionsByChannels(t *testing.T) {
 		req = MentionsByChannelRequest{
 			Q:         "q",
 			PeerType:  tgstat.String("chat"),
-			StartDate: tgstat.String("2020-01-19 03:14:07"),
+			StartDate: tgstat.String("2020011907"),
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
@@ -234,7 +285,7 @@ func TestClient_MentionsByChannels(t *testing.T) {
 		req = MentionsByChannelRequest{
 			Q:            "q",
 			PeerType:     tgstat.String("all"),
-			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			EndDate:      tgstat.String("2020011907"),
 			HideForwards: tgstat.Bool(true),
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
@@ -243,7 +294,7 @@ func TestClient_MentionsByChannels(t *testing.T) {
 		req = MentionsByChannelRequest{
 			Q:            "q",
 			PeerType:     tgstat.String("all"),
-			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			EndDate:      tgstat.String("2020011907"),
 			HideForwards: tgstat.Bool(true),
 			StrongSearch: tgstat.Bool(false),
 		}
@@ -253,7 +304,7 @@ func TestClient_MentionsByChannels(t *testing.T) {
 		req = MentionsByChannelRequest{
 			Q:            "q",
 			PeerType:     tgstat.String("all"),
-			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			EndDate:      tgstat.String("2020011907"),
 			HideForwards: tgstat.Bool(true),
 			StrongSearch: tgstat.Bool(false),
 			MinusWords:   tgstat.String("something"),
@@ -264,7 +315,7 @@ func TestClient_MentionsByChannels(t *testing.T) {
 		req = MentionsByChannelRequest{
 			Q:            "q",
 			PeerType:     tgstat.String("chat"),
-			EndDate:      tgstat.String("2020-01-19 03:14:07"),
+			EndDate:      tgstat.String("2020011907"),
 			HideForwards: tgstat.Bool(true),
 			StrongSearch: tgstat.Bool(true),
 			MinusWords:   tgstat.String("something"),
@@ -275,7 +326,59 @@ func TestClient_MentionsByChannels(t *testing.T) {
 		req = MentionsByChannelRequest{
 			Q:              "q",
 			PeerType:       tgstat.String("chat"),
-			EndDate:        tgstat.String("2020-01-19 03:14:07"),
+			EndDate:        tgstat.String("2020011907"),
+			HideForwards:   tgstat.Bool(true),
+			StrongSearch:   tgstat.Bool(true),
+			MinusWords:     tgstat.String("something"),
+			ExtendedSyntax: tgstat.Bool(true),
+		}
+		_, _, err = MentionsByChannels(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
+
+		req = MentionsByChannelRequest{
+			Q:              "q",
+			PeerType:       tgstat.String("chat"),
+			StartDate:      tgstat.String("vlvlv"),
+			EndDate:        tgstat.String("202asdasd0011907"),
+			HideForwards:   tgstat.Bool(true),
+			StrongSearch:   tgstat.Bool(true),
+			MinusWords:     tgstat.String("something"),
+			ExtendedSyntax: tgstat.Bool(true),
+		}
+		_, _, err = MentionsByChannels(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+
+		req = MentionsByChannelRequest{
+			Q:              "q",
+			PeerType:       tgstat.String("chat"),
+			StartDate:      nil,
+			EndDate:        tgstat.String("202asdasd0011907"),
+			HideForwards:   tgstat.Bool(true),
+			StrongSearch:   tgstat.Bool(true),
+			MinusWords:     tgstat.String("something"),
+			ExtendedSyntax: tgstat.Bool(true),
+		}
+		_, _, err = MentionsByChannels(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+
+		req = MentionsByChannelRequest{
+			Q:              "q",
+			PeerType:       tgstat.String("chat"),
+			StartDate:      tgstat.String("123123123"),
+			EndDate:        tgstat.String("123123"),
+			HideForwards:   tgstat.Bool(true),
+			StrongSearch:   tgstat.Bool(true),
+			MinusWords:     tgstat.String("something"),
+			ExtendedSyntax: tgstat.Bool(true),
+		}
+		_, _, err = MentionsByChannels(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
+
+		req = MentionsByChannelRequest{
+			Q:              "q",
+			PeerType:       tgstat.String("chat"),
+			StartDate:      nil,
+			EndDate:        nil,
 			HideForwards:   tgstat.Bool(true),
 			StrongSearch:   tgstat.Bool(true),
 			MinusWords:     tgstat.String("something"),

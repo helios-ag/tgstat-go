@@ -48,6 +48,14 @@ func (c Client) MentionsByPeriod(ctx context.Context, request MentionPeriodReque
 		return nil, nil, err
 	}
 
+	if err := tgstat.ValidateDate(request.StartDate); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.EndDate); err != nil {
+		return nil, nil, err
+	}
+
 	body := make(map[string]string)
 	body["q"] = request.Q
 	if nil != request.PeerType {
@@ -137,6 +145,14 @@ func (c Client) MentionsByChannels(ctx context.Context, request MentionsByChanne
 	path := endpoints.WordsMentionsByChannels
 
 	if err := request.Validate(); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.StartDate); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.EndDate); err != nil {
 		return nil, nil, err
 	}
 
