@@ -237,6 +237,15 @@ func TestClient_PostsSearch(t *testing.T) {
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("Offset: must be no greater than"))
 
+		req = PostSearchRequest{
+			Q:         "val",
+			StartDate: tgstat.String("blabla"),
+			EndDate:   tgstat.String("date"),
+		}
+		_, _, err = PostSearch(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("must be numeric"))
+
 	})
 
 	t.Run("Test PostsSearch response Mapping", func(t *testing.T) {

@@ -175,6 +175,22 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 		_, _, err = MentionsByPeriod(context.Background(), req)
 
 		Expect(err).ToNot(HaveOccurred())
+
+		req = MentionPeriodRequest{
+			Q:              "q",
+			PeerType:       tgstat.String("all"),
+			EndDate:        tgstat.String("sdfsdf"),
+			StartDate:      tgstat.String("sdalfjs"),
+			HideForwards:   tgstat.Bool(true),
+			StrongSearch:   tgstat.Bool(true),
+			MinusWords:     tgstat.String("something"),
+			Group:          tgstat.String("week"),
+			ExtendedSyntax: tgstat.Bool(true),
+		}
+		_, _, err = MentionsByPeriod(context.Background(), req)
+
+		Expect(err).To(HaveOccurred())
+
 	})
 
 }
@@ -283,5 +299,18 @@ func TestClient_MentionsByChannels(t *testing.T) {
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
 		Expect(err).ToNot(HaveOccurred())
+
+		req = MentionsByChannelRequest{
+			Q:              "q",
+			PeerType:       tgstat.String("chat"),
+			StartDate:      tgstat.String("vlvlv"),
+			EndDate:        tgstat.String("202asdasd0011907"),
+			HideForwards:   tgstat.Bool(true),
+			StrongSearch:   tgstat.Bool(true),
+			MinusWords:     tgstat.String("something"),
+			ExtendedSyntax: tgstat.Bool(true),
+		}
+		_, _, err = MentionsByChannels(context.Background(), req)
+		Expect(err).To(HaveOccurred())
 	})
 }

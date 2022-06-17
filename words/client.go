@@ -148,6 +148,14 @@ func (c Client) MentionsByChannels(ctx context.Context, request MentionsByChanne
 		return nil, nil, err
 	}
 
+	if err := tgstat.ValidateDate(request.StartDate); err != nil {
+		return nil, nil, err
+	}
+
+	if err := tgstat.ValidateDate(request.EndDate); err != nil {
+		return nil, nil, err
+	}
+
 	body := make(map[string]string)
 	body["q"] = request.Q
 	if nil != request.PeerType {
