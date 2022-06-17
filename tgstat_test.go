@@ -251,3 +251,16 @@ func TestInt(t *testing.T) {
 		Expect(&val).To(HaveValue(Equal(100)))
 	})
 }
+func TestValidateDate(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test date is in text format triggers error", func(t *testing.T) {
+		err := ValidateDate(String("blalbla"))
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("must be numeric"))
+	})
+
+	t.Run("Test date in numeric format (timestamp)", func(t *testing.T) {
+		err := ValidateDate(String("123123123"))
+		Expect(err).ToNot(HaveOccurred())
+	})
+}
