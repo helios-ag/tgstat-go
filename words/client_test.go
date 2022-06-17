@@ -188,9 +188,7 @@ func TestClient_MentionsByPeriod(t *testing.T) {
 			ExtendedSyntax: tgstat.Bool(true),
 		}
 		_, _, err = MentionsByPeriod(context.Background(), req)
-
 		Expect(err).To(HaveOccurred())
-
 	})
 
 }
@@ -312,5 +310,18 @@ func TestClient_MentionsByChannels(t *testing.T) {
 		}
 		_, _, err = MentionsByChannels(context.Background(), req)
 		Expect(err).To(HaveOccurred())
+
+		req = MentionsByChannelRequest{
+			Q:              "q",
+			PeerType:       tgstat.String("chat"),
+			StartDate:      tgstat.String("123123123"),
+			EndDate:        tgstat.String("123123"),
+			HideForwards:   tgstat.Bool(true),
+			StrongSearch:   tgstat.Bool(true),
+			MinusWords:     tgstat.String("something"),
+			ExtendedSyntax: tgstat.Bool(true),
+		}
+		_, _, err = MentionsByChannels(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 	})
 }

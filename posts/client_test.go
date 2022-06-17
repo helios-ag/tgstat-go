@@ -177,6 +177,7 @@ func TestClient_PostsStat(t *testing.T) {
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": ContainSubstring("ok"),
 		})))
+
 	})
 }
 
@@ -245,7 +246,6 @@ func TestClient_PostsSearch(t *testing.T) {
 		_, _, err = PostSearch(context.Background(), req)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("must be numeric"))
-
 	})
 
 	t.Run("Test PostsSearch response Mapping", func(t *testing.T) {
@@ -270,6 +270,14 @@ func TestClient_PostsSearch(t *testing.T) {
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": ContainSubstring("ok"),
 		})))
+
+		req = PostSearchRequest{
+			Q:         "val",
+			StartDate: tgstat.String("123123"),
+			EndDate:   tgstat.String("123123"),
+		}
+		_, _, err = PostSearch(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 	})
 }
 
@@ -300,6 +308,44 @@ func TestClient_PostsSearchExtended(t *testing.T) {
 		tgstat.NewRestRequest = oldNewRequest
 	})
 
+	t.Run("Test search extended validation", func(t *testing.T) {
+		testServer := server.NewServer()
+		defer testServer.Teardown()
+		prepareClient(testServer.URL)
+
+		req := PostSearchRequest{
+			Q: "",
+		}
+		_, _, err := PostSearchExtended(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("cannot be blank"))
+
+		req = PostSearchRequest{
+			Q:     "val",
+			Limit: tgstat.Int(100),
+		}
+		_, _, err = PostSearchExtended(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("Limit: must be no greater than"))
+
+		req = PostSearchRequest{
+			Q:      "val",
+			Offset: tgstat.Int(100),
+		}
+		_, _, err = PostSearchExtended(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("Offset: must be no greater than"))
+
+		req = PostSearchRequest{
+			Q:         "val",
+			StartDate: tgstat.String("blabla"),
+			EndDate:   tgstat.String("date"),
+		}
+		_, _, err = PostSearchExtended(context.Background(), req)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("must be numeric"))
+	})
+
 	t.Run("Test PostsGet response Mapping", func(t *testing.T) {
 		testServer := server.NewServer()
 		defer testServer.Teardown()
@@ -322,6 +368,14 @@ func TestClient_PostsSearchExtended(t *testing.T) {
 		Expect(response).To(PointTo(MatchFields(IgnoreExtras, Fields{
 			"Status": ContainSubstring("ok"),
 		})))
+
+		req = PostSearchRequest{
+			Q:         "val",
+			StartDate: tgstat.String("123123"),
+			EndDate:   tgstat.String("123123"),
+		}
+		_, _, err = PostSearchExtended(context.Background(), req)
+		Expect(err).ToNot(HaveOccurred())
 	})
 }
 
