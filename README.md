@@ -143,8 +143,6 @@ Docs at: https://api.tgstat.ru/docs/ru/channels/search.html
 
 `func Search(ctx context.Context, request SearchRequest)`
 
-Example [`/examples/channels-search/main.go`](examples/channels-search/main.go)
-
 #### Get channel stat
 
 Docs at: https://api.tgstat.ru/docs/ru/channels/search.html
@@ -263,8 +261,6 @@ Docs at: https://api.tgstat.ru/docs/ru/database/languages.html
 ### Usage
 
 #### Statistics
-
-Example [`/examples/usage/main.go`](examples/usage/main.go)
 
 Docs available at https://api.tgstat.ru/docs/ru/usage/stat.html
 
