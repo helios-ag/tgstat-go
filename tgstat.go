@@ -69,22 +69,22 @@ var NewRestRequest = func(c *Client, ctx context.Context, token, method, urlPath
 		return nil, errors.New("token not found")
 	}
 
-	//var body string
-	body := url.Values{}
+	data["token"] = token
 
-	for key, value := range data {
-		body.Add(key, value)
-	}
-
-	body.Add("token", token)
-	reqBodyData := body.Encode()
+	reqBodyData, _ := json.Marshal(data)
 	// On `GET`, move the payload into the URL
 	if method == http.MethodGet {
+		//var body string
+		body := url.Values{}
+		for key, value := range data {
+			body.Add(key, value)
+		}
+		body.Add("token", token)
 		uri += "?" + body.Encode()
-		reqBodyData = ""
+		reqBodyData = nil
 	}
 
-	req, err := http.NewRequest(method, uri, strings.NewReader(reqBodyData))
+	req, err := http.NewRequest(method, uri, bytes.NewReader(reqBodyData))
 
 	if err != nil {
 		return nil, err
