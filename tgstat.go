@@ -77,14 +77,14 @@ var NewRestRequest = func(c *Client, ctx context.Context, token, method, urlPath
 	}
 
 	body.Add("token", token)
-	reqBodyData, _ := json.Marshal(body)
+	reqBodyData := body.Encode()
 	// On `GET`, move the payload into the URL
 	if method == http.MethodGet {
 		uri += "?" + body.Encode()
-		reqBodyData = nil
+		reqBodyData = ""
 	}
 
-	req, err := http.NewRequest(method, uri, bytes.NewReader(reqBodyData))
+	req, err := http.NewRequest(method, uri, strings.NewReader(reqBodyData))
 
 	if err != nil {
 		return nil, err
