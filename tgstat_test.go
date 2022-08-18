@@ -29,7 +29,7 @@ func TestNewClient(t *testing.T) {
 		client, _ := newClient(newServer.URL)
 		Token = "asd"
 		ctx := context.Background()
-		_, err := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, nil)
+		_, err := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, make(map[string]string))
 		Expect(err).ShouldNot(HaveOccurred())
 	})
 }
@@ -71,7 +71,7 @@ func TestClientDo(t *testing.T) {
 		ctx := context.Background()
 		client, _ := newClient(newServer.URL)
 
-		request, _ := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, nil)
+		request, _ := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, make(map[string]string))
 		_, err := client.Do(request, nil)
 
 		Expect(err).To(HaveOccurred())
@@ -95,7 +95,7 @@ func TestClientDo(t *testing.T) {
 
 		ctx := context.Background()
 		client, _ := newClient(newServer.URL)
-		request, _ := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, nil)
+		request, _ := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, make(map[string]string))
 		_, err := client.Do(request, nil)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -109,7 +109,7 @@ func TestClientDo(t *testing.T) {
 		})
 		client, _ := newClient(newServer.URL)
 		ctx := context.Background()
-		request, _ := client.NewRestRequest(ctx, "Token", http.MethodGet, endpoints.ChannelsGet, nil)
+		request, _ := client.NewRestRequest(ctx, "Token", http.MethodGet, endpoints.ChannelsGet, make(map[string]string))
 		_, err := client.Do(request, nil)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("tgstat server responded with status code 400"))
@@ -189,11 +189,11 @@ func TestNewRequest(t *testing.T) {
 		api := GetAPI()
 		ctx := context.Background()
 		// Cyrillic M
-		_, err := api.NewRestRequest(ctx, Token, "М", endpoints.ChannelsGet, nil)
+		_, err := api.NewRestRequest(ctx, Token, "М", endpoints.ChannelsGet, make(map[string]string))
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("net/http: invalid method \"М\""))
 		//
-		_, err = api.NewRestRequest(ctx, Token, http.MethodGet, "htt\\wrongUrl", nil)
+		_, err = api.NewRestRequest(ctx, Token, http.MethodGet, "htt\\wrongUrl", make(map[string]string))
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("invalid character"))
 	})
@@ -212,11 +212,11 @@ func TestNewRequest(t *testing.T) {
 		api := GetAPI()
 		ctx := context.Background()
 		// Cyrillic M
-		_, err := api.NewRestRequest(ctx, Token, "М", endpoints.ChannelsGet, nil)
+		_, err := api.NewRestRequest(ctx, Token, "М", endpoints.ChannelsGet, make(map[string]string))
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("invalid method"))
 
-		_, err = api.NewRestRequest(ctx, Token, http.MethodGet, "htt\\wrongUrl", nil)
+		_, err = api.NewRestRequest(ctx, Token, http.MethodGet, "htt\\wrongUrl", make(map[string]string))
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("invalid character"))
 	})
