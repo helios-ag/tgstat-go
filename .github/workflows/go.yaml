@@ -21,7 +21,7 @@ jobs:
       - run: go version
 
       - name: Checkout repository
-        uses: actions/checfkout@v3
+        uses: actions/checkout@v3
 
       - name: Examine source code
         run: go vet -v ./...
