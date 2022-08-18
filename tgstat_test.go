@@ -9,7 +9,6 @@ import (
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"testing"
 )
@@ -78,7 +77,7 @@ func TestClientDo(t *testing.T) {
 		Expect(err.Error()).To(ContainSubstring("buf overflow"))
 		// restore reader
 		reader = func(r io.Reader) ([]byte, error) {
-			return ioutil.ReadAll(r)
+			return io.ReadAll(r)
 		}
 	})
 
@@ -120,7 +119,7 @@ func TestErrorFromResponse(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Expect application/json", func(t *testing.T) {
 		resp := http.Response{
-			Body:   ioutil.NopCloser(bytes.NewBufferString("Hello World")),
+			Body:   io.NopCloser(bytes.NewBufferString("Hello World")),
 			Header: make(http.Header),
 		}
 		resp.Header.Set("Content-Type", "application/json")
@@ -131,7 +130,7 @@ func TestErrorFromResponse(t *testing.T) {
 
 	t.Run("Expect wrong json", func(t *testing.T) {
 		resp := http.Response{
-			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
+			Body:   io.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
 			Header: make(http.Header),
 		}
 		resp.Header.Set("Content-Type", "application/json")
@@ -142,7 +141,7 @@ func TestErrorFromResponse(t *testing.T) {
 
 	t.Run("Expect wrong json header", func(t *testing.T) {
 		resp := http.Response{
-			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
+			Body:   io.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
 			Header: make(http.Header),
 		}
 		resp.Header.Set("Content-Type", "application_json")
@@ -153,7 +152,7 @@ func TestErrorFromResponse(t *testing.T) {
 
 	t.Run("Dont expect Error", func(t *testing.T) {
 		resp := http.Response{
-			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
+			Body:   io.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
 			Header: make(http.Header),
 		}
 		resp.Header.Set("Content-Type", "application/json")
