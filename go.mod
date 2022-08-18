@@ -1,6 +1,6 @@
 module github.com/helios-ag/tgstat-go
 
-go 1.18
+go 1.19
 
 require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0

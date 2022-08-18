@@ -7,19 +7,24 @@ on:
     branches: [ master ]
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Go
-        uses: actions/setup-go@v2
+      - name: Setup Go
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.18
+          go-version: 1.19
+      - run: go version
 
-      - name: Prepare
-        run: go get -t -v ./...
+      - name: Checkout repository
+        uses: actions/checfkout@v3
+
+      - name: Examine source code
+        run: go vet -v ./...
 
       - name: Build
         run: go build -v ./...
