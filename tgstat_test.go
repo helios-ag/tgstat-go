@@ -54,6 +54,27 @@ func TestEmptyData(t *testing.T) {
 	})
 }
 
+func TestEmptyToken(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test getting empty data response", func(t *testing.T) {
+		newServer := server.NewServer()
+		defer newServer.Teardown()
+
+		newServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
+			json.NewEncoder(w).Encode(ErrorResult{
+				Status: "error",
+				Error:  "empty_token",
+			})
+		})
+		client, _ := newClient(newServer.URL)
+		Token = ""
+		ctx := context.Background()
+		_, err := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, make(map[string]string))
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("token not found"))
+	})
+}
+
 func TestWithEndpoint(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test With endpoint", func(t *testing.T) {
