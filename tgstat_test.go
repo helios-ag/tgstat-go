@@ -36,16 +36,7 @@ func TestNewClient(t *testing.T) {
 func TestEmptyData(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test getting empty data response", func(t *testing.T) {
-		newServer := server.NewServer()
-		defer newServer.Teardown()
-
-		newServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(ErrorResult{
-				Status: "error",
-				Error:  "empty_token",
-			})
-		})
-		client, _ := newClient(newServer.URL)
+		client, _ := newClient("https://google.com")
 		Token = "asd"
 		ctx := context.Background()
 		_, err := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, nil)
@@ -57,19 +48,9 @@ func TestEmptyData(t *testing.T) {
 func TestEmptyToken(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test getting empty data response", func(t *testing.T) {
-		newServer := server.NewServer()
-		defer newServer.Teardown()
-
-		newServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(ErrorResult{
-				Status: "error",
-				Error:  "empty_token",
-			})
-		})
-		client, _ := newClient(newServer.URL)
-		Token = ""
+		client, _ := newClient("https://google.com")
 		ctx := context.Background()
-		_, err := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, make(map[string]string))
+		_, err := client.NewRestRequest(ctx, "", http.MethodGet, endpoints.ChannelsGet, make(map[string]string))
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("token not found"))
 	})
