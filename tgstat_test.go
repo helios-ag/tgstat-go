@@ -9,7 +9,6 @@ import (
 	server "github.com/helios-ag/tgstat-go/testing"
 	. "github.com/onsi/gomega"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"testing"
 )
@@ -29,8 +28,31 @@ func TestNewClient(t *testing.T) {
 		client, _ := newClient(newServer.URL)
 		Token = "asd"
 		ctx := context.Background()
-		_, err := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, nil)
+		_, err := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, make(map[string]string))
 		Expect(err).ShouldNot(HaveOccurred())
+	})
+}
+
+func TestEmptyData(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test getting empty data response", func(t *testing.T) {
+		client, _ := newClient("https://google.com")
+		Token = "asd"
+		ctx := context.Background()
+		_, err := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, nil)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("data is not initialised"))
+	})
+}
+
+func TestEmptyToken(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test getting empty data response", func(t *testing.T) {
+		client, _ := newClient("https://google.com")
+		ctx := context.Background()
+		_, err := client.NewRestRequest(ctx, "", http.MethodGet, endpoints.ChannelsGet, make(map[string]string))
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("token not found"))
 	})
 }
 
@@ -46,9 +68,15 @@ func TestWithEndpoint(t *testing.T) {
 
 func TestReader(t *testing.T) {
 	RegisterTestingT(t)
-	t.Run("Test Reader", func(t *testing.T) {
+	t.Run("Test Reader not nil", func(t *testing.T) {
 		reader := reader
 		Expect(reader).ShouldNot(Equal(nil))
+	})
+
+	t.Run("Test Reader return", func(t *testing.T) {
+		reader := reader
+		ioreader := io.Reader(bytes.NewReader([]byte{}))
+		Expect(reader(ioreader)).ShouldNot(Equal(nil))
 	})
 }
 
@@ -71,14 +99,14 @@ func TestClientDo(t *testing.T) {
 		ctx := context.Background()
 		client, _ := newClient(newServer.URL)
 
-		request, _ := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, nil)
+		request, _ := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, make(map[string]string))
 		_, err := client.Do(request, nil)
 
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("buf overflow"))
 		// restore reader
 		reader = func(r io.Reader) ([]byte, error) {
-			return ioutil.ReadAll(r)
+			return io.ReadAll(r)
 		}
 	})
 
@@ -95,7 +123,7 @@ func TestClientDo(t *testing.T) {
 
 		ctx := context.Background()
 		client, _ := newClient(newServer.URL)
-		request, _ := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, nil)
+		request, _ := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, make(map[string]string))
 		_, err := client.Do(request, nil)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -109,7 +137,7 @@ func TestClientDo(t *testing.T) {
 		})
 		client, _ := newClient(newServer.URL)
 		ctx := context.Background()
-		request, _ := client.NewRestRequest(ctx, "Token", http.MethodGet, endpoints.ChannelsGet, nil)
+		request, _ := client.NewRestRequest(ctx, "Token", http.MethodGet, endpoints.ChannelsGet, make(map[string]string))
 		_, err := client.Do(request, nil)
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("tgstat server responded with status code 400"))
@@ -120,7 +148,7 @@ func TestErrorFromResponse(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Expect application/json", func(t *testing.T) {
 		resp := http.Response{
-			Body:   ioutil.NopCloser(bytes.NewBufferString("Hello World")),
+			Body:   io.NopCloser(bytes.NewBufferString("Hello World")),
 			Header: make(http.Header),
 		}
 		resp.Header.Set("Content-Type", "application/json")
@@ -131,7 +159,7 @@ func TestErrorFromResponse(t *testing.T) {
 
 	t.Run("Expect wrong json", func(t *testing.T) {
 		resp := http.Response{
-			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
+			Body:   io.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
 			Header: make(http.Header),
 		}
 		resp.Header.Set("Content-Type", "application/json")
@@ -142,7 +170,7 @@ func TestErrorFromResponse(t *testing.T) {
 
 	t.Run("Expect wrong json header", func(t *testing.T) {
 		resp := http.Response{
-			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
+			Body:   io.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
 			Header: make(http.Header),
 		}
 		resp.Header.Set("Content-Type", "application_json")
@@ -153,7 +181,7 @@ func TestErrorFromResponse(t *testing.T) {
 
 	t.Run("Dont expect Error", func(t *testing.T) {
 		resp := http.Response{
-			Body:   ioutil.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
+			Body:   io.NopCloser(bytes.NewBufferString("{\"test\": test\"}")),
 			Header: make(http.Header),
 		}
 		resp.Header.Set("Content-Type", "application/json")
@@ -173,11 +201,7 @@ func TestNewRequest(t *testing.T) {
 	})
 
 	t.Run("Client not configured", func(t *testing.T) {
-		api := &Client{
-			Url:        "url",
-			httpClient: &http.Client{},
-		}
-		api = nil
+		var api *Client
 		ctx := context.Background()
 
 		_, err := api.NewRestRequest(ctx, Token, http.MethodGet, "htts://url", nil)
@@ -189,11 +213,11 @@ func TestNewRequest(t *testing.T) {
 		api := GetAPI()
 		ctx := context.Background()
 		// Cyrillic M
-		_, err := api.NewRestRequest(ctx, Token, "М", endpoints.ChannelsGet, nil)
+		_, err := api.NewRestRequest(ctx, Token, "М", endpoints.ChannelsGet, make(map[string]string))
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("net/http: invalid method \"М\""))
 		//
-		_, err = api.NewRestRequest(ctx, Token, http.MethodGet, "htt\\wrongUrl", nil)
+		_, err = api.NewRestRequest(ctx, Token, http.MethodGet, "htt\\wrongUrl", make(map[string]string))
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("invalid character"))
 	})
@@ -212,11 +236,11 @@ func TestNewRequest(t *testing.T) {
 		api := GetAPI()
 		ctx := context.Background()
 		// Cyrillic M
-		_, err := api.NewRestRequest(ctx, Token, "М", endpoints.ChannelsGet, nil)
+		_, err := api.NewRestRequest(ctx, Token, "М", endpoints.ChannelsGet, make(map[string]string))
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("invalid method"))
 
-		_, err = api.NewRestRequest(ctx, Token, http.MethodGet, "htt\\wrongUrl", nil)
+		_, err = api.NewRestRequest(ctx, Token, http.MethodGet, "htt\\wrongUrl", make(map[string]string))
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("invalid character"))
 	})

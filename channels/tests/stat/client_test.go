@@ -39,7 +39,7 @@ func TestClient_ChannelStat(t *testing.T) {
 		testServer.Mux.HandleFunc(endpoints.ChannelsStat, func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(tgstat.ChannelStatResult{
+			json.NewEncoder(w).Encode(tgstat.ChannelStatResult{ //nolint
 				Status: "ok",
 				Response: tgstat.ChannelStatResponse{
 					Id:                0,

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -65,6 +64,10 @@ var NewRestRequest = func(c *Client, ctx context.Context, token, method, urlPath
 		uri = c.Url + urlPath
 	}
 
+	if data == nil {
+		return nil, errors.New("data is not initialised")
+	}
+
 	if token == "" {
 		return nil, errors.New("token not found")
 	}
@@ -98,7 +101,7 @@ var NewRestRequest = func(c *Client, ctx context.Context, token, method, urlPath
 }
 
 var reader = func(r io.Reader) ([]byte, error) {
-	return ioutil.ReadAll(r)
+	return io.ReadAll(r)
 }
 
 // Do perform an HTTP request against the API.
@@ -114,7 +117,7 @@ func (c *Client) Do(r *http.Request, v interface{}) (*http.Response, error) {
 		return resp, err
 	}
 	resp.Body.Close()
-	resp.Body = ioutil.NopCloser(bytes.NewReader(body))
+	resp.Body = io.NopCloser(bytes.NewReader(body))
 
 	err = errorFromResponse(resp, body)
 	if err != nil {

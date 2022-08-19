@@ -48,7 +48,7 @@ func TestClient_ChannelAVGPostsReach(t *testing.T) {
 			responses := make([]tgstat.ChannelAvgReachResponse, 0)
 			responses = append(responses, response)
 
-			json.NewEncoder(w).Encode(tgstat.ChannelAvgReach{
+			json.NewEncoder(w).Encode(tgstat.ChannelAvgReach{ //nolint
 				Status:   "ok",
 				Response: responses,
 			})

@@ -49,7 +49,7 @@ func TestClient_Mentions(t *testing.T) {
 				ParticipantsCount: 1156,
 			})
 
-			json.NewEncoder(w).Encode(tgstat.ChannelSubscribers{
+			json.NewEncoder(w).Encode(tgstat.ChannelSubscribers{ //nolint
 				Status:   "ok",
 				Response: items,
 			})
