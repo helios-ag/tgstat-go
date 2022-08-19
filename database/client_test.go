@@ -45,7 +45,7 @@ func TestClient_CountriesGet(t *testing.T) {
 				Code: "US",
 				Name: "United States",
 			}
-			json.NewEncoder(w).Encode(tgstat.CountryResult{
+			json.NewEncoder(w).Encode(tgstat.CountryResult{ //nolint
 				Status: "ok",
 				Response: []tgstat.Country{
 					russia,
@@ -95,7 +95,7 @@ func TestClient_CategoriesGet(t *testing.T) {
 				Code: "news",
 				Name: "Новости",
 			}
-			json.NewEncoder(w).Encode(tgstat.CategoryResult{
+			json.NewEncoder(w).Encode(tgstat.CategoryResult{ //nolint
 				Status: "ok",
 				Response: []tgstat.Category{
 					tech,

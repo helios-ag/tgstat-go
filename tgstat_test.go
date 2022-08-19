@@ -199,11 +199,7 @@ func TestNewRequest(t *testing.T) {
 	})
 
 	t.Run("Client not configured", func(t *testing.T) {
-		api := &Client{
-			Url:        "url",
-			httpClient: &http.Client{},
-		}
-		api = nil
+		var api *Client
 		ctx := context.Background()
 
 		_, err := api.NewRestRequest(ctx, Token, http.MethodGet, "htts://url", nil)
