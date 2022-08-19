@@ -65,7 +65,7 @@ var NewRestRequest = func(c *Client, ctx context.Context, token, method, urlPath
 	}
 
 	if data == nil {
-		return nil, errors.New("data is not initialisedd")
+		return nil, errors.New("data is not initialised")
 	}
 
 	if token == "" {

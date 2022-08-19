@@ -33,6 +33,27 @@ func TestNewClient(t *testing.T) {
 	})
 }
 
+func TestEmptyData(t *testing.T) {
+	RegisterTestingT(t)
+	t.Run("Test getting empty data response", func(t *testing.T) {
+		newServer := server.NewServer()
+		defer newServer.Teardown()
+
+		newServer.Mux.HandleFunc(endpoints.ChannelsGet, func(w http.ResponseWriter, r *http.Request) {
+			json.NewEncoder(w).Encode(ErrorResult{
+				Status: "error",
+				Error:  "empty_token",
+			})
+		})
+		client, _ := newClient(newServer.URL)
+		Token = "asd"
+		ctx := context.Background()
+		_, err := client.NewRestRequest(ctx, Token, http.MethodGet, endpoints.ChannelsGet, nil)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("data is not initialised"))
+	})
+}
+
 func TestWithEndpoint(t *testing.T) {
 	RegisterTestingT(t)
 	t.Run("Test With endpoint", func(t *testing.T) {
@@ -45,9 +66,15 @@ func TestWithEndpoint(t *testing.T) {
 
 func TestReader(t *testing.T) {
 	RegisterTestingT(t)
-	t.Run("Test Reader", func(t *testing.T) {
+	t.Run("Test Reader not nil", func(t *testing.T) {
 		reader := reader
 		Expect(reader).ShouldNot(Equal(nil))
+	})
+
+	t.Run("Test Reader return", func(t *testing.T) {
+		reader := reader
+		ioreader := io.Reader(bytes.NewReader([]byte{}))
+		Expect(reader(ioreader)).ShouldNot(Equal(nil))
 	})
 }
 
