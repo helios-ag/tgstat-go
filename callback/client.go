@@ -263,7 +263,10 @@ func (c Client) Unsubscribe(ctx context.Context, subscriptionId string) (*tgstat
 	}
 
 	body := make(map[string]string)
-
+	
+	
+	body["subscription_id"] = subscriptionId
+	
 	req, err := c.api.NewRestRequest(ctx, c.token, http.MethodPost, path, body)
 
 	if err != nil {
