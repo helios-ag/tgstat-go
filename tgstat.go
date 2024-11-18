@@ -152,7 +152,7 @@ func errorFromResponse(resp *http.Response, body []byte) error {
 	if respBody.Error == "" || respBody.VerifyCode != "" {
 		return nil
 	}
-	return fmt.Errorf(respBody.Error)
+	return fmt.Errorf("%s",respBody.Error)
 }
 
 // NewClient creates a new client.
