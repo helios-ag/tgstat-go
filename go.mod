@@ -4,7 +4,7 @@ go 1.22
 
 require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
-	github.com/onsi/gomega v1.35.1
+	github.com/onsi/gomega v1.36.1
 )
 
 require (
