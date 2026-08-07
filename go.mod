@@ -3,7 +3,7 @@ module github.com/helios-ag/tgstat-go
 go 1.25.0
 
 require (
-	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
+	github.com/go-ozzo/ozzo-validation/v4 v4.4.0
 	github.com/onsi/gomega v1.42.1
 )
 
